@@ -1,0 +1,15 @@
+{
+    "name": "group-project",
+    "main": "src/index.js",
+    "dependencies": {
+        "express": "^4.18.3",
+        "express-handlebars": "^7.1.2",
+        "express-session": "^1.18.0",
+        "pg-promise": "^11.5.4",
+        "nodemon": "^3.1.0"
+    },
+    "scripts": {
+        "prestart": "npm install",
+        "start": "nodemon -L index.js"
+    }
+}

@@ -17,5 +17,11 @@
 ### Dependencies
 Node, Docker
 ### Setup
+Set up your `.env`:
+```
+POSTGRES_USER="postgres"
+POSTGRES_PASSWORD="pwd"
+POSTGRES_DB="ratings_db"
+```
 
 ### Testing
