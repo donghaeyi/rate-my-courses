@@ -24,5 +24,22 @@ app.get("/", (req, res) => {
   });
 });
 
+// Route to delete reviews
+// Code Inspired by Lab 6
+app.delete('/deleteReview', function (req, res) {
+  const query = "DELETE FROM reviews WHERE review_id = $1;";
+  db.any(query, [req.body.review_id])
+    .then(function (data) {
+      res.status(200).json({
+        status: 'success',
+        data: data,
+        message: 'review deleted successfully',
+      });
+    })
+    .catch(function (err) {
+      return console.log(err);
+    });
+});
+
 app.listen(3000);
 console.log("Server is listening on port 3000");
