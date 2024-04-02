@@ -1,6 +1,7 @@
 //  Import dependencies
 const express = require("express");
 const app = express(); // Create Express app
+const session = require('express-session');
 
 const handlebars = require("express-handlebars");
 
@@ -16,6 +17,19 @@ const hbs = handlebars.create({
 app.engine("hbs", hbs.engine);
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    saveUninitialized: true,
+    resave: true,
+  })
+);
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 
 // Begin routes
 app.get("/", (req, res) => {
