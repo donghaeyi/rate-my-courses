@@ -1,3 +1,30 @@
 {{!-- partial so it can be included on homepage or in navbar --}}
 {{!-- should be unique on any page, so the id is set --}}
-<input id="search-box" class="form-control" placeholder="Start typing to search..." oninput="change()">
+<div id="search-parent" class="container">
+    <input id="search-box" class="form-control" placeholder="Start typing to search..." oninput="change()">
+    <div id="results">
+        {{!-- will hold results --}}
+    </div>
+</div>
+
+<script>
+    const searchParent = document.querySelector("#search-parent")
+    const searchBox = document.querySelector("#search-box")
+    const results = document.querySelector("#results")
+
+    async function change() {
+        const res = await fetch(`http://localhost:3000/search?keyword=${encodeURIComponent(searchBox.value)}`)
+        const list = await res.json()
+
+        // clear existing elements
+        while (results.firstChild) results.removeChild(results.lastChild)
+
+        for (let i = 0; i < 5; i++) {
+            let datum = list[i]
+            if(datum == undefined) continue
+            let option = document.createElement('p')
+            option.innerHTML = datum.title
+            results.appendChild(option)
+        }
+    }
+</script>
