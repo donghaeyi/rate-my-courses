@@ -86,6 +86,18 @@ app.post('/login', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
   if (username.length > 100) { //Username input too large
+    let errorMsg = "Enter a username shorter than 100 characters.";
+    res.render('pages/login', {username, password, errorMsg});
+    return;
+  }
+  else if (username.length == 0) {
+    let errorMsg = "Enter a username";
+    res.render('pages/login', {password, errorMsg});
+    return;
+  }
+  else if (password.length == 0) {
+    let errorMsg = "Enter a password";
+    res.render('pages/login', {username, errorMsg});
     return;
   }
 
@@ -101,16 +113,18 @@ app.post('/login', (req, res) => {
           if (err){
             return console.log(err)
           }
-          if (bcryptRes) {
+          if (bcryptRes) { // Password matches!
             req.session.username = username;
             res.redirect('home');
-          } else {
-            res.redirect('login');
+          } else { // Password does not match!
+            let errorMsg = `Incorrect password!`
+            res.render('pages/login', {username, errorMsg});
           }
         });
       }
       else { // User not found!
-        res.redirect('login');
+        let errorMsg = `Couldnt find your account!`
+        res.render('pages/login', {username, errorMsg});
       }
     })
     .catch(err => { // Queury Error!
@@ -126,6 +140,18 @@ app.post('/register', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
   if (username.length > 100) { // Username too large!
+    let errorMsg = "Choose a username shorter than 100 characters.";
+    res.render('pages/register', {username, password, errorMsg});
+    return;
+  }
+  else if (username.length == 0) {
+    let errorMsg = "Enter a username.";
+    res.render('pages/register', {password, errorMsg});
+    return;
+  }
+  else if (password.length == 0) {
+    let errorMsg = "Enter a password.";
+    res.render('pages/register', {username, errorMsg});
     return;
   }
   const queryDoesUserExist = `SELECT * FROM Users 
@@ -136,7 +162,8 @@ app.post('/register', (req, res) => {
   db.oneOrNone(queryDoesUserExist, valuesDoesUserExist)
   .then(async user => {
     if (user) { // User exists!
-      res.redirect('register');
+      let errorMsg = `Username already exists.`;
+      res.render('pages/register', {username, errorMsg});
     }
     else { // User does not exist!
       const hash = await bcrypt.hash(password, 10)
@@ -151,7 +178,6 @@ app.post('/register', (req, res) => {
           res.redirect('home');
         })
         .catch(function (err) { // Failed to add user!
-          res.redirect('register');
           return console.log(err)
         });
     }
