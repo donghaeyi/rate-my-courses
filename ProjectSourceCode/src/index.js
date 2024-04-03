@@ -61,8 +61,8 @@ app.use(
 // Begin routes
 
 app.get("/", (req, res) => {
-  res.redirect('home')
-});
+  res.redirect('login') // Set to res.redirect('home') when nav is complete.
+}); 
 
 app.get("/home", (req, res) => {
   res.render('pages/home')
