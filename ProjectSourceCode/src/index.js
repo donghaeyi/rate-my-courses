@@ -5,11 +5,8 @@ const session = require('express-session');
 const bodyParser = require("body-parser");
 
 const handlebars = require("express-handlebars");
-const session = require('express-session');
 
 const path = require("path");
-
-const bodyParser = require('body-parser');
 
 const bcrypt = require('bcrypt'); 
 const pgp = require('pg-promise')();
