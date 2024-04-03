@@ -1,0 +1,64 @@
+Feature 1: user login with correct credentials (username and password)
+  Specific Test Cases: 
+    1. only password entered
+    2. only username entered
+    3. username and password entered but one is incorrect
+    4. username and password entered but user does not exist
+    5. username and password entered correctly
+  Test Data: 
+    1. no username; correct password
+    2. correct username; no password
+    3. correct username; incorrect password & incorrect username; correct password
+    4. incorrect username; incorrect password
+    5. correct username; correct password
+  Test Environment: 
+    We will be testing via a localhost server. 
+  Test Results: 
+    The program will display a specific message dependent on the error.
+    For tests 1 and 2, the program will display "Error. Could not log in. Both fields must be filled." and prompt them to log in again.  
+    For tests 3 and 4, the program will display "Error. The username or password are incorrect." and prompt them to log in again. 
+    For test 5, the program will display "Log in successful." and redirect the user to their account page. The user will be saved to the session. 
+  User Acceptance Testers: 
+    We will have fellow students test this feature. 
+
+
+Feature 2: course search
+  Specific Test Cases:
+    1. searching by a correct course code
+    2. searching by a correct course name
+    3. searching by a non-existant course code
+    4. searching by a non-existant course name 
+  Test Data:
+    1. CSCI; 2270
+    2. Algorithms; Robotics
+    3. AAAA; 9999
+    4. Arificol Intellegent
+  Test Environment:
+    We will be testing via a localhost server. 
+  Test Results:
+    For tests 1 and 2: the top five options matching the user inputted criteria are displayed
+    For tests 3 and 4: in the dropdown suggestion menu: "No Results Match the Search"
+  User Acceptance Testers:
+    We will have fellow students test this feature. 
+
+
+Feature 3: the user should be able to write a review if they are logged in
+  Specific Test Cases:
+    1. user is not logged in
+    2. user is logged in and fills in all fields
+    3. user is logged in and does not fill out the overall rating field (a required field)
+    4. user is logged in and fills out all required fields but does not fill out other fields
+  Test Data:
+    1. no data can be provided
+    2. year taken: 2022; term taken: Fall; review: "pretty solid"; overall rating: 7.5; homework rating: 3; enjoyability rating: 8; usefulness rating: 6.33; difficultly rating: 2; attendance required: true; exam based: true; project_based: false; combination based: false; professor: Dr. Name
+    3. year taken: 2020; term taken: Spring; review: "okay"; homework rating: 7; attendance required: false
+    4. year taken: 2019; term taken: Summer; review: "meh"; overall rating: 3; attendance required: true
+  Test Environment:
+    We will be testing via a localhost server.
+  Test Results:
+    1. The user will see a message on the course page to log in to add a review but the button to add a review will be hidden.
+    2. The user will see a message "The review was added successfully". The user will be able to see their review on the course page. The user will be able to see their review on their account page. The review will be added to the table reviews. 
+    3. The user will see a message "The review cannot be added. Please fill out all required fields." The review will not be posted. 
+    4. The user will see a message "The review was added successfully." The user will be able to see their review on the course page. The user will be able to see the review on their account page. The review will be added to the table reviews. 
+  User Acceptance Testers:
+    We will have fellow students test this feature. 
