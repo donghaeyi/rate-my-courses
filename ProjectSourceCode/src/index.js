@@ -42,16 +42,7 @@ app.use(
 
 // User data
 app.use(session({
-  secret: `7afca760099ef37f98ba3ce7ee6e5b65
-  d961fbd1c995ef78c0bd5257622540a4
-  9c1de46186bce144a88a6d0d5061ff23
-  350ad7c3cbb18490ebc7e89503fabf19
-  a3161f68756cce9229fde2ffabda596c
-  a10a4ef4655e908e6b393af5f407e6b7
-  629dfa6fcd9c410c35c471382bdf9803
-  744701ea9e733b149134bf9ec38c9b06
-  2c5280d3fdf1206b08d71761c24dce2b
-  57119acee7b6adcb3f73738605543182`,
+  secret: `Super-Secret`,
   username: undefined 
 }))
 
@@ -94,11 +85,11 @@ app.post('/login', (req, res) => {
   db.oneOrNone(query, values)
     .then(user => {
       if (user) {
-        bcrypt.compare(password, user.password, (err, response) => {
+        bcrypt.compare(password, user.password, (err, bcryptRes) => {
           if (err){
             return console.log(err)
           }
-          if (response) {
+          if (bcryptRes) {
             req.session.username = username;
             res.redirect('home');
           } else {
@@ -131,8 +122,8 @@ app.post('/register', (req, res) => {
                                 LIMIT 1`;
   const valuesDoesUserExist = [username];
   db.oneOrNone(queryDoesUserExist, valuesDoesUserExist)
-  .then(async user => { // User exists!
-    if (user) {
+  .then(async user => {
+    if (user) { // User exists!
       res.redirect('register');
     }
     else { // User does not exist!
