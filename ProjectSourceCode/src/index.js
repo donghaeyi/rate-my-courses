@@ -91,20 +91,26 @@ app.post('/login', (req, res) => {
                     $1 = username 
                   LIMIT 1`;
   const values = [username];
-  db.one(query, values)
-    .then(data => {
-      bcrypt.compare(password, data.password)
-        .then(hash => { // Login successful!
-          req.session.username = username;
-          res.redirect('home');
-        })
-        .catch(err => { // Password incorrect!
-          res.redirect('login');
-          return console.log(err)
+  db.oneOrNone(query, values)
+    .then(user => {
+      if (user) {
+        bcrypt.compare(password, user.password, (err, response) => {
+          if (err){
+            return console.log(err)
+          }
+          if (response) {
+            req.session.username = username;
+            res.redirect('home');
+          } else {
+            res.redirect('login');
+          }
         });
+      }
+      else { // User not found!
+        res.redirect('login');
+      }
     })
-    .catch(err => { // User not found!
-      res.redirect('login');
+    .catch(err => { // Queury Error!
       return console.log(err)
     })
 });
@@ -125,12 +131,12 @@ app.post('/register', (req, res) => {
                                 LIMIT 1`;
   const valuesDoesUserExist = [username];
   db.oneOrNone(queryDoesUserExist, valuesDoesUserExist)
-  .then(user => { // User exists!
+  .then(async user => { // User exists!
     if (user) {
       res.redirect('register');
     }
     else { // User does not exist!
-      const hash = bcrypt.hash(password, 10)
+      const hash = await bcrypt.hash(password, 10)
       const query = `INSERT INTO users 
                       (username, password)
                      VALUES
