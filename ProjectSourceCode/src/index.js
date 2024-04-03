@@ -3,6 +3,7 @@ const express = require("express");
 const app = express(); // Create Express app
 
 const handlebars = require("express-handlebars");
+const session = require('express-session');
 
 const path = require("path");
 
@@ -39,16 +40,25 @@ app.use(
   })
 );
 
-// User
-
-const USER = {
-  username: undefined,
-}
+// User data
+app.use(session({
+  secret: `7afca760099ef37f98ba3ce7ee6e5b65
+  d961fbd1c995ef78c0bd5257622540a4
+  9c1de46186bce144a88a6d0d5061ff23
+  350ad7c3cbb18490ebc7e89503fabf19
+  a3161f68756cce9229fde2ffabda596c
+  a10a4ef4655e908e6b393af5f407e6b7
+  629dfa6fcd9c410c35c471382bdf9803
+  744701ea9e733b149134bf9ec38c9b06
+  2c5280d3fdf1206b08d71761c24dce2b
+  57119acee7b6adcb3f73738605543182`,
+  username: undefined 
+}))
 
 // Begin routes
 
 app.get("/", (req, res) => {
-  if (USER.username) {
+  if (req.session.username) {
     res.redirect('home')
   }
   else {
@@ -57,7 +67,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/home", (req, res) => {
-  if (USER.username) {
+  if (req.session.username) {
     res.render('pages/home')
   }
   else {
@@ -66,7 +76,7 @@ app.get("/home", (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('pages/login', {USER});
+  res.render('pages/login');
 });
 
 app.post('/login', (req, res) => {
@@ -85,7 +95,7 @@ app.post('/login', (req, res) => {
     .then(data => {
       bcrypt.compare(password, data.password)
         .then(hash => { // Login successful!
-          USER.username = username;
+          req.session.username = username;
           res.redirect('home');
         })
         .catch(err => { // Password incorrect!
@@ -100,7 +110,7 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  res.render('pages/register', {USER});
+  res.render('pages/register');
 });
 
 app.post('/register', (req, res) => {
@@ -128,7 +138,7 @@ app.post('/register', (req, res) => {
       const values = [username, hash]
       db.any(query, values) 
         .then(function (data) { // User successfully added!
-          USER.username = username;
+          req.session.username = username;
           res.redirect('home');
         })
         .catch(function (err) { // Failed to add user!
@@ -143,7 +153,7 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-  USER.username = undefined
+  req.session.username = undefined
   res.render('pages/logout');
 })
 
