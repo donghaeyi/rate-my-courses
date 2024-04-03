@@ -61,21 +61,11 @@ app.use(
 // Begin routes
 
 app.get("/", (req, res) => {
-  if (req.session.username) {
-    res.redirect('home')
-  }
-  else {
-    res.redirect('login');
-  }
+  res.redirect('home')
 });
 
 app.get("/home", (req, res) => {
-  if (req.session.username) {
-    res.render('pages/home')
-  }
-  else {
-    res.redirect('login');
-  }
+  res.render('pages/home')
 });
 
 app.get('/login', (req, res) => {
