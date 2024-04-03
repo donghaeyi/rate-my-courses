@@ -26,7 +26,7 @@ CREATE TABLE reviews (
     course_id INT NOT NULL,
     /* identify when exactly the user took the course */
     year_taken SMALLINT NOT NULL,
-    term_taken CHAR(4) CHECK (term_taken in ('Fall', 'Spring', 'Summer')),  
+    term_taken VARCHAR(6) CHECK (term_taken in ('Fall', 'Spring', 'Summer')),  
     /* Each review is associated with exactly one course and one user */
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
     user_id INT NOT NULL,
@@ -34,12 +34,22 @@ CREATE TABLE reviews (
     review VARCHAR(8000) NOT NULL, 
     overall_rating DECIMAL NOT NULL CHECK (overall_rating between 0 and 10), /*We can make this rating be an average of all of the ratings metrics or leave the overall rating up to the user, right now I left it as just an overall rating out of 10*/
     /* rating metrics - can add more later on*/
-    homework_rating DECIMAL CHECK (homework_rating between 0 and 10),
-    enjoyability_rating DECIMAL CHECK (enjoyability_rating between 0 and 10), /* How much the user enjoyed the course */
+    homework_rating DECIMAL CHECK (homework_rating between 0 and 10), /* prompt them to indicate how much time they spent outside of the class on assignments */
+    enjoyability_rating DECIMAL CHECK (enjoyability_rating between 0 and 10), /* How much the user enjoyed the course, did they find it interesting or boring */
     usefulness_rating DECIMAL CHECK (usefulness_rating between 0 and 10), /* how useful this course is to the user, i.e is the content in this course often used in this industry? does it apply to everday life? is it necessary to take to understand more useful classes later on? */
-    difficulty_rating DECIMAL CHECK (difficulty_rating between 0 and 10),
+    difficulty_rating DECIMAL CHECK (difficulty_rating between 0 and 10), /* generally how difficult they thought this course was */
+    /* grading metrics - grading breakdown of course, what was the student mainly graded on */
+    /*
+    grade_recieved CHAR(2) NOT NULL CHECK (grade_recieved in ('A', 'A-', ... )) don't know if check necessary if grade recieved is a drop down menu
+    grading_difficulty VARCHAR(1000) /*Allow users to provide an explanation into the grade they recieved, prompt them to explain the difficulty of grading and how hard they worked to recieve the grade they have (i.e was this class an easy A? did I work really hard for a B? were grade averages low?) */ 
+    attendance_required BOOL NOT NULL, /* Was attendence required/needed to get a good grade */
+    /* have user check one grading catagory */
+    exam_based BOOL, /* grade was mostly determined by exams */
+    project_based BOOL, /* grade was mostly determined by large assignments/projects */
+    combination_based BOOL, /* grading breakdown does not fall in exam_based or project_based catagories, grade was determined by many different things and wasn't majority based on one catagory */
+    */
     /* Tag each course review to a professor */
-    professor_id INT NOT NULL,
+    professor_id INT NOT NULL, /* not sure how to do this efficently, maybe for each course we could have a dropdown list of professors */
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE /* Each review should have exactly 1 professor associated with it*/
 );
 
