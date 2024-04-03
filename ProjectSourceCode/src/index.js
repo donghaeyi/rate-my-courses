@@ -2,6 +2,7 @@
 const express = require("express");
 const app = express(); // Create Express app
 const session = require('express-session');
+const bodyParser = require("body-parser");
 
 const handlebars = require("express-handlebars");
 
