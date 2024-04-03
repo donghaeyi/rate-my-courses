@@ -78,17 +78,17 @@ app.post('/login', (req, res) => {
   if (username.length > 100) { //Username input too large
     let errorMsg = "Enter a username shorter than 100 characters.";
     res.render('pages/login', {username, password, errorMsg});
-    return;
+    return res.status(400).send("Enter a username shorter than 100 characters.");
   }
   else if (username.length == 0) {
     let errorMsg = "Enter a username";
     res.render('pages/login', {password, errorMsg});
-    return;
+    return res.status(400).send("Enter a username");
   }
   else if (password.length == 0) {
     let errorMsg = "Enter a password";
     res.render('pages/login', {username, errorMsg});
-    return;
+    return res.status(400).send("Enter a password");
   }
 
   const query = `SELECT * FROM Users 
@@ -101,24 +101,28 @@ app.post('/login', (req, res) => {
       if (user) {
         bcrypt.compare(password, user.password, (err, bcryptRes) => {
           if (err){
-            return console.log(err)
+            return res.status(400).send(console.log(err));
           }
           if (bcryptRes) { // Password matches!
             req.session.username = username;
             res.redirect('home');
-          } else { // Password does not match!
+            return res.status(100).send(errorMsg);
+          } 
+          else { // Password does not match!
             let errorMsg = `Incorrect password!`
             res.render('pages/login', {username, errorMsg});
+            return res.status(400).send(errorMsg);
           }
         });
       }
       else { // User not found!
         let errorMsg = `Couldnt find your account!`
         res.render('pages/login', {username, errorMsg});
+        return res.status(400).send(`Couldnt find your account!`);
       }
     })
     .catch(err => { // Queury Error!
-      return console.log(err)
+      return res.status(400).send(console.log(err));
     })
 });
 
@@ -132,17 +136,17 @@ app.post('/register', (req, res) => {
   if (username.length > 100) { // Username too large!
     let errorMsg = "Choose a username shorter than 100 characters.";
     res.render('pages/register', {username, password, errorMsg});
-    return;
+    return res.status(400).send(errorMsg);
   }
   else if (username.length == 0) {
     let errorMsg = "Enter a username.";
     res.render('pages/register', {password, errorMsg});
-    return;
+    return res.status(400).send(errorMsg);
   }
   else if (password.length == 0) {
     let errorMsg = "Enter a password.";
     res.render('pages/register', {username, errorMsg});
-    return;
+    return res.status(400).send(errorMsg);
   }
   const queryDoesUserExist = `SELECT * FROM Users 
                                 WHERE
@@ -154,6 +158,7 @@ app.post('/register', (req, res) => {
     if (user) { // User exists!
       let errorMsg = `Username already exists.`;
       res.render('pages/register', {username, errorMsg});
+      return res.status(400).send(errorMsg);
     }
     else { // User does not exist!
       const hash = await bcrypt.hash(password, 10)
@@ -166,14 +171,15 @@ app.post('/register', (req, res) => {
         .then(function (data) { // User successfully added!
           req.session.username = username;
           res.redirect('home');
+          return res.status(100).send("Success!");
         })
         .catch(function (err) { // Failed to add user!
-          return console.log(err)
+          return res.status(400).send(console.log(err));
         });
     }
   })
   .catch(err => { // Query Error!
-    return console.log(err)
+    return res.status(400).send(console.log(err));
   });
 });
 
