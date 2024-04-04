@@ -36,7 +36,7 @@ function handleInputtedUserDetailsCheck(username, password, renderPath, res) {
  * @param {*} db 
  * @returns {*} user or undefined
  */
-async function getUserFromDataBase(username, db) {
+async function getUserFromDatabase(username, db) {
   const query = `SELECT * FROM Users 
                  WHERE
                  $1 = username 
@@ -70,4 +70,4 @@ function login(user, req, res) {
   res.redirect('home');
 }
 
-module.exports = {login, handleInputtedUserDetailsCheck, getUserFromDataBase}
+module.exports = {login, handleInputtedUserDetailsCheck, getUserFromDatabase}

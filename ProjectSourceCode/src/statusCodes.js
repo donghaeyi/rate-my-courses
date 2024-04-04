@@ -8,7 +8,7 @@
 // 5xx: server errors
 // 6xx: Multi-sided errors
 const statusCodes = {
-    SUCCESSFUL_REGISTARTION: 201,
+    SUCCESSFUL_REGISTRATION: 201,
     SUCCESSFUL_LOGIN: 202,
 
     USERNAME_TOO_LARGE: 230,
@@ -20,7 +20,7 @@ const statusCodes = {
 
     FAILED_TO_ADD_USER: 512,
     BCRYPT_ERROR: 513,
-    QUEURY_ERROR: 514,
+    QUERY_ERROR: 514,
 }
 
 module.exports = statusCodes

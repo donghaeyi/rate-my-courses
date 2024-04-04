@@ -90,7 +90,7 @@ app.post('/login', async (req, res) => {
     return
   }
 
-  let user = await authentication.getUserFromDataBase(username, db)
+  let user = await authentication.getUserFromDatabase(username, db)
 
   if (user) { // User found!
     bcrypt.compare(password, user.password, (err, bcryptRes) => {
@@ -126,7 +126,7 @@ app.post('/register', async (req, res) => {
   if (!authentication.handleInputtedUserDetailsCheck(username, password, 'pages/register', res)) {
     return
   }
-  let user = await authentication.getUserFromDataBase(username, db)
+  let user = await authentication.getUserFromDatabase(username, db)
   if (user) { // User already exists
     let errorMsg = `Username already exists.`;
     res.render('pages/register', {username, errorMsg});
@@ -141,13 +141,13 @@ app.post('/register', async (req, res) => {
     const values = [username, hash]
     db.any(query, values) 
       .then(async function (data) { // User successfully added!
-        res.statusCode = statusCodes.SUCCESSFUL_REGISTARTION;
-        user = await authentication.getUserFromDataBase(username, db)
+        res.statusCode = statusCodes.SUCCESSFUL_REGISTRATION;
+        user = await authentication.getUserFromDatabase(username, db)
         if (user) {
           authentication.login(user, req, res)
         }
         else {
-          res.statusCode = statusCodes.QUEURY_ERROR;
+          res.statusCode = statusCodes.QUERY_ERROR;
           throw new Error("Registration did not add user")
         }
       })
