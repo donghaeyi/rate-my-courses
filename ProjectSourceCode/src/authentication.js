@@ -6,7 +6,7 @@ const statusCodes = require('./statusCodes.js');
  * @param {String} password
  * @param {String} renderPath Which page should be rendered too if account does not meet requirements?
  * @param {*} res
- * @return {Boolean} Returns false if requirements not met, returns true otherwise
+ * @return {Number} Returns false if requirements not met, returns true otherwise
 */
 function handleInputtedUserDetailsCheck(username, password, renderPath, res) {
   if (username.length > 100) { // Username input too large for database
@@ -51,6 +51,8 @@ async function getUserFromDatabase(username, db) {
     })
 }
 
+g_variablesToBeRetreived = ['username']
+
 /**
  * Logs user in, assigns variables from user to req.session.
  * @param {*} user 
@@ -58,14 +60,6 @@ async function getUserFromDatabase(username, db) {
  * @param {*} res 
  */
 function login(user, req, res) {
-  for (var sessionKey in req.session) {
-    for (var userKey in user) {
-      if (sessionKey == userKey) {
-        sessionKey[sessionKey] = user[userKey]
-        break;
-      }
-    }
-  }
   req.session.username = user.username
   res.redirect('home');
 }

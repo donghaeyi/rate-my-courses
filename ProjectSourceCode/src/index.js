@@ -42,17 +42,8 @@ app.use(
   })
 );
 
-// User data
-// Session stores client data.
-// Data accessible via: req.session.varname
 app.use(session({
   secret: `Super-Secret`,
-  username: undefined,
-  // Example of how to add more data:
-  // varname: undefined
-
-  // NOTE: inorder for varname to automatically be added on login 
-  // it MUST share the same name as a value in the database.
 }))
 
 app.use(
