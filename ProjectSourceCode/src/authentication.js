@@ -52,24 +52,6 @@ async function getUserFromDataBase(username, db) {
 }
 
 /**
- * Handles login for registration
- * @param {String} username 
- * @param {*} req 
- * @param {*} res 
- * @param {*} db 
- */
-async function loginRegistration(username, req, res, db) {
-    user = await getUserFromDataBase(username, db)
-    if (user) {
-      login(user, req, res)
-    }
-    else {
-      res.statusCode = statusCodes.QUEURY_ERROR;
-      throw new Error("Registration did not add user")
-    }
-}
-
-/**
  * Logs user in, assigns variables from user to req.session.
  * @param {*} user 
  * @param {*} req 

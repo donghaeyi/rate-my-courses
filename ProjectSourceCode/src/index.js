@@ -140,9 +140,16 @@ app.post('/register', async (req, res) => {
                     ($1, $2)`;
     const values = [username, hash]
     db.any(query, values) 
-      .then(function (data) { // User successfully added!
+      .then(async function (data) { // User successfully added!
         res.statusCode = statusCodes.SUCCESSFUL_REGISTARTION;
-        authentication.loginRegistration(username, req, res, db)
+        user = await authentication.getUserFromDataBase(username, db)
+        if (user) {
+          authentication.login(user, req, res)
+        }
+        else {
+          res.statusCode = statusCodes.QUEURY_ERROR;
+          throw new Error("Registration did not add user")
+        }
       })
       .catch(function (err) { // Failed to add user!
         res.statusCode = statusCodes.FAILED_TO_ADD_USER;
