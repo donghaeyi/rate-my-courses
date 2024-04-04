@@ -70,4 +70,4 @@ function login(user, req, res) {
   res.redirect('home');
 }
 
-module.exports = {login, loginRegistration, doesAccountMeetRequirements, getUserFromDataBase}
+module.exports = {login, doesAccountMeetRequirements, getUserFromDataBase}
