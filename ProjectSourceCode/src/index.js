@@ -11,6 +11,9 @@ const path = require("path");
 const bcrypt = require('bcrypt'); 
 const pgp = require('pg-promise')();
 
+const statusCodes = require('./statusCodes.js');
+const authentication = require('./authentication.js');
+
 const dbConfig = {
   host: 'db',
   port: 5432,
@@ -40,10 +43,20 @@ app.use(
 );
 
 // User data
+// Session stores client data.
+// Data accessible via: req.session.varname
 app.use(session({
   secret: `Super-Secret`,
-  username: undefined 
+  username: undefined,
+  // Example of how to add more data:
+  // varname: undefined
 }))
+
+// Used by register and login to login.
+function login(req, res, user) {
+  req.session.username = user.username
+  res.redirect('home');
+}
 
 app.use(
   session({
@@ -75,20 +88,23 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-  if (username.length > 100) { //Username input too large
+  if (username.length > 100) { // Username input too large for database
     let errorMsg = "Enter a username shorter than 100 characters.";
     res.render('pages/login', {username, password, errorMsg});
-    return res.status(400).send("Enter a username shorter than 100 characters.");
+    res.statusCode = statusCodes.USERNAME_TOO_LARGE;
+    return;
   }
-  else if (username.length == 0) {
+  else if (username.length == 0) { // No username submitted
     let errorMsg = "Enter a username";
     res.render('pages/login', {password, errorMsg});
-    return res.status(400).send("Enter a username");
+    res.statusCode = statusCodes.EMPTY_USERNAME;
+    return;
   }
-  else if (password.length == 0) {
+  else if (password.length == 0) { // No password submitted
     let errorMsg = "Enter a password";
     res.render('pages/login', {username, errorMsg});
-    return res.status(400).send("Enter a password");
+    res.statusCode = statusCodes.EMPTY_PASSWORD;
+    return;
   }
 
   const query = `SELECT * FROM Users 
@@ -98,33 +114,50 @@ app.post('/login', (req, res) => {
   const values = [username];
   db.oneOrNone(query, values)
     .then(user => {
-      if (user) {
+      if (user) { // User found!
         bcrypt.compare(password, user.password, (err, bcryptRes) => {
-          if (err){
-            return res.status(400).send(console.log(err));
+          if (err) { // bcrypt Error
+            res.statusCode = statusCodes.BCRYPT_ERROR;
+            return console.log(err)
           }
           if (bcryptRes) { // Password matches!
-            req.session.username = username;
-            res.redirect('home');
-            return res.status(100).send(errorMsg);
+            res.statusCode = statusCodes.SUCCESSFUL_LOGIN;
+            login(req, res, user)
           } 
           else { // Password does not match!
             let errorMsg = `Incorrect password!`
+            res.statusCode = statusCodes.PASSWORD_DIDNT_MATCH;
             res.render('pages/login', {username, errorMsg});
-            return res.status(400).send(errorMsg);
           }
         });
       }
       else { // User not found!
         let errorMsg = `Couldnt find your account!`
+        res.statusCode = statusCodes.USER_NOT_FOUND;
         res.render('pages/login', {username, errorMsg});
-        return res.status(400).send(`Couldnt find your account!`);
       }
     })
     .catch(err => { // Queury Error!
-      return res.status(400).send(console.log(err));
+      res.statusCode = statusCodes.QUEURY_ERROR;
+      return console.log(err)
     })
 });
+
+function loginRegistration(req, res, username) {
+  const query = `SELECT * FROM Users 
+                  WHERE
+                    $1 = username 
+                  LIMIT 1`;
+  const values = [username]
+  db.one(query, values)
+    .then(user => {
+      login(req, res, user)
+    })
+    .catch(err => { // User not found error
+      res.statusCode = statusCodes.QUEURY_ERROR;
+      return console.log(err)
+    })
+}
 
 app.get('/register', (req, res) => {
   res.render('pages/register');
@@ -133,20 +166,23 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-  if (username.length > 100) { // Username too large!
+  if (username.length > 100) { // Username too large for database
     let errorMsg = "Choose a username shorter than 100 characters.";
     res.render('pages/register', {username, password, errorMsg});
-    return res.status(400).send(errorMsg);
+    res.statusCode = statusCodes.USERNAME_TOO_LARGE;
+    return;
   }
-  else if (username.length == 0) {
+  else if (username.length == 0) { // Empty username
     let errorMsg = "Enter a username.";
     res.render('pages/register', {password, errorMsg});
-    return res.status(400).send(errorMsg);
+    res.statusCode = statusCodes.EMPTY_USERNAME;
+    return;
   }
-  else if (password.length == 0) {
+  else if (password.length == 0) { // Empty password
     let errorMsg = "Enter a password.";
     res.render('pages/register', {username, errorMsg});
-    return res.status(400).send(errorMsg);
+    res.statusCode = statusCodes.EMPTY_PASSWORD;
+    return;
   }
   const queryDoesUserExist = `SELECT * FROM Users 
                                 WHERE
@@ -155,12 +191,12 @@ app.post('/register', (req, res) => {
   const valuesDoesUserExist = [username];
   db.oneOrNone(queryDoesUserExist, valuesDoesUserExist)
   .then(async user => {
-    if (user) { // User exists!
+    if (user) { // User already exists
       let errorMsg = `Username already exists.`;
       res.render('pages/register', {username, errorMsg});
-      return res.status(400).send(errorMsg);
+      res.statusCode = statusCodes.USER_ALREADY_EXISTS;
     }
-    else { // User does not exist!
+    else { // User does not yet exist
       const hash = await bcrypt.hash(password, 10)
       const query = `INSERT INTO users 
                       (username, password)
@@ -169,17 +205,18 @@ app.post('/register', (req, res) => {
       const values = [username, hash]
       db.any(query, values) 
         .then(function (data) { // User successfully added!
-          req.session.username = username;
-          res.redirect('home');
-          return res.status(100).send("Success!");
+          res.statusCode = statusCodes.SUCCESSFUL_REGISTARTION;
+          loginRegistration(req, res, username)
         })
         .catch(function (err) { // Failed to add user!
-          return res.status(400).send(console.log(err));
+          res.statusCode = statusCodes.FAILED_TO_ADD_USER;
+          return console.log(err)
         });
     }
   })
   .catch(err => { // Query Error!
-    return res.status(400).send(console.log(err));
+    res.statusCode = statusCodes.QUEURY_ERROR;
+    return console.log(err)
   });
 });
 
