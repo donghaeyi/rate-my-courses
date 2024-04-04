@@ -86,7 +86,7 @@ app.post('/login', async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  if (!authentication.handleInputtedUserDetailCheck(username, password, 'pages/login', res)) {
+  if (!authentication.handleInputtedUserDetailsCheck(username, password, 'pages/login', res)) {
     return
   }
 
@@ -123,7 +123,7 @@ app.get('/register', (req, res) => {
 app.post('/register', async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-  if (!authentication.handleInputtedUserDetailCheck(username, password, 'pages/register', res)) {
+  if (!authentication.handleInputtedUserDetailsCheck(username, password, 'pages/register', res)) {
     return
   }
   let user = await authentication.getUserFromDataBase(username, db)

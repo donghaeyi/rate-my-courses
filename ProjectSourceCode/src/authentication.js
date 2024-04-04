@@ -8,7 +8,7 @@ const statusCodes = require('./statusCodes.js');
  * @param {*} res
  * @return {Boolean} Returns false if requirements not met, returns true otherwise
 */
-function handleInputtedUserDetailCheck(username, password, renderPath, res) {
+function handleInputtedUserDetailsCheck(username, password, renderPath, res) {
   if (username.length > 100) { // Username input too large for database
     let errorMsg = "Enter a username shorter than 100 characters.";
     res.render(renderPath, {username, password, errorMsg});
@@ -70,4 +70,4 @@ function login(user, req, res) {
   res.redirect('home');
 }
 
-module.exports = {login, handleInputtedUserDetailCheck, getUserFromDataBase}
+module.exports = {login, handleInputtedUserDetailsCheck, getUserFromDataBase}
