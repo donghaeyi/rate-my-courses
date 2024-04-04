@@ -24,5 +24,15 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/account", (req, res) => {
+  res.render("pages/account", {
+  });
+});
+
+app.post("/account", (req, res) => {
+  const username = req.body.username;
+  const query = "SELECT * FROM users WHERE username = ?";
+});
+
 app.listen(3000);
 console.log("Server is listening on port 3000");
