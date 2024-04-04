@@ -1,5 +1,13 @@
 const statusCodes = require('./statusCodes.js');
 
+/** 
+ * Handles username length, username, and password check for login post and register post.
+ * @param {String} username
+ * @param {String} password
+ * @param {String} renderPath Which page should be rendered too if account does not meet requirements?
+ * @param {*} res
+ * @return {Boolean} Returns false if requirements not met, returns true otherwise
+*/
 function doesAccountMeetRequirements(username, password, renderPath, res) {
   if (username.length > 100) { // Username input too large for database
     let errorMsg = "Enter a username shorter than 100 characters.";
@@ -22,6 +30,12 @@ function doesAccountMeetRequirements(username, password, renderPath, res) {
   return true
 }
 
+/**
+ * Gets user from database by queurying for username.
+ * @param {String} username 
+ * @param {*} db 
+ * @returns {*} user or undefined
+ */
 async function getUserFromDataBase(username, db) {
   const query = `SELECT * FROM Users 
                  WHERE
@@ -37,6 +51,13 @@ async function getUserFromDataBase(username, db) {
     })
 }
 
+/**
+ * Handles login for registration
+ * @param {String} username 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} db 
+ */
 async function loginRegistration(username, req, res, db) {
     user = await getUserFromDataBase(username, db)
     if (user) {
@@ -48,7 +69,12 @@ async function loginRegistration(username, req, res, db) {
     }
 }
 
-// Used by register and login to login.
+/**
+ * Logs user in, assigns variables from user to req.session.
+ * @param {*} user 
+ * @param {*} req 
+ * @param {*} res 
+ */
 function login(user, req, res) {
   for (var sessionKey in req.session) {
     for (var userKey in user) {
