@@ -61,6 +61,11 @@ const auth = (req, res, next) => {
 
 // Begin routes
 
+// dummy route for testing
+app.get('/welcome', (req, res) => {
+  res.json({status: 'success', message: 'Welcome!'});
+});
+
 app.get("/", (req, res) => {
   res.redirect('login') // Set to res.redirect('home') when nav is complete.
 }); 
@@ -74,8 +79,8 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
+  const username = req.body.username || '';
+  const password = req.body.password || '';
 
   if (!authentication.handleInputtedUserDetailsCheck(username, password, 'pages/login', res)) {
     return
@@ -112,8 +117,8 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
+  const username = req.body.username || '';
+  const password = req.body.password || '';
   if (!authentication.handleInputtedUserDetailsCheck(username, password, 'pages/register', res)) {
     return
   }
@@ -155,5 +160,5 @@ app.get('/logout', (req, res) => {
   })
 })
 
-app.listen(3000);
+module.exports = app.listen(3000);
 console.log("Server is listening on port 3000");
