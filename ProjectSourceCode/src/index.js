@@ -11,6 +11,9 @@ const path = require("path");
 const bcrypt = require('bcrypt'); 
 const pgp = require('pg-promise')();
 
+const statusCodes = require('./statusCodes.js');
+const authentication = require('./authentication.js');
+
 const dbConfig = {
   host: 'db',
   port: 5432,
@@ -34,18 +37,6 @@ app.set("views", path.join(__dirname, "views"));
 app.use(bodyParser.json());
 
 app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
-
-// User data
-app.use(session({
-  secret: `Super-Secret`,
-  username: undefined 
-}))
-
-app.use(
   session({
     secret: process.env.SESSION_SECRET,
     saveUninitialized: true,
@@ -58,112 +49,110 @@ app.use(
   })
 );
 
+// Middleware
+
+const auth = (req, res, next) => {
+  // redirect to login if not logged in
+  if (!req.session.username) {
+    return res.redirect('/login');
+  }
+  next();
+}
+
 // Begin routes
 
 app.get("/", (req, res) => {
-  if (req.session.username) {
-    res.redirect('home')
-  }
-  else {
-    res.redirect('login');
-  }
-});
+  res.redirect('login') // Set to res.redirect('home') when nav is complete.
+}); 
 
 app.get("/home", (req, res) => {
-  if (req.session.username) {
-    res.render('pages/home')
-  }
-  else {
-    res.redirect('login');
-  }
+  res.render('pages/home')
 });
 
 app.get('/login', (req, res) => {
   res.render('pages/login');
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-  if (username.length > 100) { //Username input too large
-    return;
+
+  if (!authentication.handleInputtedUserDetailsCheck(username, password, 'pages/login', res)) {
+    return
   }
 
-  const query = `SELECT * FROM Users 
-                  WHERE
-                    $1 = username 
-                  LIMIT 1`;
-  const values = [username];
-  db.oneOrNone(query, values)
-    .then(user => {
-      if (user) {
-        bcrypt.compare(password, user.password, (err, bcryptRes) => {
-          if (err){
-            return console.log(err)
-          }
-          if (bcryptRes) {
-            req.session.username = username;
-            res.redirect('home');
-          } else {
-            res.redirect('login');
-          }
-        });
+  let user = await authentication.getUserFromDatabase(username, db)
+
+  if (user) { // User found!
+    bcrypt.compare(password, user.password, (err, bcryptRes) => {
+      if (err) { // bcrypt Error
+        res.statusCode = statusCodes.BCRYPT_ERROR;
+        return console.log(err)
       }
-      else { // User not found!
-        res.redirect('login');
+      if (bcryptRes) { // Password matches!
+        res.statusCode = statusCodes.SUCCESSFUL_LOGIN;
+        authentication.login(user, req, res)
+      } 
+      else { // Password does not match!
+        let errorMsg = `Incorrect password!`
+        res.statusCode = statusCodes.PASSWORD_DIDNT_MATCH;
+        res.render('pages/login', {username, errorMsg});
       }
-    })
-    .catch(err => { // Queury Error!
-      return console.log(err)
-    })
+    });
+  }
+  else { // User not found!
+    let errorMsg = `Couldnt find your account!`
+    res.statusCode = statusCodes.USER_NOT_FOUND;
+    res.render('pages/login', {username, errorMsg});
+  }
 });
 
 app.get('/register', (req, res) => {
   res.render('pages/register');
 });
 
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-  if (username.length > 100) { // Username too large!
-    return;
+  if (!authentication.handleInputtedUserDetailsCheck(username, password, 'pages/register', res)) {
+    return
   }
-  const queryDoesUserExist = `SELECT * FROM Users 
-                                WHERE
-                                  $1 = username 
-                                LIMIT 1`;
-  const valuesDoesUserExist = [username];
-  db.oneOrNone(queryDoesUserExist, valuesDoesUserExist)
-  .then(async user => {
-    if (user) { // User exists!
-      res.redirect('register');
-    }
-    else { // User does not exist!
-      const hash = await bcrypt.hash(password, 10)
-      const query = `INSERT INTO users 
-                      (username, password)
-                     VALUES
-                      ($1, $2)`;
-      const values = [username, hash]
-      db.any(query, values) 
-        .then(function (data) { // User successfully added!
-          req.session.username = username;
-          res.redirect('home');
-        })
-        .catch(function (err) { // Failed to add user!
-          res.redirect('register');
-          return console.log(err)
-        });
-    }
-  })
-  .catch(err => { // Query Error!
-    return console.log(err)
-  });
+  let user = await authentication.getUserFromDatabase(username, db)
+  if (user) { // User already exists
+    let errorMsg = `Username already exists.`;
+    res.render('pages/register', {username, errorMsg});
+    res.statusCode = statusCodes.USER_ALREADY_EXISTS;
+  }
+  else { // User does not yet exist
+    const hash = await bcrypt.hash(password, 10)
+    const query = `INSERT INTO users 
+                    (username, password)
+                    VALUES
+                    ($1, $2)`;
+    const values = [username, hash]
+    db.any(query, values) 
+      .then(async function (data) { // User successfully added!
+        res.statusCode = statusCodes.SUCCESSFUL_REGISTRATION;
+        user = await authentication.getUserFromDatabase(username, db)
+        if (user) {
+          authentication.login(user, req, res)
+        }
+        else {
+          res.statusCode = statusCodes.QUERY_ERROR;
+          throw new Error("Registration did not add user")
+        }
+      })
+      .catch(function (err) { // Failed to add user!
+        res.statusCode = statusCodes.FAILED_TO_ADD_USER;
+        return console.log(err)
+      });
+  }
 });
 
 app.get('/logout', (req, res) => {
-  req.session.username = undefined
-  res.render('pages/logout');
+  req.session.destroy(() => {
+    res.render('pages/logout');
+  })
 })
 
 app.listen(3000);
