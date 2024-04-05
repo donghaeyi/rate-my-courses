@@ -37,16 +37,6 @@ app.set("views", path.join(__dirname, "views"));
 app.use(bodyParser.json());
 
 app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
-
-app.use(session({
-  secret: `Super-Secret`,
-}))
-
-app.use(
   session({
     secret: process.env.SESSION_SECRET,
     saveUninitialized: true,
@@ -58,6 +48,16 @@ app.use(
     extended: true,
   })
 );
+
+// Middleware
+
+const auth = (req, res, next) => {
+  // redirect to login if not logged in
+  if (!req.session.username) {
+    return res.redirect('/login');
+  }
+  next();
+}
 
 // Begin routes
 
@@ -150,8 +150,9 @@ app.post('/register', async (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-  req.session.username = undefined
-  res.render('pages/logout');
+  req.session.destroy(() => {
+    res.render('pages/logout');
+  })
 })
 
 app.listen(3000);

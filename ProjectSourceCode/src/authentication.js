@@ -61,7 +61,9 @@ g_variablesToBeRetreived = ['username']
  */
 function login(user, req, res) {
   req.session.username = user.username
-  res.redirect('home');
+  req.session.save((err) => {
+    res.redirect('home');
+  })
 }
 
 module.exports = {login, handleInputtedUserDetailsCheck, getUserFromDatabase}
