@@ -1,5 +1,5 @@
 INSERT INTO courses
-  (course_id, course_tag, course_name, credit_hours, description)
+  (course_number, course_tag, course_name, credit_hours, description)
 VALUES
   (1000, 'CSCI', 'Computer Science as a Field of Work and Study', 1, 'Introduces curriculum, learning techniques, time management and career opportunities in Computer Science. Includes presentations from alumni and others with relevant educational and professional experience.'),
   (1300, 'CSCI', 'Introduction to Programming', 4, 'Teaches techniques for writing computer programs in higher level programming languages to solve problems of interest in a range of application domains. Appropriate for students with little to no experience in computing or programming.'),

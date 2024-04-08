@@ -1,8 +1,8 @@
 /*Each course should have exactly one row in the courses table. */
 DROP TABLE IF EXISTS courses;
 CREATE TABLE IF NOT EXISTS courses (
-  id SERIAL PRIMARY KEY, /* Since not every course ID is unique for different department classes (MATH 1300 VS CSCI 1300), I thought it would be easiest to just have a unique id attached to every course*/
-  course_id SMALLINT,
+  course_id SERIAL PRIMARY KEY, /* Since not every course ID is unique for different department classes (MATH 1300 VS CSCI 1300), I thought it would be easiest to just have a unique id attached to every course*/
+  course_number SMALLINT,
   course_tag CHAR(4), /*Refers to the 4 letter tag along with the course number (i.e CSCI) */
   course_name VARCHAR(500) NOT NULL,
   credit_hours NUMERIC NOT NULL, /*Credit hours aren't really necessary but nice to have */
@@ -28,9 +28,9 @@ CREATE TABLE reviews (
     year_taken SMALLINT NOT NULL,
     term_taken VARCHAR(6) CHECK (term_taken in ('Fall', 'Spring', 'Summer')),  
     /* Each review is associated with exactly one course and one user */
-    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id_fk) REFERENCES courses(course_id) ON DELETE CASCADE,
     user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id_fk) REFERENCES users(user_id) ON DELETE CASCADE,
     review VARCHAR(8000) NOT NULL, 
     overall_rating DECIMAL NOT NULL CHECK (overall_rating between 0 and 10), /*We can make this rating be an average of all of the ratings metrics or leave the overall rating up to the user, right now I left it as just an overall rating out of 10*/
     /* rating metrics - can add more later on*/
@@ -68,7 +68,7 @@ DROP TABLE IF EXISTS courses_to_professors;
 CREATE TABLE IF NOT EXISTS courses_to_professors (
     course_id INT NOT NULL,
     professor_id INT NOT NULL,
-    FOREIGN KEY (course_id) REFERENCES courses (id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses (course_id) ON DELETE CASCADE,
     FOREIGN KEY (professor_id) REFERENCES professors (professor_id) ON DELETE CASCADE
 );
 
