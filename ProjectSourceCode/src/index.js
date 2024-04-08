@@ -5,6 +5,8 @@ const session = require('express-session');
 const bodyParser = require("body-parser");
 
 const handlebars = require("express-handlebars");
+const bodyParser = require('body-parser');
+const session = require('express-session');
 
 const path = require("path");
 
