@@ -1,0 +1,10 @@
+<h1>Register</h1>
+<form method="post" action="/register">
+    <label for="username">Username:</label>
+    <input id="username" type="text" value="{{username}}" name="username" /><br />
+    <label for="password">Password:</label>
+    <input id="password" type="text" value="{{password}}" name="password" /><br />
+    <input type="submit" />
+</form>
+{{> loginMessage }}
+<p>Already have an account? <a href="/login">Login</a></p>
