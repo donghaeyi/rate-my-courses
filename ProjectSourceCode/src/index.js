@@ -3,7 +3,6 @@ const express = require("express");
 const app = express(); // Create Express app
 const session = require('express-session');
 const bodyParser = require("body-parser");
-const axios = require("axios").default;
 
 const handlebars = require("express-handlebars");
 
@@ -14,6 +13,7 @@ const pgp = require('pg-promise')();
 
 const statusCodes = require('./statusCodes.js');
 const authentication = require('./authentication.js');
+const { search } = require("./cu-api.js");
 
 const dbConfig = {
   host: 'db',
@@ -160,91 +160,8 @@ app.post('/register', async (req, res) => {
 //              e.g. "CSCI 2270" or "robotics" or "ASEN"
 // Returns: list of matching courses, each an object with title and code
 app.get("/search", async (req, res) => {
-  let data = JSON.stringify({
-    "other": {
-      "srcdb": "2247" //todo get current term for use
-    },
-    "criteria": [
-      {
-        "field": "keyword",
-        "value": req.query.keyword
-      }
-    ]
-  });
-  
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    url: `https://classes.colorado.edu/api/?page=fose&route=search&keyword=${req.query.keyword}`,
-    headers: { 
-      'Content-Type': 'application/json'
-    },
-    data: data
-  };
-  
-  axios.request(config)
-  .then((response) => {
-    const apidata = response.data.results
-
-    let data = []
-    for (const datum of apidata) {
-      if(!data.some(d => d.title == datum.title)) data.push({
-        title: datum.title,
-        code: datum.code
-      })
-    }
-
-    res.send(data)
-  })
-  .catch((error) => {
-    console.log(error);
-  });
-});
-
-// API route to return the appropriate class suggestions from a keyword search
-// Request: requires query parameter "keyword" which represents user search terms
-//              e.g. "CSCI 2270" or "robotics" or "ASEN"
-// Returns: list of matching courses, each an object with title and code
-app.get("/search", async (req, res) => {
-  let data = JSON.stringify({
-    "other": {
-      "srcdb": "2247" //todo get current term for use
-    },
-    "criteria": [
-      {
-        "field": "keyword",
-        "value": req.query.keyword
-      }
-    ]
-  });
-  
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    url: `https://classes.colorado.edu/api/?page=fose&route=search&keyword=${req.query.keyword}`,
-    headers: { 
-      'Content-Type': 'application/json'
-    },
-    data: data
-  };
-  
-  axios.request(config)
-  .then((response) => {
-    const apidata = response.data.results
-
-    let data = []
-    for (const datum of apidata) {
-      if(!data.some(d => d.title == datum.title)) data.push({
-        title: datum.title,
-        code: datum.code
-      })
-    }
-
-    res.send(data)
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+  let data = await search(req.query.keyword)
+  res.send(data).status(200)
 });
 
 app.get('/logout', (req, res) => {

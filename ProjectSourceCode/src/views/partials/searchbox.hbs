@@ -5,26 +5,39 @@
     <div id="results">
         {{!-- will hold results --}}
     </div>
+    <div id="loading-spinner" class="spinner-border" role="status" style="visibility: hidden;">
+        <span class="sr-only"></span>
+    </div>
 </div>
 
 <script>
     const searchParent = document.querySelector("#search-parent")
     const searchBox = document.querySelector("#search-box")
     const results = document.querySelector("#results")
+    const spinner = document.querySelector("#loading-spinner")
+
+    let timer
 
     async function change() {
-        const res = await fetch(`http://localhost:3000/search?keyword=${encodeURIComponent(searchBox.value)}`)
-        const list = await res.json()
-
-        // clear existing elements
-        while (results.firstChild) results.removeChild(results.lastChild)
-
-        for (let i = 0; i < 5; i++) {
-            let datum = list[i]
-            if(datum == undefined) continue
-            let option = document.createElement('p')
-            option.innerHTML = datum.title
-            results.appendChild(option)
+        if(timer) {
+            clearTimeout(timer)
         }
+        timer = setTimeout(async () => {
+            spinner.style.visibility = 'visible'
+            const res = await fetch(`http://localhost:3000/search?keyword=${encodeURIComponent(searchBox.value)}`)
+            const list = await res.json()
+            spinner.style.visibility = 'hidden'
+
+            // clear existing elements
+            while (results.firstChild) results.removeChild(results.lastChild)
+
+            for (let i = 0; i < 5; i++) {
+                let datum = list[i]
+                if(datum == undefined) continue
+                let option = document.createElement('p')
+                option.innerHTML = datum.code + ': ' + datum.title
+                results.appendChild(option)
+            }
+        }, 500)
     }
 </script>
