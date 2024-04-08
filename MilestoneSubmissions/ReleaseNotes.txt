@@ -1,0 +1,21 @@
+Last updated 4/3/2024
+- Created UAT Plan
+- Updated create.sql 
+- Added homepage with searchbox (not yet implemented)
+- Added login.hbs
+- Added logout.hbs
+- Added register.hbs
+
+## What's Changed
+* Database initialization by @maddiekloud in https://github.com/madisonpj/CSCI3308-Final-Project/pull/29
+* Home page #28 by @matt-harp in https://github.com/madisonpj/CSCI3308-Final-Project/pull/30
+* Creating session variables by @madisonpj in https://github.com/madisonpj/CSCI3308-Final-Project/pull/33
+* Issue 35 - Added a professors table and a courses_to_professors table by @maddiekloud in https://github.com/madisonpj/CSCI3308-Final-Project/pull/37
+
+## New Contributors
+* @maddiekloud made their first contribution in https://github.com/madisonpj/CSCI3308-Final-Project/pull/29
+* @matt-harp made their first contribution in https://github.com/madisonpj/CSCI3308-Final-Project/pull/30
+* @madisonpj made their first contribution in https://github.com/madisonpj/CSCI3308-Final-Project/pull/33
+
+**Full Changelog**: https://github.com/madisonpj/CSCI3308-Final-Project/commits/v0.0.0
+

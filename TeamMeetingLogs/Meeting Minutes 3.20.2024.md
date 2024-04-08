@@ -20,4 +20,4 @@
   - Rate classes based on different common statistics
 - Fix: User story title should be short, description should be the longer part
 - Have a meeting among ourselves to expand user features, can cut down later if needed
-- Next meeting 5/3/2024
+- Next meeting 4/3/2024
