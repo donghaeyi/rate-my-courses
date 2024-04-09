@@ -154,26 +154,18 @@ app.post('/register', async (req, res) => {
   }
 });
 
+
+// account.hbs
 app.get("/account", (req, res) => {
   res.render("pages/account", {
+    username: req.session.username,
   });
 });
 
-app.get("/account", async (req, res) => {
-  try {
-    const query = `
-      SELECT users.username, reviews.review, reviews.overall_rating
-      FROM reviews
-      JOIN users ON reviews.user_id = users.user_id;
-    `;
-    const { rows } = await db.query(query);
-    res.render("pages/account", {
-      reviews: rows,
-    });
-  } catch (error) {
-    console.error('Error fetching reviews:', error);
-    res.send("Error fetching reviews");
-  }
+app.get("/reviews", (req, res) => {
+  res.render("pages/reviews", {
+
+  });
 });
 
 app.get('/logout', (req, res) => {
