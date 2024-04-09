@@ -30,6 +30,11 @@ const hbs = handlebars.create({
   extname: "hbs",
   layoutsDir: __dirname + "/views/layouts",
   partialsDir: __dirname + "/views/partials",
+  helpers: {
+    json: function(ctx) {
+      return JSON.stringify(ctx)
+    }
+  }
 });
 
 app.engine("hbs", hbs.engine);
@@ -178,7 +183,10 @@ app.get("/course/:code", async (req, res) => {
                                       'review_id', r.review_id,
                                       'year_taken', r.year_taken,
                                       'term_taken', r.term_taken,
-                                      'posted_by', r.user_id,
+                                      'posted_by', json_build_object(
+                                        'user_id', u.user_id,
+                                        'username', u.username
+                                      ),
                                       'review', r.review,
                                       'overall_rating', r.overall_rating,
                                       'homework_rating', r.homework_rating,
@@ -188,6 +196,8 @@ app.get("/course/:code", async (req, res) => {
                                       'professor_id', r.professor_id
                                     )) AS reviews
                                   FROM reviews r
+                                  JOIN users u ON
+                                    r.user_id = u.user_id
                                   WHERE
                                     r.course_id = courses.id
                                 ),
