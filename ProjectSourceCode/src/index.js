@@ -160,6 +160,34 @@ app.post('/register', async (req, res) => {
   }
 });
 
+
+// account.hbs
+app.get("/account", async (req, res) => {
+  try {
+    if (!req.session.username) {
+      // Redirect or handle the case where there is no session user, back to login
+      return res.redirect("/login");
+    }
+    // Fetch the reviews for the logged in user
+    const query = `
+      SELECT r.review, r.overall_rating, c.course_name
+      FROM reviews r
+      JOIN users u ON r.user_id = u.user_id
+      JOIN courses c ON r.course_id = c.id
+      WHERE u.username = $1;
+    `;
+    const { rows } = await db.query(query, [req.session.username]);
+    res.render("pages/account", {
+      username: req.session.username, // To display the username to account page
+      reviews: rows // Pass the fetched reviews to the template
+    });
+  } catch (error) { // Failed to fetch reviews
+    console.error('Error fetching reviews:', error);
+    res.send("Error fetching reviews");
+  }
+});
+
+
 // API route to return the appropriate class suggestions from a keyword search
 // Request: requires query parameter "keyword" which represents user search terms
 //              e.g. "CSCI 2270" or "robotics" or "ASEN"
