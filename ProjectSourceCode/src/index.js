@@ -164,6 +164,45 @@ app.get("/search", async (req, res) => {
   res.send(data).status(200)
 });
 
+// API route to feed data from our database into a specific course page
+// Request: requires param 'code' for the class code e.g. "CSCI2270" (no spaces)
+// Returns: database information we have about the course including ratings
+app.get("/course/:code", async (req, res) => {
+  try {
+    // assisted by ChatGPT to learn how to aggregate JSON data into a single query
+    let data = await db.one(`SELECT
+                              *, COALESCE(
+                                (
+                                  SELECT
+                                    json_agg(json_build_object(
+                                      'review_id', r.review_id,
+                                      'year_taken', r.year_taken,
+                                      'term_taken', r.term_taken,
+                                      'posted_by', r.user_id,
+                                      'review', r.review,
+                                      'overall_rating', r.overall_rating,
+                                      'homework_rating', r.homework_rating,
+                                      'enjoyability_rating', r.enjoyability_rating,
+                                      'usefulness_rating', r.usefulness_rating,
+                                      'difficulty_rating', r.difficulty_rating,
+                                      'professor_id', r.professor_id
+                                    )) AS reviews
+                                  FROM reviews r
+                                  WHERE
+                                    r.course_id = courses.id
+                                ),
+                                '[]'::json
+                              ) AS reviews
+                            FROM courses WHERE courses.course_tag = $1 AND courses.course_id = $2;`, [req.params.code.slice(0,4), req.params.code.slice(4)])
+    console.log(data)                          
+    res.render('pages/course', data)
+  }
+  catch(err) {
+    console.log(err) // todo handle
+    return res.status(404).send()
+  }
+});
+
 app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.render('pages/logout');
