@@ -13,6 +13,7 @@ const pgp = require('pg-promise')();
 
 const statusCodes = require('./statusCodes.js');
 const authentication = require('./authentication.js');
+const { search } = require("./cu-api.js");
 
 const dbConfig = {
   host: 'db',
@@ -166,6 +167,15 @@ app.get("/reviews", (req, res) => {
   res.render("pages/reviews", {
 
   });
+});
+
+// API route to return the appropriate class suggestions from a keyword search
+// Request: requires query parameter "keyword" which represents user search terms
+//              e.g. "CSCI 2270" or "robotics" or "ASEN"
+// Returns: list of matching courses, each an object with title and code
+app.get("/search", async (req, res) => {
+  let data = await search(req.query.keyword)
+  res.send(data).status(200)
 });
 
 app.get('/logout', (req, res) => {
