@@ -17,6 +17,28 @@ CREATE TABLE IF NOT EXISTS users (
   password CHAR(60) NOT NULL
 );
 
+/* Table to keep track of all of the professors listed on our interface. */
+DROP TABLE IF EXISTS professors;
+CREATE TABLE IF NOT EXISTS professors (
+    professor_id SERIAL PRIMARY KEY NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    department VARCHAR(50), /* department that the professor is currently in */
+    years_teaching SMALLINT /* How many years the professor has been teaching for, could make this more specific to how many years they've taught at CU, how many years they've taught in this department, etc. */
+);
+
+/* table to connect professors to the courses they teach */
+DROP TABLE IF EXISTS courses_to_professors;
+CREATE TABLE IF NOT EXISTS courses_to_professors (
+    course_id INT NOT NULL,
+    professor_id INT NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES courses (course_id) ON DELETE CASCADE,
+    FOREIGN KEY (professor_id) REFERENCES professors (professor_id) ON DELETE CASCADE
+);
+
+/* For the actual rate my professors side of this interface, we might need a separate reviews table that is specific to rating a professor 
+(would have different metrics like how engaging the professor is, how much the student learned, etc.) */
+
 DROP TABLE IF EXISTS reviews;
 /* I was going to add date posted as an attribute, but we can query the date posted by the id number of the review (later posts will have a higher id number)
  *review, course name, and user id should not be optional. Also made review VARCHAR(8000) so they can write as much as they want*/
@@ -50,27 +72,9 @@ CREATE TABLE reviews (
     */
     /* Tag each course review to a professor */
     professor_id INT NOT NULL, /* not sure how to do this efficently, maybe for each course we could have a dropdown list of professors */
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE /* Each review should have exactly 1 professor associated with it*/
+    FOREIGN KEY (professor_id) REFERENCES professors(professor_id) ON DELETE CASCADE /* Each review should have exactly 1 professor associated with it*/
 );
 
-/* Table to keep track of all of the professors listed on our interface. */
-DROP TABLE IF EXISTS professors;
-CREATE TABLE IF NOT EXISTS professors (
-    professor_id SERIAL PRIMARY KEY NOT NULL,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    department VARCHAR(50), /* department that the professor is currently in */
-    years_teaching SMALLINT /* How many years the professor has been teaching for, could make this more specific to how many years they've taught at CU, how many years they've taught in this department, etc. */
-);
 
-/* table to connect professors to the courses they teach */
-DROP TABLE IF EXISTS courses_to_professors;
-CREATE TABLE IF NOT EXISTS courses_to_professors (
-    course_id INT NOT NULL,
-    professor_id INT NOT NULL,
-    FOREIGN KEY (course_id) REFERENCES courses (course_id) ON DELETE CASCADE,
-    FOREIGN KEY (professor_id) REFERENCES professors (professor_id) ON DELETE CASCADE
-);
 
-/* For the actual rate my professors side of this interface, we might need a separate reviews table that is specific to rating a professor 
-(would have different metrics like how engaging the professor is, how much the student learned, etc.) */
+
