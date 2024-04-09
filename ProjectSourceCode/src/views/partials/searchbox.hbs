@@ -2,11 +2,16 @@
 {{!-- should be unique on any page, so the id is set --}}
 <div id="search-parent" class="container">
     <input id="search-box" class="form-control" placeholder="Start typing to search..." oninput="change()">
-    <div id="results">
+    <div id="results" class="d-flex flex-column p-2">
         {{!-- will hold results --}}
+        <div id="cloneme" class="mb-2" style="display: none;">
+            <a class="w-100 btn btn-info" role="button" href=""></a>
+        </div>
     </div>
-    <div id="loading-spinner" class="spinner-border" role="status" style="visibility: hidden;">
-        <span class="sr-only"></span>
+    <div class="d-flex justify-content-center">
+        <div id="loading-spinner" class="spinner-border" role="status" style="visibility: hidden;">
+            <span class="sr-only"></span>
+        </div>
     </div>
 </div>
 
@@ -16,6 +21,10 @@
     const results = document.querySelector("#results")
     const spinner = document.querySelector("#loading-spinner")
 
+    const template = document.querySelector("#cloneme").cloneNode(true)
+    template.removeAttribute('id')
+    template.style.display = '' // start with display: none to prevent FOUC
+
     let timer
 
     async function change() {
@@ -24,7 +33,7 @@
         }
         timer = setTimeout(async () => {
             spinner.style.visibility = 'visible'
-            const res = await fetch(`http://localhost:3000/search?keyword=${encodeURIComponent(searchBox.value)}`)
+            const res = await fetch(`${window.location.origin}/search?keyword=${encodeURIComponent(searchBox.value)}`)
             const list = await res.json()
             spinner.style.visibility = 'hidden'
 
@@ -34,9 +43,11 @@
             for (let i = 0; i < 5; i++) {
                 let datum = list[i]
                 if(datum == undefined) continue
-                let option = document.createElement('p')
-                option.innerHTML = datum.code + ': ' + datum.title
-                results.appendChild(option)
+                const clone = template.cloneNode(true)
+                const link = clone.children[0]
+                link.setAttribute('href', `/course/${datum.code.replace(' ', '')}`)
+                link.innerHTML = datum.code + ': ' + datum.title
+                results.appendChild(clone)
             }
         }, 500)
     }
