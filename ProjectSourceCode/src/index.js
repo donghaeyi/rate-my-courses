@@ -154,11 +154,83 @@ app.post('/register', async (req, res) => {
   }
 });
 
+
+
 app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.render('pages/logout');
   })
-})
+});
+
+// *****************************************************
+// <!-- Review routes -->
+// *****************************************************
+
+//route to render the review form, pass data from tables so user doesn't select options that aren't in the database
+app.get('/review', (req, res) => {
+  /* Implemented when we have a button to write a review, make sure user is logged in
+  if (!req.session.user) {
+    // Default to login page if user not logged in
+    return res.redirect('/login');
+  }else{
+    res.render('pages/review');
+  }*/
+
+  //queries to get all courses and professors, we can narrow down this search later (specifically to have the professors listed match the course requested)
+  const all_courses = 'SELECT * FROM courses;';
+  const all_professors = 'SELECT * FROM professors;';
+  db.task('get-everything', task => {
+    return task.batch([task.any(all_courses), task.any(all_professors)]);
+  })
+  .then(results => {
+    res.render('pages/review', {
+      courses: results[0], 
+      professors: results[1],
+      message: "success",
+    });
+  })
+  .catch(err => {
+    res.render('pages/review', {
+      courses: [],
+      professors: [],
+      message: err,
+    });
+  });
+  
+});
+//assuming that the user can press a button on the nav bar to write a review about a class (or we could have this built into the course page)
+app.post('review/addReview', async function (req, res) {
+  try{
+    //user won't be able to access the review form if they are not logged in, this route takes care of the submit review action
+    const user_id = req.session.user.user_id;
+
+    //query to find the course that they are writing the review for. For simplicity, I'm going to have the user input the course code (like CSCI) and the course number to find the course id
+    //const course_id = await db.one('SELECT course_id FROM courses WHERE course_number = ($1) AND course_tag = ($2)', [req.body.course_number, req.body.course_tag]);
+    //if the user can only select courses from a drop down menu, we can ensure that we get a course id from each request
+    const course_id = req.body.course_id;
+    //query professors by a dropdown menu listing all of the professors for matched course
+    const professor_id = req.body.professor_id;
+    //need to make different routes so that the user can add metrics, this might be hard to accomodate all combinations
+    
+    const review = await db.one(`INSERT INTO reviews (course_id, year_taken, term_taken, user_id, overall_rating, review, professor_id) values ($1, $2, $3, $4, $5, $6, $7) returning review_id;`, 
+    [course_id, 
+    req.body.year_taken, 
+    req.body.term_taken, 
+    user_id, 
+    req.body.overall_rating,
+    req.body.review,
+    req.body.professor_id
+    ]);
+    res.status(201).json({
+      status: "success",
+      review_id: review,
+      message: "Data added successfully"
+    });
+  }catch(error){
+    console.log(error);
+    res.status(500).send(); //right now it'll log an error if either the course isn't found or if all of the required data  isn't sent
+  }
+});
 
 module.exports = app.listen(3000);
 console.log("Server is listening on port 3000");

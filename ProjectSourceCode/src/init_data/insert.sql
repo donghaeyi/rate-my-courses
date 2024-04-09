@@ -22,3 +22,16 @@ VALUES
   (4308, 'CSCI', 'Software Engineering Project 1', 4, 'Senior capstone course in which students design, implement, document and test software systems for use in industry, non-profits, government and research institutions. Also offers extensive experience in oral and written communication throughout the development process. Department consent required. Department-enforced prerequisites differ for BS and BA degree. Contact academic advisor for details. Senior Capstone courses are optional for BA students. BA students interested in taking this course should contact their advisor early in their major.'),
   (4448, 'CSCI', 'Object-Oriented Analysis and Design', 3, 'An applied analysis and design class that addresses the use of object-oriented techniques. Topics include domain modeling, use cases, architectural design and modeling notations. Students apply the techniques in analysis and design projects.'),
   (4502, 'CSCI', 'Data Mining', 3, 'Introduces basic data mining concepts and techniques for discovering interesting patterns hidden in large-scale data sets, focusing on issues relating to effectiveness and efficiency. Topics covered include data preprocessing, data warehouse, association, classification, clustering, and mining specific data types such as time-series, social networks, multimedia, and Web data.');
+
+INSERT INTO professors
+    (first_name, last_name, department)
+VALUES
+    ('Asa', 'Ashraf', 'Computer Science'),
+    ('Alfonso', 'Bastias', 'Computer Science'),
+    ('Nikolaus', 'Correll', 'Computer Science'),
+    ('Christopher', 'Godley', 'Computer Science'),
+    ('Sreesha', 'Nath', 'Computer Science'),
+    ('Alan', 'Paradise', 'Computer Science'),
+    ('Divya', 'Vernerey', 'Computer Science'),
+    ('Tom', 'Yeh', 'Computer Science'),
+    ('Al', 'Pisano', 'Computer Science');

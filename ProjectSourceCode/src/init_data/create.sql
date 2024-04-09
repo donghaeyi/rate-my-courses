@@ -23,14 +23,14 @@ DROP TABLE IF EXISTS reviews;
 CREATE TABLE reviews (
     review_id SERIAL PRIMARY KEY,
     /* could potentially be easier to sort the reviews by their timestamp (exactly when they were posted) but I'm not sure if that will overcomplicate things, we can still identify when the reviews was writen by its primary key */
-    course_id INT NOT NULL,
+    course_id INT NOT NULL, 
     /* identify when exactly the user took the course */
     year_taken SMALLINT NOT NULL,
     term_taken VARCHAR(6) CHECK (term_taken in ('Fall', 'Spring', 'Summer')),  
     /* Each review is associated with exactly one course and one user */
-    FOREIGN KEY (course_id_fk) REFERENCES courses(course_id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE, 
     user_id INT NOT NULL,
-    FOREIGN KEY (user_id_fk) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     review VARCHAR(8000) NOT NULL, 
     overall_rating DECIMAL NOT NULL CHECK (overall_rating between 0 and 10), /*We can make this rating be an average of all of the ratings metrics or leave the overall rating up to the user, right now I left it as just an overall rating out of 10*/
     /* rating metrics - can add more later on*/
@@ -57,8 +57,8 @@ CREATE TABLE reviews (
 DROP TABLE IF EXISTS professors;
 CREATE TABLE IF NOT EXISTS professors (
     professor_id SERIAL PRIMARY KEY NOT NULL,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
     department VARCHAR(50), /* department that the professor is currently in */
     years_teaching SMALLINT /* How many years the professor has been teaching for, could make this more specific to how many years they've taught at CU, how many years they've taught in this department, etc. */
 );

@@ -1,0 +1,34 @@
+<!--Page dedicated to writing a new review, I thought it would be useful to press a button and go to a new page where you just have a form to write a review-->
+
+<h1>Write a new review:</h1> 
+<form method="post" action="/addReview">
+    <div class="form-group col-md-6">
+        <label for="course_name" class="form-label">Course Name:</label><br />
+        <select id = "course_name" class="form-control" required />
+        {{#each courses}}
+                <option value = "{{course_id}}">{{course_name}}</option>
+        {{/each}}
+        </select><br/>
+        <label for="year_taken" class="form-label">Year taken:</label><br/>
+        <input id = "year_taken" type ="number" min="1900" max="2099" step="1" class="form-control" required/><br/>
+
+        <label for="term_taken" class="form-label">Term taken</label><br/>
+        <select id="term_taken" class="form-control" required/>
+            <option value="Fall">Fall</option>
+            <option value="Spring">Spring</option>
+            <option value="Summer">Summer</option>
+                            
+        </select><br/>
+        <label for="professor" class="form-label">Professor:</label>
+        <select id="professor" class="form-control" required/>
+        {{#each professors}} <!--Need to figure out way to display only the professors that teach inputted course and pass the professor id to /addReview -->
+            <option value="{{professor_id}}">{{first_name}} {{last_name}}</option>
+        {{/each}}
+        </select><br/>
+        <label for="overall_rating" class="form-label">Overall rating of the class:</label><br />
+        <input id = "overall_rating" type ="number" min="0" max="10" step="1" class="form-control" required/><br/>
+        <label for="review" class="form-label">Write your review:</label><br />
+        <input id = "review" type="text" class="form-control" required/><br />
+        <input type="submit" value = "Submit Review" class="btn btn-primary"/>
+    </div>
+</form>
