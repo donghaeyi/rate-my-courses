@@ -13,7 +13,7 @@ const pgp = require('pg-promise')();
 
 const statusCodes = require('./statusCodes.js');
 const authentication = require('./authentication.js');
-const { search, getCourseInfo } = require("./cu-api.js");
+const { search, getCourseInfo, getCourseInfo } = require("./cu-api.js");
 const { vote, deleteVote, getVote } = require('./vote.js');
 
 const dbConfig = {
