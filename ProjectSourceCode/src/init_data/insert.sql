@@ -34,6 +34,6 @@ VALUES
   (21, 4502, 'CSCI', 'Data Mining', 3, 'Introduces basic data mining concepts and techniques for discovering interesting patterns hidden in large-scale data sets, focusing on issues relating to effectiveness and efficiency. Topics covered include data preprocessing, data warehouse, association, classification, clustering, and mining specific data types such as time-series, social networks, multimedia, and Web data.');
 
 INSERT INTO reviews
-  (course_id, year_taken, term_taken, user_id, review, overall_rating, enjoyability_rating, usefulness_rating, difficulty_rating, professor_id)
+  (course_id, year_taken, term_taken, user_id, review, overall_rating, homework_rating, enjoyability_rating, usefulness_rating, difficulty_rating, professor_id)
 VALUES
-  (1, 2022, 'Fall', 9999, 'It was a class.', 5, 5, 5, 5, 1);
+  (1, 2022, 'Fall', 9999, 'It was a class.', 5, 5, 5, 5, 5, 1);
