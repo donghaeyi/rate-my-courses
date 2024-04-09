@@ -1,12 +1,35 @@
 <div class='container'>
   <div class='jumbotron'>
+    {{!-- Display the username --}}
     <h1><centre>{{username}}'s Reviews</centre></h1>  
+
+    {{!-- If there are reviews, display reviews --}}
+     {{#if reviews.length}}
+
     <table class='table'>
-      <tbody>
+      <thead>
         <tr>
-          <th scope='col'>{{reviews}}</th>
-        </tr>
+            <th scope='col'>Course Name</th>
+            <th scope='col'>Review</th>
+            <th scope='col'>Rating</th>
+          </tr>
+      </thead>
+
+      <tbody>
+        {{!-- Iterate through the user's reviews and display them --}}
+         {{#each reviews}}
+            <tr>
+              <td>{{this.course_name}}</td>
+              <td>{{this.review}}</td>
+              <td>{{this.overall_rating}}</td>
+            </tr>
+          {{/each}}
       </tbody>
     </table> 
+
+    {{!-- There are no reviews by this user --}}
+    {{else}}
+      <p>No reviews found.</p>
+    {{/if}}
   </div>
 </div>
