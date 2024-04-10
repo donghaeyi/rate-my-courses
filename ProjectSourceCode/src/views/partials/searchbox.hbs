@@ -1,3 +1,54 @@
 {{!-- partial so it can be included on homepage or in navbar --}}
 {{!-- should be unique on any page, so the id is set --}}
-<input id="search-box" class="form-control" placeholder="Start typing to search..." oninput="change()">
+<div id="search-parent" class="container">
+    <input id="search-box" class="form-control" placeholder="Start typing to search..." oninput="change()">
+    <div id="results" class="d-flex flex-column p-2">
+        {{!-- will hold results --}}
+        <div id="cloneme" class="mb-2" style="display: none;">
+            <a class="w-100 btn btn-info" role="button" href=""></a>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center">
+        <div id="loading-spinner" class="spinner-border" role="status" style="visibility: hidden;">
+            <span class="sr-only"></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    const searchParent = document.querySelector("#search-parent")
+    const searchBox = document.querySelector("#search-box")
+    const results = document.querySelector("#results")
+    const spinner = document.querySelector("#loading-spinner")
+
+    const template = document.querySelector("#cloneme").cloneNode(true)
+    template.removeAttribute('id')
+    template.style.display = '' // start with display: none to prevent FOUC
+
+    let timer
+
+    async function change() {
+        if(timer) {
+            clearTimeout(timer)
+        }
+        timer = setTimeout(async () => {
+            spinner.style.visibility = 'visible'
+            const res = await fetch(`${window.location.origin}/search?keyword=${encodeURIComponent(searchBox.value)}`)
+            const list = await res.json()
+            spinner.style.visibility = 'hidden'
+
+            // clear existing elements
+            while (results.firstChild) results.removeChild(results.lastChild)
+
+            for (let i = 0; i < 5; i++) {
+                let datum = list[i]
+                if(datum == undefined) continue
+                const clone = template.cloneNode(true)
+                const link = clone.children[0]
+                link.setAttribute('href', `/course/${datum.code.replace(' ', '')}`)
+                link.innerHTML = datum.code + ': ' + datum.title
+                results.appendChild(clone)
+            }
+        }, 500)
+    }
+</script>
