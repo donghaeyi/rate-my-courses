@@ -76,7 +76,7 @@ app.get('/welcome', (req, res) => {
 // Default route
 app.get("/", (req, res) => {
   res.render('pages/home')
-}); 
+});  
 
 // Renders login.hbs
 app.get('/login', (req, res) => {
