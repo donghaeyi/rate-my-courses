@@ -57,6 +57,16 @@ app.use(
 
 // Middleware
 
+app.use(function (req, res, next) {
+  // Make `user` and `authenticated` available in templates
+  res.locals.user = {
+    username: req.session.username,
+    user_id: req.session.user_id
+  }
+  res.locals.authenticated = (req.session.username != undefined)
+  next()
+})
+
 // Authentication Middleware.
 const auth = (req, res, next) => {
   if (!req.session.username && req.path.startsWith("/account")) {
@@ -65,7 +75,7 @@ const auth = (req, res, next) => {
   }
   if (req.session.username && (req.path.startsWith("/login") || req.path.startsWith("/register"))) {
     // Default to home page if the user is logged in and tries to log in again
-    return res.redirect('/home');
+    return res.redirect('/');
   }
   next();
 };
