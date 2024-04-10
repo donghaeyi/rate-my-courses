@@ -1,7 +1,7 @@
 INSERT INTO users
   (user_id, username, password)
 VALUES
-  (9999, 'TestUser', 'pwd');
+  (9999, 'TestUser', '$2b$10$8lpKGL6WoNoxqls13cNiJu1u6VEJy5SJveyLqn5p4sT2VS17LSve2');
 
 INSERT INTO professors
   (professor_id)
