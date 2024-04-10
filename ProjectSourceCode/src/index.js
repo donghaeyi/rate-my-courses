@@ -75,13 +75,8 @@ app.get('/welcome', (req, res) => {
 
 // Default route
 app.get("/", (req, res) => {
-  res.redirect('login') // Set to res.redirect('home') when nav is complete.
-}); 
-
-// Renders home.hbs
-app.get("/home", (req, res) => {
   res.render('pages/home')
-});
+}); 
 
 // Renders login.hbs
 app.get('/login', (req, res) => {
