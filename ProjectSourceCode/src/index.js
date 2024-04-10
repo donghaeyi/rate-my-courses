@@ -13,7 +13,7 @@ const pgp = require('pg-promise')();
 
 const statusCodes = require('./statusCodes.js');
 const authentication = require('./authentication.js');
-const { search } = require("./cu-api.js");
+const { search, getCourseInfo } = require("./cu-api.js");
 
 const dbConfig = {
   host: 'db',
@@ -232,7 +232,19 @@ app.get("/course/:code", async (req, res) => {
     res.render('pages/course', data)
   }
   catch(err) {
-    console.log(err) // todo handle
+    if(err.message == 'No data returned from the query.') {
+      const id = req.params.code.slice(4)
+      const tag = req.params.code.slice(0,4)
+      const info = await getCourseInfo(`${tag} ${id}`)
+      if(info) {
+        console.log(info)
+        const c_name = info.title
+        const hrs = info.credit_hours
+        const desc = info.description.replace(/<[^>]*>/g, '')
+        await db.none('INSERT INTO courses (course_id, course_tag, course_name, credit_hours, description) VALUES ($1, $2, $3, $4, $5);', [id, tag, c_name, hrs, desc])
+        res.redirect(req.url)
+      }
+    }
     return res.status(404).send()
   }
 });
