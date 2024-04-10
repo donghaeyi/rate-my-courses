@@ -51,13 +51,21 @@ app.use(
 
 // Middleware
 
+// Authentication Middleware.
 const auth = (req, res, next) => {
-  // redirect to login if not logged in
-  if (!req.session.username) {
+  if (!req.session.user && req.path.startsWith("/account")) {
+    // Default to login page.
     return res.redirect('/login');
   }
+  if (req.session.user && (req.path.startsWith("/login") || req.path.startsWith("/register"))) {
+    // Default to home page if the user is logged in and tries to log in again
+    return res.redirect('/home');
+  }
   next();
-}
+};
+
+// Authentication Required
+app.use(auth);
 
 // Begin routes
 
@@ -67,7 +75,7 @@ app.get('/welcome', (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.redirect('login') // Set to res.redirect('home') when nav is complete.
+  res.redirect('pages/home') // Set to res.redirect('home') when nav is complete.
 }); 
 
 app.get("/home", (req, res) => {
@@ -76,6 +84,10 @@ app.get("/home", (req, res) => {
 
 app.get('/login', (req, res) => {
   res.render('pages/login');
+});
+
+app.get('/account', (req, res) => {
+  res.render('pages/account');
 });
 
 app.post('/login', async (req, res) => {
