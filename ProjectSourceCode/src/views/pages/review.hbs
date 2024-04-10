@@ -1,34 +1,48 @@
 <!--Page dedicated to writing a new review, I thought it would be useful to press a button and go to a new page where you just have a form to write a review-->
 
-<h1>Write a new review:</h1> 
+<h1 style="text-align: center">Write a new review:</h1> 
 <form method="post" action="/addReview">
-    <div class="form-group col-md-6">
+    <div class="form-group col-md-6" style="margin: auto;">
         <label for="course_name" class="form-label">Course Name:</label><br />
         <select id = "course_name" class="form-control" required />
         {{#each courses}}
-                <option value = "{{course_id}}">{{course_name}}</option>
+                <option value = {{course_id}}>{{course_name}}</option>
         {{/each}}
-        </select><br/>
-        <label for="year_taken" class="form-label">Year taken:</label><br/>
-        <input id = "year_taken" type ="number" min="1900" max="2099" step="1" class="form-control" required/><br/>
-
-        <label for="term_taken" class="form-label">Term taken</label><br/>
-        <select id="term_taken" class="form-control" required/>
-            <option value="Fall">Fall</option>
-            <option value="Spring">Spring</option>
-            <option value="Summer">Summer</option>
-                            
-        </select><br/>
-        <label for="professor" class="form-label">Professor:</label>
+        </select><br/> <!--Spacing of input fields with line breaks (can also just change style to do this this)--> 
+        <div class="row"> <!--Put year taken and term taken side by side (layout choice)-->
+            <div class="col">
+                <label for="year_taken" class="form-label">Year taken:</label><br/>
+                <input id = "year_taken" type ="number" min="1900" max="2099" step="1" class="form-control" required/><br/>
+            </div>
+            <div class = "col">
+                <label for="term_taken" class="form-label">Term taken:</label><br/>
+                <select id="term_taken" class="form-control" required/>
+                    <option value="Fall">Fall</option>
+                    <option value="Spring">Spring</option>
+                    <option value="Summer">Summer</option>
+                </select><br/>
+            </div>
+            
+        </div>
+        <label for="professor" class="form-label">Professor:</label><br/>
         <select id="professor" class="form-control" required/>
         {{#each professors}} <!--Need to figure out way to display only the professors that teach inputted course and pass the professor id to /addReview -->
-            <option value="{{professor_id}}">{{first_name}} {{last_name}}</option>
+            <option value={{professor_id}}>{{first_name}} {{last_name}}</option>
         {{/each}}
-        </select><br/>
-        <label for="overall_rating" class="form-label">Overall rating of the class:</label><br />
-        <input id = "overall_rating" type ="number" min="0" max="10" step="1" class="form-control" required/><br/>
+        </select><br />
+        <div><p> Rate this course on a scale from 0 to 10.</p></div>
+        <div class="row" id="rating_metrics">
+            <div class = "col">
+                <label for="overall_rating" class="form-label">Overall class rating:</label><br />
+                <input id = "overall_rating" type ="number" min="0" max="10" step=".1" class="form-control" required/> <!--Rating between 0 and 10, can be up to one decimal place (.1 step). Eventually can add a slider to make more interactive-->
+                <small id="ratingHelpBlock" class="form-text text-muted">
+                    Note that the overall rating is required. Please explain why you rated the course this way. 
+                </small> <!--Need to add captions that say what the scale is based off of (like a 10 being this is best course ever and I would absolutely recommend it, 0 being I would not recommend that anyone takes this course-->
+            </div>
+            
+        </div><br/>
         <label for="review" class="form-label">Write your review:</label><br />
-        <input id = "review" type="text" class="form-control" required/><br />
+        <textarea class="form-control" id = "review" rows = "3" required/></textarea><br />
         <input type="submit" value = "Submit Review" class="btn btn-primary"/>
     </div>
 </form>
