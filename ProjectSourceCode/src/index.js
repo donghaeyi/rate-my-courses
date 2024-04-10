@@ -53,11 +53,11 @@ app.use(
 
 // Authentication Middleware.
 const auth = (req, res, next) => {
-  if (!req.session.user && req.path.startsWith("/account")) {
+  if (!req.session.username && req.path.startsWith("/account")) {
     // Default to login page.
     return res.redirect('/login');
   }
-  if (req.session.user && (req.path.startsWith("/login") || req.path.startsWith("/register"))) {
+  if (req.session.username && (req.path.startsWith("/login") || req.path.startsWith("/register"))) {
     // Default to home page if the user is logged in and tries to log in again
     return res.redirect('/home');
   }
