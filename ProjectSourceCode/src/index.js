@@ -14,6 +14,7 @@ const pgp = require('pg-promise')();
 const statusCodes = require('./statusCodes.js');
 const authentication = require('./authentication.js');
 const { search } = require("./cu-api.js");
+const vote = require('./vote.js');
 
 const dbConfig = {
   host: 'db',
