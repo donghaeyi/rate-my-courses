@@ -1,3 +1,4 @@
+Pre-Release
 Last updated 4/3/2024
 - Created UAT Plan
 - Updated create.sql 
@@ -19,3 +20,24 @@ Last updated 4/3/2024
 
 **Full Changelog**: https://github.com/madisonpj/CSCI3308-Final-Project/commits/v0.0.0
 
+
+
+v0.1.0
+Last updated 4/9/2024
+- Added searchbox.hb that gives course suggestions in the search box on the home page
+- Updated error messages, status codes and utility functions
+- Unit testing
+- Added course.hbs that displays reviews of the course
+- Added account.hbs that displays all of the user's reviews
+
+## What's Changed
+* Login error messages, statusCodes, utility functions. by @garthable in https://github.com/madisonpj/CSCI3308-Final-Project/pull/39
+* Search box suggestions by @matt-harp in https://github.com/madisonpj/CSCI3308-Final-Project/pull/34
+* Course page by @matt-harp in https://github.com/madisonpj/CSCI3308-Final-Project/pull/42
+* Account page by @DonghaeYi in https://github.com/madisonpj/CSCI3308-Final-Project/pull/43
+
+## New Contributors
+* @garthable made their first contribution in https://github.com/madisonpj/CSCI3308-Final-Project/pull/39
+* @DonghaeYi made their first contribution in https://github.com/madisonpj/CSCI3308-Final-Project/pull/43
+
+**Full Changelog**: https://github.com/madisonpj/CSCI3308-Final-Project/compare/v0.0.0...v0.1.0

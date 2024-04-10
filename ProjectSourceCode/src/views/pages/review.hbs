@@ -4,7 +4,7 @@
 <form method="post" action="/addReview">
     <div class="form-group col-md-6" style="margin: auto;">
         <label for="course_name" class="form-label">Course Name:</label><br />
-        <select id = "course_name" class="form-control" required />
+        <select id = "course_name" class="form-control" name="course_id" required />
         {{#each courses}}
                 <option value = {{course_id}}>{{course_name}}</option>
         {{/each}}
@@ -12,11 +12,11 @@
         <div class="row"> <!--Put year taken and term taken side by side (layout choice)-->
             <div class="col">
                 <label for="year_taken" class="form-label">Year taken:</label><br/>
-                <input id = "year_taken" type ="number" min="1900" max="2099" step="1" class="form-control" required/><br/>
+                <input id = "year_taken" type ="number" min="1900" max="2099" step="1" class="form-control" name = "year" required/><br/>
             </div>
             <div class = "col">
                 <label for="term_taken" class="form-label">Term taken:</label><br/>
-                <select id="term_taken" class="form-control" required/>
+                <select id="term_taken" class="form-control" name = "term" required/>
                     <option value="Fall">Fall</option>
                     <option value="Spring">Spring</option>
                     <option value="Summer">Summer</option>
@@ -25,7 +25,7 @@
             
         </div>
         <label for="professor" class="form-label">Professor:</label><br/>
-        <select id="professor" class="form-control" required/>
+        <select id="professor" class="form-control" name = "professor_id" required/>
         {{#each professors}} <!--Need to figure out way to display only the professors that teach inputted course and pass the professor id to /addReview -->
             <option value={{professor_id}}>{{first_name}} {{last_name}}</option>
         {{/each}}
@@ -34,7 +34,7 @@
         <div class="row" id="rating_metrics">
             <div class = "col">
                 <label for="overall_rating" class="form-label">Overall class rating:</label><br />
-                <input id = "overall_rating" type ="number" min="0" max="10" step=".1" class="form-control" required/> <!--Rating between 0 and 10, can be up to one decimal place (.1 step). Eventually can add a slider to make more interactive-->
+                <input id = "overall_rating" type ="number" min="0" max="10" step=".1" class="form-control" name = "overall" required/> <!--Rating between 0 and 10, can be up to one decimal place (.1 step). Eventually can add a slider to make more interactive-->
                 <small id="ratingHelpBlock" class="form-text text-muted">
                     Note that the overall rating is required. Please explain why you rated the course this way. 
                 </small> <!--Need to add captions that say what the scale is based off of (like a 10 being this is best course ever and I would absolutely recommend it, 0 being I would not recommend that anyone takes this course-->
@@ -42,7 +42,7 @@
             
         </div><br/>
         <label for="review" class="form-label">Write your review:</label><br />
-        <textarea class="form-control" id = "review" rows = "3" required/></textarea><br />
+        <textarea class="form-control" id = "review" rows = "3" name = "write_review" required/></textarea><br />
         <input type="submit" value = "Submit Review" class="btn btn-primary"/>
     </div>
 </form>
