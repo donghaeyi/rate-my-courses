@@ -1,13 +1,13 @@
 /**
  * 
- * @param {Number} userId 
- * @param {Number} reviewId 
+ * @param {Number} user_id 
+ * @param {Number} review_id 
  * @param {*} db 
  * @returns entry in votes database table.
  */
-async function getVote(userId, reviewId, db) {
+async function getVote(user_id, review_id, db) {
     const query = `SELECT * FROM votes WHERE user_id = $1 AND review_id = $2`
-    const values = [userId, reviewId]
+    const values = [user_id, review_id]
 
     return await db.oneOrNone(query, values)
     .then(vote => {
@@ -63,8 +63,8 @@ async function removeVote(user_id, review_id, db) {
 
 /**
  * Updates vote table with info provided.
- * @param {Number} userId 
- * @param {Number} reviewId 
+ * @param {Number} user_id 
+ * @param {Number} review_id 
  * @param {Number} amount 
  * @param {*} db 
  */
