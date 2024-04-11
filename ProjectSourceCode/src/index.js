@@ -14,7 +14,7 @@ const pgp = require('pg-promise')();
 const statusCodes = require('./statusCodes.js');
 const authentication = require('./authentication.js');
 const { search, getCourseInfo } = require("./cu-api.js");
-const { vote, deleteVote } = require('./vote.js');
+const { vote, deleteVote, getVote } = require('./vote.js');
 
 const dbConfig = {
   host: 'db',
@@ -266,24 +266,23 @@ app.get('/logout', (req, res) => {
 
 // API route to create, or modify a vote.
 // Requests: query parameters, review_id and vote_amount.
-app.post('/vote', (req, res) => {
+app.post('/vote', async (req, res) => {
   const user_id = req.session.user_id;
   const review_id = req.body.review_id;
   const vote_amount = req.body.vote_amount;
   if (user_id === undefined) {
-    res.redirect('login');
+
+    res.redirect('/login');
     return;
   }
   if (review_id === undefined) {
-    res.send(400).message(`review_id not found in post request '/vote'. Please make sure review_id is defined in request body.`);
-    return;
-  }
+    return console.log(`review_id not found in post request '/vote'. Please make sure review_id is defined in request body.`);
+  }  
   if (vote_amount === undefined) {
-    res.send(400).message(`vote_amount not found in post request '/vote'. Please make sure vote_amount is defined in request body.`);
-    return;
+    return console.log(`vote_amount not found in post request '/vote'. Please make sure vote_amount is defined in request body.`);
   }
-  vote(user_id, review_id, vote_amount, db);
-  res.status(200);
+  await vote(user_id, review_id, vote_amount, db);
+  return res.status(200);
 })
 
 // API route to delete a vote.
@@ -293,20 +292,15 @@ app.delete('/vote', (req, res) => {
   const review_id = req.body.review_id;
   const vote_amount = req.body.amount;
   if (user_id === undefined) {
-    res.redirect('login');
-    return;
+    return res.redirect('/login');
   }
   if (review_id === undefined) {
-    res.send(400).message(`review_id not found in delete request '/vote'. Please make sure review_id is defined in request body.`);
-    return;
+    return console.log(`review_id not found in delete request '/vote'. Please make sure review_id is defined in request body.`);
   }
-  if (vote_amount === undefined) {
-    res.send(400).message(`vote_amount not found in delete request '/vote'. Please make sure vote_amount is defined in request body.`);
-    return;
-  }
-  deleteVote(user_id, review_id, vote_amount, db);
+  deleteVote(user_id, review_id, db);
   res.status(200);
 })
 
 module.exports = app.listen(3000);
 console.log("Server is listening on port 3000");
+ 

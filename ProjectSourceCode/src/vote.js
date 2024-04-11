@@ -9,7 +9,13 @@ async function getVote(user_id, review_id, db) {
     const query = `SELECT * FROM votes WHERE user_id = $1 AND review_id = $2`
     const values = [user_id, review_id]
 
-    return await db.oneOrNone(query, values);
+    return await db.oneOrNone(query, values)
+        .then(vote => {
+            return vote
+        })
+        .catch(err => {
+            return console.log(err)
+        })
 }
 
 /**
@@ -64,12 +70,12 @@ async function modifyVote(user_id, review_id, vote_amount, db) {
  */
 async function vote(user_id, review_id, vote_amount, db) {
     const vote = await getVote(user_id, review_id, db)
-    if (vote === undefined) {
-        modifyVote(user_id, review_id, vote_amount, db);
+    if (vote === null) {
+        await createVote(user_id, review_id, vote_amount, db);
     }
     else {
-        createVote(user_id, review_id, vote_amount, db)
+        await modifyVote(user_id, review_id, vote_amount, db)
     }
 }
 
-module.exports = {vote, deleteVote}
+module.exports = {vote, deleteVote, getVote}
