@@ -13,7 +13,7 @@ const pgp = require('pg-promise')();
 
 const statusCodes = require('./statusCodes.js');
 const authentication = require('./authentication.js');
-const { search, getCourseInfo, getCourseInfo } = require("./cu-api.js");
+const { search, getCourseInfo } = require("./cu-api.js");
 const { vote, deleteVote, getVote } = require('./vote.js');
 
 const dbConfig = {
@@ -290,7 +290,6 @@ app.post('/vote', async (req, res) => {
 app.delete('/vote', (req, res) => {
   const user_id = req.session.user_id;
   const review_id = req.body.review_id;
-  const vote_amount = req.body.amount;
   if (user_id === undefined) {
     return res.redirect('/login');
   }
@@ -299,7 +298,7 @@ app.delete('/vote', (req, res) => {
   }
   deleteVote(user_id, review_id, db);
   res.status(200);
-})
+}) 
 
 module.exports = app.listen(3000);
 console.log("Server is listening on port 3000");
