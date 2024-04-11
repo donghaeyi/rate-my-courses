@@ -73,18 +73,23 @@ app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
 
+// Default route
 app.get("/", (req, res) => {
   res.redirect('login') // Set to res.redirect('home') when nav is complete.
 }); 
 
+// Renders home.hbs
 app.get("/home", (req, res) => {
   res.render('pages/home')
 });
 
+// Renders login.hbs
 app.get('/login', (req, res) => {
   res.render('pages/login');
 });
 
+// API route to verify login info
+// Requests username and password for query.
 app.post('/login', async (req, res) => {
   const username = req.body.username || '';
   const password = req.body.password || '';
@@ -119,10 +124,13 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Renders register.hbs
 app.get('/register', (req, res) => {
   res.render('pages/register');
 });
 
+// API route to register new account.
+// Requests username and password parameter for append query.
 app.post('/register', async (req, res) => {
   const username = req.body.username || '';
   const password = req.body.password || '';
@@ -242,10 +250,29 @@ app.get("/course/:code", async (req, res) => {
   }
 });
 
+// Renders login page and destroys user session.
 app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.render('pages/logout');
   })
+})
+
+// API route to create, destroy, or modify a vote.
+// Requests: query parameters userId, reviewId, and amount.
+app.post('/vote', (req, res) => {
+  const userId = req.body.userId;
+  const reviewId = req.body.reviewId;
+  const amount = req.body.amount;
+  if (!userId) {
+    throw Error(`userId not found in '/vote'. Please make sure userId is defined in request body.`);
+  }
+  if (!reviewId) {
+    throw Error(`reviewId not found in '/vote'. Please make sure reviewId is defined in request body.`);
+  }
+  if (!amount) {
+    throw Error(`amount not found in '/vote'. Please make sure amount is defined in request body.`);
+  }
+  vote(userId, reviewId, amount, db);
 })
 
 module.exports = app.listen(3000);
