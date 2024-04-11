@@ -14,7 +14,7 @@ const pgp = require('pg-promise')();
 const statusCodes = require('./statusCodes.js');
 const authentication = require('./authentication.js');
 const { search, getCourseInfo } = require("./cu-api.js");
-const vote = require('./vote.js');
+const { vote, deleteVote } = require('./vote.js');
 
 const dbConfig = {
   host: 'db',
@@ -264,25 +264,47 @@ app.get('/logout', (req, res) => {
   })
 })
 
-// API route to create, destroy, or modify a vote.
-// Requests: query parameters user_id, review_id, and amount.
+// API route to create, or modify a vote.
+// Requests: query parameters, review_id and vote_amount.
 app.post('/vote', (req, res) => {
-  const user_id = req.body.user_id;
+  const user_id = req.session.user_id;
   const review_id = req.body.review_id;
-  const amount = req.body.amount;
+  const vote_amount = req.body.vote_amount;
   if (user_id === undefined) {
-    res.send(400).message(`user_id not found in '/vote'. Please make sure user_id is defined in request body.`);
+    res.redirect('login');
     return;
   }
   if (review_id === undefined) {
-    res.send(400).message(`review_id not found in '/vote'. Please make sure review_id is defined in request body.`);
+    res.send(400).message(`review_id not found in post request '/vote'. Please make sure review_id is defined in request body.`);
     return;
   }
-  if (amount === undefined) {
-    res.send(400).message(`amount not found in '/vote'. Please make sure amount is defined in request body.`);
+  if (vote_amount === undefined) {
+    res.send(400).message(`vote_amount not found in post request '/vote'. Please make sure vote_amount is defined in request body.`);
     return;
   }
-  vote(user_id, review_id, amount, db);
+  vote(user_id, review_id, vote_amount, db);
+  res.status(200);
+})
+
+// API route to delete a vote.
+// Requests: query parameters, review_id and amount.
+app.delete('/vote', (req, res) => {
+  const user_id = req.session.user_id;
+  const review_id = req.body.review_id;
+  const vote_amount = req.body.amount;
+  if (user_id === undefined) {
+    res.redirect('login');
+    return;
+  }
+  if (review_id === undefined) {
+    res.send(400).message(`review_id not found in delete request '/vote'. Please make sure review_id is defined in request body.`);
+    return;
+  }
+  if (vote_amount === undefined) {
+    res.send(400).message(`vote_amount not found in delete request '/vote'. Please make sure vote_amount is defined in request body.`);
+    return;
+  }
+  deleteVote(user_id, review_id, vote_amount, db);
   res.status(200);
 })
 
