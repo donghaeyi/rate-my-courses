@@ -263,13 +263,13 @@ app.post('/vote', (req, res) => {
   const userId = req.body.userId;
   const reviewId = req.body.reviewId;
   const amount = req.body.amount;
-  if (!userId) {
+  if (userId === undefined) {
     throw Error(`userId not found in '/vote'. Please make sure userId is defined in request body.`);
   }
-  if (!reviewId) {
+  if (reviewId === undefined) {
     throw Error(`reviewId not found in '/vote'. Please make sure reviewId is defined in request body.`);
   }
-  if (!amount) {
+  if (amount === undefined) {
     throw Error(`amount not found in '/vote'. Please make sure amount is defined in request body.`);
   }
   vote(userId, reviewId, amount, db);
