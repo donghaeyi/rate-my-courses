@@ -265,10 +265,10 @@ app.get('/logout', (req, res) => {
 })
 
 // API route to create, destroy, or modify a vote.
-// Requests: query parameters userId, reviewId, and amount.
+// Requests: query parameters user_id, review_id, and amount.
 app.post('/vote', (req, res) => {
-  const userId = req.body.userId;
-  const reviewId = req.body.reviewId;
+  const user_id = req.body.user_id;
+  const review_id = req.body.review_id;
   const amount = req.body.amount;
   if (userId === undefined) {
     throw Error(`userId not found in '/vote'. Please make sure userId is defined in request body.`);

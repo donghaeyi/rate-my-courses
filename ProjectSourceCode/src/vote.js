@@ -20,18 +20,18 @@ async function getVote(userId, reviewId, db) {
 
 /**
  * Creates new entry in votes database table.
- * @param {Number} userId 
- * @param {Number} reviewId 
+ * @param {Number} user_id 
+ * @param {Number} review_id 
  * @param {Number} amount 
  * @param {*} db 
  */
-async function createVote(userId, reviewId, amount, db) {
+async function createVote(user_id, review_id, amount, db) {
     const query = `INSERT INTO votes 
                     (user_id, review_id, vote_amount)
                     VALUES
                     ($1, $2, $3)`;
 
-    const values = [userId, reviewId, amount]
+    const values = [user_id, review_id, amount]
     await db.none(query, values)
         .then(function () {
 
@@ -43,15 +43,15 @@ async function createVote(userId, reviewId, amount, db) {
 
 /**
  * Destroys entry in votes database table.
- * @param {Number} userId 
- * @param {Number} reviewId 
+ * @param {Number} user_id 
+ * @param {Number} review_id 
  * @param {*} db 
  */
-async function removeVote(userId, reviewId, db) {
+async function removeVote(user_id, review_id, db) {
     const query = `DELETE FROM votes 
                    WHERE user_id = $1 AND review_id = $2`;
 
-    const values = [userId, reviewId]
+    const values = [user_id, review_id]
     await db.none(query, values)
         .then(function () {
 
@@ -68,21 +68,21 @@ async function removeVote(userId, reviewId, db) {
  * @param {Number} amount 
  * @param {*} db 
  */
-async function vote(userId, reviewId, amount, db) {
-    const vote = await getVote(userId, reviewId, db)
+async function vote(user_id, review_id, amount, db) {
+    const vote = await getVote(user_id, review_id, db)
     if (vote) {
         if (amount == 0) {
-            await removeVote(userId, reviewId, db)
+            await removeVote(user_id, review_id, db)
             return;
         }
-        await removeVote(userId, reviewId, db)
-        await createVote(userId, reviewId, amount, db)
+        await removeVote(user_id, review_id, db)
+        await createVote(user_id, review_id, amount, db)
     }
     else {
         if (amount == 0) {
             return;
         }
-        await createVote(userId, reviewId, amount, db)
+        await createVote(user_id, review_id, amount, db)
     }
 }
 
