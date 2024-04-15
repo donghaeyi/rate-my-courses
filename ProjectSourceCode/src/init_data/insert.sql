@@ -37,3 +37,8 @@ INSERT INTO reviews
   (course_id, year_taken, term_taken, user_id, review, overall_rating, homework_rating, enjoyability_rating, usefulness_rating, difficulty_rating, professor_id)
 VALUES
   (99991, 2022, 'Fall', 9999, 'It was a class.', 5, 5, 5, 5, 5, 99991);
+
+INSERT INTO votes
+  (user_id, review_id, vote_amount)
+VALUES
+  (9999, 1, 1);
