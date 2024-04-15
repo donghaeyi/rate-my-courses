@@ -12,12 +12,22 @@
           <h5>Review from {{term_taken}} {{year_taken}}:</h5>
 
           <table class="table">
+            <th scope="col">Update Review</th>
+            <th scope="col">Delete Review</th>
             <tr>
               <td scope="col">Overall: {{this.overall_rating}}/10</td>
               <td scope="col">Homework: {{this.homework_rating}}/10</td>
               <td scope="col">Enjoyability: {{this.enjoyability_rating}}/10</td>
               <td scope="col">Usefulness: {{this.usefulness_rating}}/10</td>
               <td scope="col">Difficulty: {{this.difficulty_rating}}/10</td>
+              <td></td>
+              <td>
+                <form method="DELETE", action="/deleteReview">
+                  <input type="hidden" name="review_id" value="{{this.review_id}}">
+                  <input type="hidden" name="user_id" value="{{this.user_id}}">
+                  <button type="submit" class="btn btn-primary">Delete Review</button>
+                </form>
+              </td>
             </tr>
           </table>
           
@@ -35,9 +45,5 @@
   {{/if}}
 </div>
 
-<form method="DELETE", action="/deleteReview">
-    <input type="hidden" name="review_id" value="{{review_id}}">
-    <input type="hidden" name="user_id" value="{{user_id}}">
-    <button type="submit" class="btn btn-primary">Delete Review</button>
 
 {{> up_down_vote_script }}
