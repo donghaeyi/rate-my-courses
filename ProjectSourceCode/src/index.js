@@ -194,10 +194,10 @@ app.get("/account", async (req, res) => {
       JOIN courses c ON r.course_id = c.id
       WHERE u.username = $1;
     `;
-    const { rows } = await db.query(query, [req.session.username]);
+    const rows = await db.query(query, [req.session.username]); // Store the result in a variable
     res.render("pages/account", {
       username: req.session.username, // To display the username to account page
-      reviews: rows // Pass the fetched reviews to the template
+      reviews: rows // Pass the fetched reviews to account.hbs
     });
   } catch (error) { // Failed to fetch reviews
     console.error('Error fetching reviews:', error);
