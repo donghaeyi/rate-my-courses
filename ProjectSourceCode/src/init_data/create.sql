@@ -1,7 +1,7 @@
 /*Each course should have exactly one row in the courses table. */
 DROP TABLE IF EXISTS courses;
 CREATE TABLE IF NOT EXISTS courses (
-  course_id SERIAL PRIMARY KEY, /* Since not every course ID is unique for different department classes (MATH 1300 VS CSCI 1300), I thought it would be easiest to just have a unique id attached to every course*/
+  id SERIAL PRIMARY KEY, /* Since not every course ID is unique for different department classes (MATH 1300 VS CSCI 1300), I thought it would be easiest to just have a unique id attached to every course*/
   course_number SMALLINT,
   course_tag CHAR(4), /*Refers to the 4 letter tag along with the course number (i.e CSCI) */
   course_name VARCHAR(500) NOT NULL,

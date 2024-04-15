@@ -9,7 +9,7 @@ VALUES
   (99991);
 
 INSERT INTO courses
-  (id, course_id, course_tag, course_name, credit_hours, description)
+  (id, course_number, course_tag, course_name, credit_hours, description)
 VALUES
   (99991, 1000, 'CSCI', 'Computer Science as a Field of Work and Study', 1, 'Introduces curriculum, learning techniques, time management and career opportunities in Computer Science. Includes presentations from alumni and others with relevant educational and professional experience.'),
   (99992, 1300, 'CSCI', 'Introduction to Programming', 4, 'Teaches techniques for writing computer programs in higher level programming languages to solve problems of interest in a range of application domains. Appropriate for students with little to no experience in computing or programming.'),
@@ -37,3 +37,16 @@ INSERT INTO reviews
   (course_id, year_taken, term_taken, user_id, review, overall_rating, homework_rating, enjoyability_rating, usefulness_rating, difficulty_rating, professor_id)
 VALUES
   (99991, 2022, 'Fall', 9999, 'It was a class.', 5, 5, 5, 5, 5, 99991);
+
+INSERT INTO professors
+    (first_name, last_name, department)
+VALUES
+    ('Asa', 'Ashraf', 'Computer Science'),
+    ('Alfonso', 'Bastias', 'Computer Science'),
+    ('Nikolaus', 'Correll', 'Computer Science'),
+    ('Christopher', 'Godley', 'Computer Science'),
+    ('Sreesha', 'Nath', 'Computer Science'),
+    ('Alan', 'Paradise', 'Computer Science'),
+    ('Divya', 'Vernerey', 'Computer Science'),
+    ('Tom', 'Yeh', 'Computer Science'),
+    ('Al', 'Pisano', 'Computer Science');
