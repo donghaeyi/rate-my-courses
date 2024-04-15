@@ -58,13 +58,31 @@ app.use(
 
 // Middleware
 
+app.use(function (req, res, next) {
+  // Make `user` and `authenticated` available in templates
+  res.locals.user = {
+    username: req.session.username,
+    user_id: req.session.user_id
+  }
+  res.locals.authenticated = (req.session.username != undefined)
+  next()
+})
+
+// Authentication Middleware.
 const auth = (req, res, next) => {
-  // redirect to login if not logged in
-  if (!req.session.username) {
+  if (!req.session.username && req.path.startsWith("/account")) {
+    // Default to login page.
     return res.redirect('/login');
   }
+  if (req.session.username && (req.path.startsWith("/login") || req.path.startsWith("/register"))) {
+    // Default to home page if the user is logged in and tries to log in again
+    return res.redirect('/');
+  }
   next();
-}
+};
+
+// Authentication Required
+app.use(auth);
 
 // Begin routes
 
@@ -81,6 +99,10 @@ app.get("/", (req, res) => {
 // Renders login.hbs
 app.get('/login', (req, res) => {
   res.render('pages/login');
+});
+
+app.get('/account', (req, res) => {
+  res.render('pages/account');
 });
 
 // API route to verify login info
@@ -180,10 +202,10 @@ app.get("/account", async (req, res) => {
       JOIN courses c ON r.course_id = c.id
       WHERE u.username = $1;
     `;
-    const { rows } = await db.query(query, [req.session.username]);
+    const rows = await db.query(query, [req.session.username]); // Store the result in a variable
     res.render("pages/account", {
       username: req.session.username, // To display the username to account page
-      reviews: rows // Pass the fetched reviews to the template
+      reviews: rows // Pass the fetched reviews to account.hbs
     });
   } catch (error) { // Failed to fetch reviews
     console.error('Error fetching reviews:', error);
