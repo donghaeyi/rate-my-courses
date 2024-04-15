@@ -12,31 +12,32 @@
        aria-label="Toggle navigation">
        <span class="navbar-toggler-icon"></span>
      </button>
-     <div class="collapse navbar-collapse" id="navbar-collapse">
+     <div class="topnav" id="navbar-collapse">
        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <!-- TODO: Login -->
-                <a class="nav-link" href="/login">Log In</a>
-            </li>
-            <li class="nav-item">
-                <!-- TODO: Register -->
-                <a class="nav-link" href="/register">Register</a>
-            </li>
-            <li class="nav-item">
-                <!-- TODO: Logout -->
-                <a class="nav-link" href="/logout">Log Out</a>
-            </li>
-            <li class="nav-item">
-                <!-- Access Course Search -->
-                <a class="nav-link" href="/home">Course Search</a>
-            </li>
+          <li class="nav-item active">
+            <!-- Access Course Search -->
+            <a class="nav-link" href="/">Course Search</a>
+          </li>
         </ul>
-        <ul class="navbar-nav">
-            <li class="nav-item active">
-                <!-- TODO: Account Page -->
-                <a class="nav-link" href="/account">My Account</a>
-            </li>
-        </ul>
+     </div>
+     <div class="topnav-right">
+      <ul class="navbar-nav">
+        {{#if authenticated}}
+          <li class="nav-item active">
+            <a class="nav-link" href="/account">My Account</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Log Out</a>
+          </li>
+        {{else}}
+          <li class="nav-item active">
+            <a class="nav-link" href="/login">Log In</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/register">Register</a>
+          </li>
+        {{/if}}
+      </ul>
      </div>
    </div>
  </nav>
