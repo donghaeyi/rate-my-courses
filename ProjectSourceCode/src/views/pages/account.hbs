@@ -12,6 +12,8 @@
             <th scope='col'>Course Name</th>
             <th scope='col'>Review</th>
             <th scope='col'>Rating</th>
+            <th scope="col">Update Review</th>
+            <th scope="col">Delete Review</th>
           </tr>
       </thead>
 
@@ -22,6 +24,14 @@
               <td>{{this.course_name}}</td>
               <td>{{this.review}}</td>
               <td>{{this.overall_rating}}</td>
+              <td></td>
+              <td>
+                <form method="DELETE", action="/deleteReview">
+                  <input type="hidden" name="review_id" value="{{this.review_id}}">
+                  <input type="hidden" name="user_id" value="{{this.user_id}}">
+                  <button type="submit" class="btn btn-primary">Delete Review</button>
+                </form>
+              </td>
             </tr>
           {{/each}}
       </tbody>
@@ -33,7 +43,3 @@
     {{/if}}
   </div>
 </div>
-<form method="DELETE", action="/deleteReview">
-    <input type="hidden" name="review_id" value="{{review_id}}">
-    <input type="hidden" name="user_id" value="{{user_id}}">
-    <button type="submit" class="btn btn-primary">Delete Review</button>
