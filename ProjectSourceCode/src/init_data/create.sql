@@ -74,3 +74,14 @@ CREATE TABLE IF NOT EXISTS courses_to_professors (
 
 /* For the actual rate my professors side of this interface, we might need a separate reviews table that is specific to rating a professor 
 (would have different metrics like how engaging the professor is, how much the student learned, etc.) */
+
+/* table to connect user to up/down votes */
+DROP TABLE IF EXISTS votes;
+CREATE TABLE IF NOT EXISTS votes (
+    user_id INT NOT NULL,
+    review_id INT NOT NULL,
+    vote_amount INT NOT NULL,
+    
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (review_id) REFERENCES reviews (review_id) ON DELETE CASCADE
+);

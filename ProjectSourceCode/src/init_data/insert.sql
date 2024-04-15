@@ -36,6 +36,9 @@ VALUES
 INSERT INTO reviews
   (course_id, year_taken, term_taken, user_id, review, overall_rating, homework_rating, enjoyability_rating, usefulness_rating, difficulty_rating, professor_id)
 VALUES
-  (99991, 2022, 'Fall', 9999, 'It was a class.', 5, 5, 5, 5, 5, 99991),
-  (99992, 2023, 'Spring', 9999, 'It was another class.', 6, 6, 6, 6, 6, 99991),
-  (999921, 2020, 'Summer', 9999, 'This class sucked!', 1, 1, 1, 1, 1, 99991);
+  (99991, 2022, 'Fall', 9999, 'It was a class.', 5, 5, 5, 5, 5, 99991);
+
+INSERT INTO votes
+  (user_id, review_id, vote_amount)
+VALUES
+  (9999, 1, 1);
