@@ -172,10 +172,10 @@ app.get("/account", async (req, res) => {
       JOIN courses c ON r.course_id = c.id
       WHERE u.username = $1;
     `;
-    const { rows } = await db.query(query, [req.session.username]);
+    const rows = await db.query(query, [req.session.username]); // Store the result in a variable
     res.render("pages/account", {
       username: req.session.username, // To display the username to account page
-      reviews: rows // Pass the fetched reviews to the template
+      reviews: rows // Pass the fetched reviews to account.hbs
     });
   } catch (error) { // Failed to fetch reviews
     console.error('Error fetching reviews:', error);
@@ -261,13 +261,11 @@ app.get('/logout', (req, res) => {
 
 //route to render the review form, pass data from tables so user doesn't select options that aren't in the database
 app.get('/review', (req, res) => {
-  // Implemented when we have a button to write a review, make sure user is logged in
-  if (!req.session) {
-    // Default to login page if user not logged in
-    return res.redirect('/login');
+  // make sure user is logged in to write a review. 
+  if (!req.session.username) {
+    // Redirect or handle the case where there is no session user, back to login
+    return res.redirect("/login");
   }
-    
-  console.log(req.session);
 
   //queries to get all courses and professors, we can narrow down this search later (specifically to have the professors listed match the course requested)
   const all_courses = 'SELECT * FROM courses;';
@@ -295,6 +293,7 @@ app.get('/review', (req, res) => {
 //Write a new review (adds review to reviews table)
 //assuming that the user can press a button on the nav bar to write a review about a class (or we could have this built into the course page)
 app.post('/addReview', async function (req, res) {
+  //testing request
   console.log(req.body);
   console.log(req.session);
   try{
@@ -313,12 +312,9 @@ app.post('/addReview', async function (req, res) {
     parseInt(req.body.overall),
     professor_id
     ]);
-    res.status(201).json({
-      status: "success",
-      review_id: review,
-      message: "Data added successfully"
-    });
-    
+    if(review){ //if the new review successfully added to reviews table, redirect to their account page. 
+        res.redirect('/account'); 
+    }
   }catch(error){
     console.log(error);
     res.status(500).send();
