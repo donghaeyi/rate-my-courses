@@ -261,13 +261,13 @@ app.get('/logout', (req, res) => {
 
 //route to render the review form, pass data from tables so user doesn't select options that aren't in the database
 app.get('/review', (req, res) => {
-  /* Implemented when we have a button to write a review, make sure user is logged in
-  if (!req.session.user) {
+  // Implemented when we have a button to write a review, make sure user is logged in
+  if (!req.session) {
     // Default to login page if user not logged in
     return res.redirect('/login');
-  }else{
-    res.render('pages/review');
-  }*/
+  }
+    
+  console.log(req.session);
 
   //queries to get all courses and professors, we can narrow down this search later (specifically to have the professors listed match the course requested)
   const all_courses = 'SELECT * FROM courses;';
@@ -301,7 +301,7 @@ app.post('/addReview', async function (req, res) {
 
     //user won't be able to access the review form if they are not logged in, this route takes care of the submit review action
     const user_id = req.session.user_id;
-    const course_id = parseInt(req.body.course_id);
+    const course_id = parseInt(req.body.id);
     const professor_id = parseInt(req.body.professor_id);
     
     const review = await db.one(`INSERT INTO reviews (course_id, year_taken, term_taken, user_id, review, overall_rating, professor_id) values ($1, $2, $3, $4, $5, $6, $7) returning review_id;`, 

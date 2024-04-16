@@ -4,9 +4,9 @@
 <form method="post" action="/addReview">
     <div class="form-group col-md-6" style="margin: auto;">
         <label for="course_name" class="form-label">Course Name:</label><br />
-        <select id = "course_name" class="form-control" name="course_id" required />
+        <select id = "course_name" class="form-control" name="id" required />
         {{#each courses}}
-                <option value = {{course_id}}>{{course_name}}</option>
+                <option value = {{id}}>{{course_name}}</option>
         {{/each}}
         </select><br/> <!--Spacing of input fields with line breaks (can also just change style to do this this)--> 
         <div class="row"> <!--Put year taken and term taken side by side (layout choice)-->

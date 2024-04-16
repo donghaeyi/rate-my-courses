@@ -50,7 +50,7 @@ CREATE TABLE reviews (
     year_taken SMALLINT NOT NULL,
     term_taken VARCHAR(6) CHECK (term_taken in ('Fall', 'Spring', 'Summer')),  
     /* Each review is associated with exactly one course and one user */
-    FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE, 
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE, 
     user_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     review VARCHAR(8000) NOT NULL, 
