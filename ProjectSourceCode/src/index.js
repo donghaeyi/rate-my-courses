@@ -101,10 +101,6 @@ app.get('/login', (req, res) => {
   res.render('pages/login');
 });
 
-app.get('/account', (req, res) => {
-  res.render('pages/account');
-});
-
 // API route to verify login info
 // Requests username and password for query.
 app.post('/login', async (req, res) => {
@@ -194,15 +190,22 @@ app.get("/account", async (req, res) => {
       // Redirect or handle the case where there is no session user, back to login
       return res.redirect("/login");
     }
+
+    console.log(`Username: ${req.session.username}`);
+
     // Fetch the reviews for the logged in user
     const query = `
-      SELECT r.review, r.overall_rating, c.course_name
+      SELECT r.*, c.*
       FROM reviews r
       JOIN users u ON r.user_id = u.user_id
       JOIN courses c ON r.course_id = c.id
       WHERE u.username = $1;
     `;
+
     const rows = await db.query(query, [req.session.username]); // Store the result in a variable
+    
+    console.log(`Database Rows: ${JSON.stringify(rows, null, 2)}`);
+    
     res.render("pages/account", {
       username: req.session.username, // To display the username to account page
       reviews: rows // Pass the fetched reviews to account.hbs

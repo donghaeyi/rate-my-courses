@@ -1,35 +1,35 @@
-<div class='container'>
-  <div class='jumbotron'>
-    {{!-- Display the username --}}
-    <h1><centre>{{ user.username }}'s Reviews</centre></h1>  
+<div class="container" >
+  {{!-- Display the username --}}
+  <h1>{{username}}'s Reviews</h1>  
 
-    {{!-- If there are reviews, display reviews --}}
-     {{#if reviews.length}}
+  {{!-- If there are reviews, display reviews --}}
+  {{#if reviews.length}}
+    <div class="container">
+      {{#each reviews}}
+        <div class="container border border-dark">
+          <h3>{{this.course_tag}} {{this.course_id}}: {{this.course_name}}</h3>
+          
+          <h5>Review from {{term_taken}} {{year_taken}}:</h5>
 
-    <table class='table'>
-      <thead>
-        <tr>
-            <th scope='col'>Course Name</th>
-            <th scope='col'>Review</th>
-            <th scope='col'>Rating</th>
-          </tr>
-      </thead>
-
-      <tbody>
-        {{!-- Iterate through the user's reviews and display them --}}
-         {{#each reviews}}
+          <table class="table">
             <tr>
-              <td>{{this.course_name}}</td>
-              <td>{{this.review}}</td>
-              <td>{{this.overall_rating}}</td>
+              <td scope="col">Overall: {{this.overall_rating}}/10</td>
+              <td scope="col">Homework: {{this.homework_rating}}/10</td>
+              <td scope="col">Enjoyability: {{this.enjoyability_rating}}/10</td>
+              <td scope="col">Usefulness: {{this.usefulness_rating}}/10</td>
+              <td scope="col">Difficulty: {{this.difficulty_rating}}/10</td>
             </tr>
-          {{/each}}
-      </tbody>
-    </table> 
-
-    {{!-- There are no reviews by this user --}}
-    {{else}}
+          </table>
+          
+          <h6>{{this.review}}</h6>
+        </div>
+      {{/each}}
+    </div>
+    
+  {{!-- There are no reviews by this user --}}
+  {{else}}
+    <div class="container">
       <p>No reviews found.</p>
-    {{/if}}
-  </div>
+    </div>
+  {{/if}}
 </div>
