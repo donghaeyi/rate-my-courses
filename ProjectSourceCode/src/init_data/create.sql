@@ -32,7 +32,7 @@ DROP TABLE IF EXISTS courses_to_professors;
 CREATE TABLE IF NOT EXISTS courses_to_professors (
     course_id INT NOT NULL,
     professor_id INT NOT NULL,
-    FOREIGN KEY (course_id) REFERENCES courses (course_id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES courses (id) ON DELETE CASCADE,
     FOREIGN KEY (professor_id) REFERENCES professors (professor_id) ON DELETE CASCADE
 );
 
