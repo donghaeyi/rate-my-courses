@@ -104,7 +104,6 @@ app.get('/login', (req, res) => {
   res.render('pages/login');
 });
 
-
 // API route to verify login info
 // Requests username and password for query.
 app.post('/login', async (req, res) => {
@@ -145,7 +144,7 @@ app.post('/login', async (req, res) => {
 // Code Inspired by Lab 6
 app.delete('/deleteReview', async (req, res) => {
   const query = `
-      SELECT r.review, r.overall_rating, c.course_name, r.review_id
+      SELECT r.*, c.*
       FROM reviews r
       JOIN users u ON r.user_id = u.user_id
       JOIN courses c ON r.course_id = c.id
@@ -218,15 +217,22 @@ app.get("/account", async (req, res) => {
       // Redirect or handle the case where there is no session user, back to login
       return res.redirect("/login");
     }
+
+    console.log(`Username: ${req.session.username}`);
+
     // Fetch the reviews for the logged in user
     const query = `
-      SELECT r.review, r.overall_rating, c.course_name, r.review_id
+      SELECT r.*, c.*
       FROM reviews r
       JOIN users u ON r.user_id = u.user_id
       JOIN courses c ON r.course_id = c.id
       WHERE u.username = $1;
     `;
+
     const rows = await db.query(query, [req.session.username]); // Store the result in a variable
+    
+    console.log(`Database Rows: ${JSON.stringify(rows, null, 2)}`);
+    
     res.render("pages/account", {
       username: req.session.username, // To display the username to account page
       reviews: rows // Pass the fetched reviews to account.hbs
@@ -308,7 +314,94 @@ app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.render('pages/logout');
   })
-})
+});
+
+// *****************************************************
+// <!-- Review routes -->
+// *****************************************************
+
+//route to render the review form, pass data from tables so user doesn't select options that aren't in the database
+app.get('/review', (req, res) => {
+  // make sure user is logged in to write a review. 
+  if (!req.session.username) {
+    // Redirect or handle the case where there is no session user, back to login
+    return res.redirect("/login");
+  }
+
+  //queries to get all courses and professors, we can narrow down this search later (specifically to have the professors listed match the course requested)
+  const all_courses = 'SELECT * FROM courses;';
+  const all_professors = 'SELECT * FROM professors;';
+  db.task('get-everything', task => {
+    return task.batch([task.any(all_courses), task.any(all_professors)]);
+  })
+  .then(results => {
+    res.render('pages/review', {
+      courses: results[0], 
+      professors: results[1],
+      message: "success",
+    });
+  })
+  .catch(err => {
+    res.render('pages/review', {
+      courses: [],
+      professors: [],
+      message: err,
+    });
+  });
+  
+});
+
+//Write a new review (adds review to reviews table)
+//assuming that the user can press a button on the nav bar to write a review about a class (or we could have this built into the course page)
+app.post('/addReview', async function (req, res) {
+  //testing request
+  console.log(req.body);
+  console.log(req.session);
+  try{
+
+    //user won't be able to access the review form if they are not logged in, this route takes care of the submit review action
+    const user_id = req.session.user_id;
+    const course_id = parseInt(req.body.id);
+    const professor_id = parseInt(req.body.professor_id);
+    
+    const review = await db.one(`INSERT INTO reviews (course_id, year_taken, term_taken, user_id, review, overall_rating, professor_id) values ($1, $2, $3, $4, $5, $6, $7) returning review_id;`, 
+    [course_id, 
+    parseInt(req.body.year), 
+    req.body.term, 
+    user_id, 
+    req.body.write_review,
+    parseInt(req.body.overall),
+    professor_id
+    ]);
+    const review_id = review.review_id;
+    //For the optional fields of the form, individually add these values to this review (there's definetely a better way to do this)
+    if(req.body.difficulty){
+      await db.any('UPDATE reviews SET difficulty_rating = ($1) WHERE review_id = ($2);',[parseInt(req.body.difficulty), review_id]);
+    }
+    if(req.body.enjoy){
+      await db.any('UPDATE reviews SET enjoyability_rating = ($1) WHERE review_id = ($2);',[parseInt(req.body.enjoy), review_id]);
+    }
+    if(req.body.homework){
+      await db.any('UPDATE reviews SET homework_rating = ($1) WHERE review_id = ($2);',[parseInt(req.body.homework), review_id]);
+    }
+    if(req.body.useful){
+      await db.any('UPDATE reviews SET usefulness_rating = ($1) WHERE review_id = ($2);',[parseInt(req.body.useful), review_id]);
+    }
+    if(req.body.grade_recieved){
+      await db.any('UPDATE reviews SET grade_recieved = ($1) WHERE review_id = ($2);',[req.body.grade_recieved, review_id]);
+    }
+    if(req.body.attendance_required){
+      await db.any('UPDATE reviews SET grade_recieved = ($1) WHERE review_id = ($2);',[req.body.grade_recieved, review_id]);
+    }
+    if(review){ //if the new review successfully added to reviews table, redirect to their account page. 
+        res.redirect('/account'); 
+    }
+  }catch(error){
+    console.log(error);
+    res.status(500).send();
+  }
+    
+});
 
 // API route to create, or modify a vote.
 // Requests: query parameters, review_id and vote_amount.
