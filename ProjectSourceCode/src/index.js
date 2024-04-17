@@ -276,7 +276,8 @@ app.get("/course/:code", async (req, res) => {
                                 '[]'::json
                               ) AS reviews
                             FROM courses WHERE courses.course_tag = $1 AND courses.course_id = $2;`, [req.params.code.slice(0,4), req.params.code.slice(4)])
-    console.log(data)                          
+    console.log(data)  
+    data.reviews.sort((a,b) => b.total_vote - a.total_vote)                        
     res.render('pages/course', data)
   }
   catch(err) {
