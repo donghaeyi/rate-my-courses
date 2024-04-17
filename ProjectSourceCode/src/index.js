@@ -1,5 +1,6 @@
 //  Import dependencies
 const express = require("express");
+const methodOverride = require('method-override');
 const app = express(); // Create Express app
 const bodyParser = require('body-parser');
 const session = require('express-session');
@@ -99,6 +100,7 @@ app.use(
   })
 );
 
+app.use(methodOverride('_method'));
 // Begin routes
 
 // dummy route for testing
@@ -150,6 +152,30 @@ app.post('/login', async (req, res) => {
     res.statusCode = statusCodes.USER_NOT_FOUND;
     res.render('pages/login', {username, errorMsg});
   }
+});
+
+// Route to delete reviews
+// Code Inspired by Lab 6
+app.delete('/deleteReview', async (req, res) => {
+  const query = `
+      SELECT r.review, r.overall_rating, c.course_name, r.review_id
+      FROM reviews r
+      JOIN users u ON r.user_id = u.user_id
+      JOIN courses c ON r.course_id = c.id
+      WHERE u.username = $1;`;
+
+  const query2 = `DELETE FROM reviews WHERE review_id = $1;`; //not sending parameters correctly
+  await db.any(query2, [req.body.review_id])
+    .then(async function (data) {
+      const rows = await db.query(query, [req.session.username]);
+      res.render('pages/account', {
+        username: req.session.username,
+        reviews: rows
+      });
+      })
+    .catch(function (err) {
+      return console.log(err);
+    });
 });
 
 // Renders register.hbs
