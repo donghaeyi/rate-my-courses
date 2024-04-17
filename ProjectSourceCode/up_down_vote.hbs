@@ -1,0 +1,42 @@
+<div class="review" data-review-id="{{review_id}}">
+    <div class="review-content">
+        {{review_text}}
+    </div>
+    <div class="vote-buttons">
+        <button class="vote-button" data-vote="upvote">Upvote</button>
+        <button class="vote-button" data-vote="downvote">Downvote</button>
+    </div>
+</div>
+
+<script>
+    // Event listener for upvote and downvote buttons
+    document.addEventListener('click', function(event) {
+        // Check if the clicked element is a vote button
+        if (event.target.classList.contains('vote-button')) {
+            const button = event.target;
+            const reviewElement = button.closest('.review');
+            const reviewId = reviewElement.getAttribute('data-review-id');
+            const voteType = button.getAttribute('data-vote');
+
+            // Make an AJAX request to the server to handle the vote
+            fetch(`/api/vote/${reviewId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ voteType: voteType }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Vote recorded successfully:', data.message);
+                } else {
+                    console.error('Failed to record vote:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error making request:', error);
+            });
+        }
+    });
+</script>
