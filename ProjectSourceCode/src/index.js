@@ -1,5 +1,6 @@
 //  Import dependencies
 const express = require("express");
+const methodOverride = require('method-override');
 const app = express(); // Create Express app
 const bodyParser = require('body-parser');
 const session = require('express-session');
@@ -85,6 +86,7 @@ const auth = (req, res, next) => {
 // Authentication Required
 app.use(auth);
 
+app.use(methodOverride('_method'));
 // Begin routes
 
 // dummy route for testing
@@ -102,9 +104,6 @@ app.get('/login', (req, res) => {
   res.render('pages/login');
 });
 
-app.get('/account', (req, res) => {
-  res.render('pages/account');
-});
 
 // API route to verify login info
 // Requests username and password for query.
@@ -144,27 +143,26 @@ app.post('/login', async (req, res) => {
 
 // Route to delete reviews
 // Code Inspired by Lab 6
-// Waiting to be tested until the account page is made
 app.delete('/deleteReview', async (req, res) => {
-  const query0 = "SELECT user_id FROM users WHERE username = $1;";
-  user = req.session.username;
-  const sessionUser = await db.one(query0, user);
-  const query1 = "SELECT user_id FROM reviews WHERE review_id = $1;";
-  const reviewUser = await db.one(query1, req.body.review_id);
-  if (sessionUser == reviewUser) {
-  const query2 = "DELETE FROM reviews WHERE review_id = $1;";
-  db.any(query2, [req.body.review_id])
-    .then(function (data) {
-      res.status(200).json({
-        status: 'success',
-        data: data,
-        message: 'review deleted successfully',
+  const query = `
+      SELECT r.review, r.overall_rating, c.course_name, r.review_id
+      FROM reviews r
+      JOIN users u ON r.user_id = u.user_id
+      JOIN courses c ON r.course_id = c.id
+      WHERE u.username = $1;`;
+
+  const query2 = `DELETE FROM reviews WHERE review_id = $1;`; //not sending parameters correctly
+  await db.any(query2, [req.body.review_id])
+    .then(async function (data) {
+      const rows = await db.query(query, [req.session.username]);
+      res.render('pages/account', {
+        username: req.session.username,
+        reviews: rows
       });
-    })
+      })
     .catch(function (err) {
       return console.log(err);
     });
-  }
 });
 
 // Renders register.hbs
@@ -222,7 +220,7 @@ app.get("/account", async (req, res) => {
     }
     // Fetch the reviews for the logged in user
     const query = `
-      SELECT r.review, r.overall_rating, c.course_name
+      SELECT r.review, r.overall_rating, c.course_name, r.review_id
       FROM reviews r
       JOIN users u ON r.user_id = u.user_id
       JOIN courses c ON r.course_id = c.id
