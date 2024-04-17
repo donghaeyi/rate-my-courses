@@ -1,7 +1,7 @@
 <!--Page dedicated to writing a new review, I thought it would be useful to press a button and go to a new page where you just have a form to write a review-->
 
 <h1 style="text-align: center">Write a new review:</h1> 
-<form method="post" action="/addReview">
+<form method="post" action="/addReview" style="padding-bottom: 50px;">
     <div class="form-group col-md-6" style="margin: auto;">
         <label for="course_name" class="form-label">Course Name:</label><br />
         <select id = "course_name" class="form-control" name="id" required />
@@ -32,38 +32,46 @@
         </select><br/>
         <hr>
         <div><b> Rate this course on a scale from 0 to 10:</b></div></br>
-        
+        <!--Referenced stack overflow to figure out how to display the number (value) next to the slider dynamically--> 
         <div class="form-group row">
-            <label for="overall_rating" class="col-sm-4 col-form-label">Overall class rating:</label><br />
-            <div class="col-sm-4">
-                <input id = "overall_rating" type ="number" min="0" max="10" step=".1" class="form-control" name = "overall" required/> <!--Rating between 0 and 10, can be up to one decimal place (.1 step). Eventually can add a slider to make more interactive-->
+            <label for="overall" class="col-sm-4 col-form-label pt-0">Overall class rating:</label><br />
+            <div class="col-md-3">
+                <!--Rating between 0 and 10, accept decimal values, but only .5 (step)-->
+                <input id = "overall" name = "overall" type ="range" min="0" max="10" step=".5" value = "0" oninput="overall_amount.value=overall.value" /><br/> 
+                <output id="overall_amount" name="overall_amount" for="overall">0</output>
             </div>
             <small id="ratingHelpBlock" class="form-text text-muted">
-                    Note that only the overall class rating is required. With a 10 being this is best course ever and a 0 being I would not recommend this course to anyone, please give this class a rating and be sure to explain why you rated the course this way.
+                    With a 10 being this is best course ever and a 0 being I would not recommend this course to anyone, please give this class a rating and be sure to explain why you rated the course this way.
             </small>
             
         </div></br>
         <div class="form-group row">
             <div class="col md-3">
-                <label for="enjoyability_rating" class="form-label">How enjoyable was this class?</label><br />
-                <input id = "enjoyibility_rating" name = "enjoy" type ="number" min="0" max="10" step=".1" class="form-control" /><br/>
+                <label for="enjoy" class="form-label">How enjoyable was this class?</label><br />
+                <input id = "enjoy" name = "enjoy" type ="range" min="0" max="10" step=".5" value = "0" oninput="enjoy_amount.value=enjoy.value" /><br/>
+                <output id="enjoy_amount" name="enjoy_amount" for="overall">0</output>
             </div>
             <div class="col md-3">
-                <label for="difficulty_rating" class="form-label">How difficult was the content?</label><br />
-                <input id = "difficulty_rating" name = "difficulty" type ="number" min="0" max="10" step=".1" class="form-control" /><br/>
+                <label for="difficulty" class="form-label">How difficult was the content?</label><br />
+                <input id = "difficulty" name = "difficulty" type ="range" min="0" max="10" step=".5" value = "0" oninput="difficulty_amount.value=difficulty.value"/><br/>
+                <output id="difficulty_amount" name="difficulty_amount" for="homework">0</output>
             </div>
                 <!--Need to add captions that say what the scale is based off of (like a 10 being this is best course ever and I would absolutely recommend it, 0 being I would not recommend that anyone takes this course-->
         </div>
         <div class = "form-group row">
-            <div class="col md-3">
-                <label for="homework_rating" class="form-label">How difficult was your homework?</label><br />
-                <input id = "homework_rating" name = "homework" type ="number" min="0" max="10" step=".1" class="form-control" /><br/> 
-            </div>
-            <div class="col md-3">
-                <label for="usefulness_rating" class="form-label">How useful was this class to you?</label><br />
-                <input id = "usefulness_rating" name = "useful" type ="number" min="0" max="10" step=".1" class="form-control" /><br/> 
-            </div>
+                
+                <div class="col md-4">
+                    <label for="homework" class="form-label">How difficult was your homework?</label><br />
+                    <input id = "homework" name = "homework" type ="range" min="0" max="10" step=".5" value = "0" oninput="homework_amount.value=homework.value" /><br/> 
+                    <output id="homework_amount" name="homework_amount" for="homework">0</output>
+                </div>          
+                <div class="col md-4">
+                    <label for="usefulness" class="form-label">How useful was this class to you?</label><br />
+                    <input id = "usefulness" name = "usefulness" type ="range" min="0" max="10" step=".5" value = "0" oninput="usefulness_amount.value=usefulness.value" /><br/> 
+                    <output id="usefulness_amount" name="usefulness_amount" for="usefulness">0</output>
+                </div>
         </div>
+        
         <hr>
         <div><b>Grading breakdown</b></div>
         <small id="gradingHelpBlock" class="form-text text-muted">
@@ -73,7 +81,7 @@
             <label for="grade_recieved" class="col-sm-6 col-form-label">Grade recieved:</label><br />
             <div class="col sm-6">
                 <select id="grade_recieved" class="form-control" name="grade_recieved">
-                    <option selected>Choose...</option>
+                    <option disabled selected value>Choose...</option>
                     <option value='A'>A</option>
                     <option value='A-'>A-</option>
                     <option value='B+'>B+</option>
@@ -108,6 +116,6 @@
         <br/>
         <label for="review" class="form-label">Write your review:</label><br />
         <textarea class="form-control" id = "review" rows = "3" name = "write_review" required/></textarea><br />
-        <input type="submit" value = "Submit Review" class="btn btn-primary"/>
+        <input type="submit" value = "Submit Review" class="btn btn-primary"/> <!--Submit review - goes to addReview POST route-->
     </div>
 </form>
