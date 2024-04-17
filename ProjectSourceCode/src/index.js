@@ -312,6 +312,26 @@ app.post('/addReview', async function (req, res) {
     parseInt(req.body.overall),
     professor_id
     ]);
+    const review_id = review.review_id;
+    //For the optional fields of the form, individually add these values to this review (there's definetely a better way to do this)
+    if(req.body.difficulty){
+      await db.any('UPDATE reviews SET difficulty_rating = ($1) WHERE review_id = ($2);',[parseInt(req.body.difficulty), review_id]);
+    }
+    if(req.body.enjoy){
+      await db.any('UPDATE reviews SET enjoyability_rating = ($1) WHERE review_id = ($2);',[parseInt(req.body.enjoy), review_id]);
+    }
+    if(req.body.homework){
+      await db.any('UPDATE reviews SET homework_rating = ($1) WHERE review_id = ($2);',[parseInt(req.body.homework), review_id]);
+    }
+    if(req.body.useful){
+      await db.any('UPDATE reviews SET usefulness_rating = ($1) WHERE review_id = ($2);',[parseInt(req.body.useful), review_id]);
+    }
+    if(req.body.grade_recieved){
+      await db.any('UPDATE reviews SET grade_recieved = ($1) WHERE review_id = ($2);',[req.body.grade_recieved, review_id]);
+    }
+    if(req.body.attendance_required){
+      await db.any('UPDATE reviews SET grade_recieved = ($1) WHERE review_id = ($2);',[req.body.grade_recieved, review_id]);
+    }
     if(review){ //if the new review successfully added to reviews table, redirect to their account page. 
         res.redirect('/account'); 
     }

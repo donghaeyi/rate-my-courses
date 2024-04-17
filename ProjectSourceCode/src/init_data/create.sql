@@ -2,7 +2,7 @@
 DROP TABLE IF EXISTS courses;
 CREATE TABLE IF NOT EXISTS courses (
   id SERIAL PRIMARY KEY, /* Since not every course ID is unique for different department classes (MATH 1300 VS CSCI 1300), I thought it would be easiest to just have a unique id attached to every course*/
-  course_number SMALLINT,
+  course_id SMALLINT,
   course_tag CHAR(4), /*Refers to the 4 letter tag along with the course number (i.e CSCI) */
   course_name VARCHAR(500) NOT NULL,
   credit_hours NUMERIC NOT NULL, /*Credit hours aren't really necessary but nice to have */
@@ -61,15 +61,9 @@ CREATE TABLE reviews (
     usefulness_rating DECIMAL CHECK (usefulness_rating between 0 and 10), /* how useful this course is to the user, i.e is the content in this course often used in this industry? does it apply to everday life? is it necessary to take to understand more useful classes later on? */
     difficulty_rating DECIMAL CHECK (difficulty_rating between 0 and 10), /* generally how difficult they thought this course was */
     /* grading metrics - grading breakdown of course, what was the student mainly graded on */
-    /*
-    grade_recieved CHAR(2) NOT NULL CHECK (grade_recieved in ('A', 'A-', ... )) don't know if check necessary if grade recieved is a drop down menu
-    grading_difficulty VARCHAR(1000) /*Allow users to provide an explanation into the grade they recieved, prompt them to explain the difficulty of grading and how hard they worked to recieve the grade they have (i.e was this class an easy A? did I work really hard for a B? were grade averages low?) */ 
-    attendance_required BOOL NOT NULL, /* Was attendence required/needed to get a good grade */
-    /* have user check one grading catagory */
-    exam_based BOOL, /* grade was mostly determined by exams */
-    project_based BOOL, /* grade was mostly determined by large assignments/projects */
-    combination_based BOOL, /* grading breakdown does not fall in exam_based or project_based catagories, grade was determined by many different things and wasn't majority based on one catagory */
-    */
+    grade_recieved CHAR(2), /*grades will be in a dropdown menu so only valid selections are choosen */
+    attendance_required BOOLEAN, /* Was attendence required/needed to get a good grade */
+    
     /* Tag each course review to a professor */
     professor_id INT NOT NULL, /* not sure how to do this efficently, maybe for each course we could have a dropdown list of professors */
     FOREIGN KEY (professor_id) REFERENCES professors(professor_id) ON DELETE CASCADE /* Each review should have exactly 1 professor associated with it*/

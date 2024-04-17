@@ -29,18 +29,83 @@
         {{#each professors}} <!--Need to figure out way to display only the professors that teach inputted course and pass the professor id to /addReview -->
             <option value={{professor_id}}>{{first_name}} {{last_name}}</option>
         {{/each}}
-        </select><br />
-        <div><p> Rate this course on a scale from 0 to 10.</p></div>
-        <div class="row" id="rating_metrics">
-            <div class = "col">
-                <label for="overall_rating" class="form-label">Overall class rating:</label><br />
+        </select><br/>
+        <hr>
+        <div><b> Rate this course on a scale from 0 to 10:</b></div></br>
+        
+        <div class="form-group row">
+            <label for="overall_rating" class="col-sm-4 col-form-label">Overall class rating:</label><br />
+            <div class="col-sm-4">
                 <input id = "overall_rating" type ="number" min="0" max="10" step=".1" class="form-control" name = "overall" required/> <!--Rating between 0 and 10, can be up to one decimal place (.1 step). Eventually can add a slider to make more interactive-->
-                <small id="ratingHelpBlock" class="form-text text-muted">
-                    Note that the overall rating is required. Please explain why you rated the course this way. 
-                </small> <!--Need to add captions that say what the scale is based off of (like a 10 being this is best course ever and I would absolutely recommend it, 0 being I would not recommend that anyone takes this course-->
             </div>
+            <small id="ratingHelpBlock" class="form-text text-muted">
+                    Note that only the overall class rating is required. With a 10 being this is best course ever and a 0 being I would not recommend this course to anyone, please give this class a rating and be sure to explain why you rated the course this way.
+            </small>
             
-        </div><br/>
+        </div></br>
+        <div class="form-group row">
+            <div class="col md-3">
+                <label for="enjoyability_rating" class="form-label">How enjoyable was this class?</label><br />
+                <input id = "enjoyibility_rating" name = "enjoy" type ="number" min="0" max="10" step=".1" class="form-control" /><br/>
+            </div>
+            <div class="col md-3">
+                <label for="difficulty_rating" class="form-label">How difficult was the content?</label><br />
+                <input id = "difficulty_rating" name = "difficulty" type ="number" min="0" max="10" step=".1" class="form-control" /><br/>
+            </div>
+                <!--Need to add captions that say what the scale is based off of (like a 10 being this is best course ever and I would absolutely recommend it, 0 being I would not recommend that anyone takes this course-->
+        </div>
+        <div class = "form-group row">
+            <div class="col md-3">
+                <label for="homework_rating" class="form-label">How difficult was your homework?</label><br />
+                <input id = "homework_rating" name = "homework" type ="number" min="0" max="10" step=".1" class="form-control" /><br/> 
+            </div>
+            <div class="col md-3">
+                <label for="usefulness_rating" class="form-label">How useful was this class to you?</label><br />
+                <input id = "usefulness_rating" name = "useful" type ="number" min="0" max="10" step=".1" class="form-control" /><br/> 
+            </div>
+        </div>
+        <hr>
+        <div><b>Grading breakdown</b></div>
+        <small id="gradingHelpBlock" class="form-text text-muted">
+                    Note that this section is not required. 
+        </small></br>
+        <div class = "form-group row">
+            <label for="grade_recieved" class="col-sm-6 col-form-label">Grade recieved:</label><br />
+            <div class="col sm-6">
+                <select id="grade_recieved" class="form-control" name="grade_recieved">
+                    <option selected>Choose...</option>
+                    <option value='A'>A</option>
+                    <option value='A-'>A-</option>
+                    <option value='B+'>B+</option>
+                    <option value='B'>B</option>
+                    <option value='B-'>B-</option>
+                    <option value='C+'>C+</option>
+                    <option value='C'>C</option>
+                    <option value='C-'>C-</option>
+                    <option value='D+'>D+</option>
+                    <option value='D'>D</option>
+                    <option value='D-'>D-</option>
+                    <option value='F'>F</option>
+                </select><br/>
+            </div>
+        </div>
+        <div class = "form-group row">
+            <legend class="col-form-label col-sm-6 pt-0">Was attendance mandatory?</legend>
+            <div class = "col sm-6">
+                <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="attendance_required" id="required" value='TRUE'>
+                <label class="form-check-label" for="inlineRadio1">Yes</label>
+                </div>
+                <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="attendance_required" id="not_required" value='FALSE'>
+                <label class="form-check-label" for="inlineRadio2">No</label>
+                </div>
+            </div>
+        </div>
+        </br>
+        
+        <hr>
+        <br/>
         <label for="review" class="form-label">Write your review:</label><br />
         <textarea class="form-control" id = "review" rows = "3" name = "write_review" required/></textarea><br />
         <input type="submit" value = "Submit Review" class="btn btn-primary"/>
