@@ -22,7 +22,7 @@
           </table>
           
           <h6>{{this.review}}</h6>
-          <h7>Upvotes: {{this.total_vote}}</h7>
+          {{> up_down_vote_button }}
         </div>
       {{/each}}
     </div>
@@ -34,3 +34,5 @@
     </div>
   {{/if}}
 </div>
+
+{{> up_down_vote_script }}

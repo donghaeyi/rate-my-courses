@@ -1,0 +1,43 @@
+<script>
+    // Event listener for upvote and downvote buttons
+    document.addEventListener('click', function(event) {
+        // Check if the clicked element is a vote button
+        if (event.target.classList.contains('vote-button')) {
+            const button = event.target;
+            const reviewElement = button.closest('.review');
+            const reviewId = Number(button.getAttribute('review-id'))
+            const baseTotalVote = Number(button.getAttribute('base-vote'))
+            const voteType = button.getAttribute('data-vote');
+
+            let totalVote = Number(baseTotalVote + Number(voteType))
+
+            const voteDisplay = document.getElementById('total_vote' + reviewId).innerText = `Upvotes: ${totalVote}`
+
+            // Make an AJAX request to the server to handle the vote
+            if (voteType == 1 || voteType==-1) {
+                fetch(`/vote`, {
+                    method: 'POST',
+                    headers: ['Content-Type', 'application/json'],
+                    mode: 'cors',
+                    cache: 'default',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ review_id: reviewId, vote_amount: voteType }),
+                })
+            }
+            else{
+                fetch(`/vote`, {
+                    method: 'DELETE',
+                    headers: ['Content-Type', 'application/json'],
+                    mode: 'cors',
+                    cache: 'default',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ review_id: reviewId }),
+                })
+            }
+        }
+    });
+</script>

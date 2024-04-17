@@ -253,7 +253,8 @@ app.get("/course/:code", async (req, res) => {
                                       'usefulness_rating', r.usefulness_rating,
                                       'difficulty_rating', r.difficulty_rating,
                                       'professor_id', r.professor_id,
-                                      'total_vote', v.total_vote
+                                      'total_vote', v.total_vote,
+                                      'review_id', r.review_id
                                     )) AS reviews
                                   FROM reviews r
                                   JOIN users u ON
@@ -418,6 +419,7 @@ app.post('/vote', async (req, res) => {
 app.delete('/vote', (req, res) => {
   const user_id = req.session.user_id;
   const review_id = req.body.review_id;
+  console.log("vote")
   if (user_id === undefined) {
     return res.redirect('/login');
   }
@@ -427,6 +429,11 @@ app.delete('/vote', (req, res) => {
   deleteVote(user_id, review_id, db);
   res.status(200);
 }) 
+
+app.get('/test', (req, res) => {
+  const total_vote = 1
+  res.render('pages/test', {total_vote})
+})
 
 module.exports = app.listen(3000);
 console.log("Server is listening on port 3000");

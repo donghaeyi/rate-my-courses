@@ -2,6 +2,7 @@
     <h1>{{course_tag}} {{course_id}}</h1>
     <h4>{{course_name}}</h4>
     <h5>Reviews:</h5>
+
     {{#each reviews}}
         <div class="container">
             <h6>Review from {{term_taken}} {{year_taken}}:</h6>
@@ -11,8 +12,9 @@
             <p>Usefulness: {{usefulness_rating}}/10</p>
             <p>Difficulty: {{difficulty_rating}}/10</p>
             <p>{{review}}</p>
-            <p>Upvotes: {{total_vote}}</p>
+            {{> up_down_vote_button }}
             <p class="text-muted">posted by {{posted_by.username}}</p>
         </div>
     {{/each}}
 </div>
+{{> up_down_vote_script }}
