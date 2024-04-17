@@ -144,12 +144,11 @@ app.post('/login', async (req, res) => {
 // Code Inspired by Lab 6
 app.delete('/deleteReview', async (req, res) => {
   const query = `
-      SELECT r.review, r.overall_rating, c.course_name, r.review_id
+    SELECT r.review, r.overall_rating, c.course_name, r.review_id
       FROM reviews r
       JOIN users u ON r.user_id = u.user_id
       JOIN courses c ON r.course_id = c.id
       WHERE u.username = $1;`;
-
   const query2 = `DELETE FROM reviews WHERE review_id = $1;`; //not sending parameters correctly
   await db.any(query2, [req.body.review_id])
     .then(async function (data) {
