@@ -63,7 +63,6 @@ CREATE TABLE reviews (
     /* grading metrics - grading breakdown of course, what was the student mainly graded on */
     grade_recieved CHAR(2), /*grades will be in a dropdown menu so only valid selections are choosen */
     attendance_required BOOLEAN, /* Was attendence required/needed to get a good grade */
-    
     /* Tag each course review to a professor */
     professor_id INT NOT NULL, /* not sure how to do this efficently, maybe for each course we could have a dropdown list of professors */
     FOREIGN KEY (professor_id) REFERENCES professors(professor_id) ON DELETE CASCADE /* Each review should have exactly 1 professor associated with it*/
@@ -72,3 +71,14 @@ CREATE TABLE reviews (
 
 
 
+
+/* table to connect user to up/down votes */
+DROP TABLE IF EXISTS votes;
+CREATE TABLE IF NOT EXISTS votes (
+    user_id INT NOT NULL,
+    review_id INT NOT NULL,
+    vote_amount INT NOT NULL,
+    
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (review_id) REFERENCES reviews (review_id) ON DELETE CASCADE
+);

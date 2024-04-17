@@ -14,6 +14,7 @@ const pgp = require('pg-promise')();
 const statusCodes = require('./statusCodes.js');
 const authentication = require('./authentication.js');
 const { search, getCourseInfo } = require("./cu-api.js");
+const { vote, deleteVote, getVote } = require('./vote.js');
 
 const dbConfig = {
   host: 'db',
@@ -57,13 +58,31 @@ app.use(
 
 // Middleware
 
+app.use(function (req, res, next) {
+  // Make `user` and `authenticated` available in templates
+  res.locals.user = {
+    username: req.session.username,
+    user_id: req.session.user_id
+  }
+  res.locals.authenticated = (req.session.username != undefined)
+  next()
+})
+
+// Authentication Middleware.
 const auth = (req, res, next) => {
-  // redirect to login if not logged in
-  if (!req.session.username) {
+  if (!req.session.username && req.path.startsWith("/account")) {
+    // Default to login page.
     return res.redirect('/login');
   }
+  if (req.session.username && (req.path.startsWith("/login") || req.path.startsWith("/register"))) {
+    // Default to home page if the user is logged in and tries to log in again
+    return res.redirect('/');
+  }
   next();
-}
+};
+
+// Authentication Required
+app.use(auth);
 
 // Begin routes
 
@@ -72,14 +91,22 @@ app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
 
+// Default route
 app.get("/", (req, res) => {
   res.render('pages/home')
-}); 
+});  
 
+// Renders login.hbs
 app.get('/login', (req, res) => {
   res.render('pages/login');
 });
 
+app.get('/account', (req, res) => {
+  res.render('pages/account');
+});
+
+// API route to verify login info
+// Requests username and password for query.
 app.post('/login', async (req, res) => {
   const username = req.body.username || '';
   const password = req.body.password || '';
@@ -114,10 +141,13 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Renders register.hbs
 app.get('/register', (req, res) => {
   res.render('pages/register');
 });
 
+// API route to register new account.
+// Requests username and password parameter for append query.
 app.post('/register', async (req, res) => {
   const username = req.body.username || '';
   const password = req.body.password || '';
@@ -249,6 +279,7 @@ app.get("/course/:code", async (req, res) => {
   }
 });
 
+// Renders login page and destroys user session.
 app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.render('pages/logout');
@@ -342,5 +373,42 @@ app.post('/addReview', async function (req, res) {
     
 });
 
+// API route to create, or modify a vote.
+// Requests: query parameters, review_id and vote_amount.
+app.post('/vote', async (req, res) => {
+  const user_id = req.session.user_id;
+  const review_id = req.body.review_id;
+  const vote_amount = req.body.vote_amount;
+  if (user_id === undefined) {
+
+    res.redirect('/login');
+    return;
+  }
+  if (review_id === undefined) {
+    return console.log(`review_id not found in post request '/vote'. Please make sure review_id is defined in request body.`);
+  }  
+  if (vote_amount === undefined) {
+    return console.log(`vote_amount not found in post request '/vote'. Please make sure vote_amount is defined in request body.`);
+  }
+  await vote(user_id, review_id, vote_amount, db);
+  return res.status(200);
+})
+
+// API route to delete a vote.
+// Requests: query parameters, review_id and amount.
+app.delete('/vote', (req, res) => {
+  const user_id = req.session.user_id;
+  const review_id = req.body.review_id;
+  if (user_id === undefined) {
+    return res.redirect('/login');
+  }
+  if (review_id === undefined) {
+    return console.log(`review_id not found in delete request '/vote'. Please make sure review_id is defined in request body.`);
+  }
+  deleteVote(user_id, review_id, db);
+  res.status(200);
+}) 
+
 module.exports = app.listen(3000);
 console.log("Server is listening on port 3000");
+ 
