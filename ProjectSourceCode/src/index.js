@@ -250,11 +250,24 @@ app.get("/course/:code", async (req, res) => {
                                       'enjoyability_rating', r.enjoyability_rating,
                                       'usefulness_rating', r.usefulness_rating,
                                       'difficulty_rating', r.difficulty_rating,
-                                      'professor_id', r.professor_id
+                                      'professor_id', r.professor_id,
+                                      'total_vote', v.total_vote
                                     )) AS reviews
                                   FROM reviews r
                                   JOIN users u ON
                                     r.user_id = u.user_id
+                                  JOIN (
+                                        SELECT r1.review_id AS review_id, COALESCE(SUM(v1.vote_amount), 0) AS total_vote
+                                        FROM
+                                          votes v1
+                                          RIGHT JOIN
+                                          reviews r1
+                                          ON
+                                          v1.review_id = r1.review_id
+                                          GROUP BY
+                                          r1.review_id
+                                      ) AS v ON
+                                    v.review_id = r.review_id
                                   WHERE
                                     r.course_id = courses.id
                                 ),
