@@ -3,8 +3,9 @@
         {{review_text}}
     </div>
     <div class="vote-buttons">
-        <button class="vote-button" data-vote="upvote">Upvote</button>
-        <button class="vote-button" data-vote="downvote">Downvote</button>
+        <button class="vote-button" data-vote="1">Upvote</button>
+        <button class="vote-button" data-vote="-1">Downvote</button>
+        <button class="vote-button" data-vote="unvote">Remove Vote</button>
     </div>
 </div>
 
@@ -19,13 +20,23 @@
             const voteType = button.getAttribute('data-vote');
 
             // Make an AJAX request to the server to handle the vote
+            if (voteType == 1 || voteType==-1) {
             fetch(`/api/vote/${reviewId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ voteType: voteType }),
-            })
+            })}
+            else{
+            fetch(`/api/vote/${reviewId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ voteType: voteType }),
+            })}
+
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
