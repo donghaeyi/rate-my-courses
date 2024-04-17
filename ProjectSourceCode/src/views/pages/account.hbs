@@ -18,6 +18,14 @@
               <td scope="col">Enjoyability: {{this.enjoyability_rating}}/10</td>
               <td scope="col">Usefulness: {{this.usefulness_rating}}/10</td>
               <td scope="col">Difficulty: {{this.difficulty_rating}}/10</td>
+              <td></td>
+              <td>
+                <form method="POST", action="/deleteReview?_method=DELETE" mode="cors">
+                  <input type="hidden" id="review_id" name="review_id" value="{{this.review_id}}">
+                  <input type="hidden" id="user_id" name="user_id" value="{{this.user_id}}">
+                  <button type="submit" class="btn btn-primary">Delete Review</button>
+                </form>
+              </td>
             </tr>
           </table>
           
