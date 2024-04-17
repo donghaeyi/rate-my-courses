@@ -195,11 +195,13 @@ app.get("/account", async (req, res) => {
 
     // Fetch the reviews for the logged in user
     const query = `
-      SELECT r.*, c.*
+      SELECT r.*, c.*, COALESCE(SUM(v.vote_amount), 0) AS total_vote
       FROM reviews r
       JOIN users u ON r.user_id = u.user_id
       JOIN courses c ON r.course_id = c.id
-      WHERE u.username = $1;
+      LEFT JOIN votes v ON v.review_id = r.review_id
+      WHERE u.username = $1
+      GROUP BY r.review_id, c.id;
     `;
 
     const rows = await db.query(query, [req.session.username]); // Store the result in a variable
