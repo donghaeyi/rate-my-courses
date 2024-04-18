@@ -413,7 +413,7 @@ app.post('/addReview', async function (req, res) {
       await db.any('UPDATE reviews SET grade_recieved = ($1) WHERE review_id = ($2);',[req.body.grade_recieved, review_id]);
     }
     if(req.body.attendance_required){
-      await db.any('UPDATE reviews SET grade_recieved = ($1) WHERE review_id = ($2);',[req.body.grade_recieved, review_id]);
+      await db.any('UPDATE reviews SET attendance_required = ($1) WHERE review_id = ($2);',[req.body.attendance_required, review_id]);
     }
     if(review){ //if the new review successfully added to reviews table, redirect to their account page. 
         res.redirect('/account'); 
