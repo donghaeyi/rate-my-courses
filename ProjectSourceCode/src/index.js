@@ -144,15 +144,29 @@ app.post('/login', async (req, res) => {
 // Code Inspired by Lab 6
 app.delete('/deleteReview', async (req, res) => {
   const query = `
-    SELECT r.*, c.*
-      FROM reviews r
-      JOIN users u ON r.user_id = u.user_id
-      JOIN courses c ON r.course_id = c.id
-      WHERE u.username = $1;`;
+  SELECT 
+    r.*, 
+    c.*, 
+    COALESCE(SUM(v.vote_amount), 0) AS total_vote, 
+    COALESCE(vu.vote_amount, 0) AS vote_state,
+    r.review_id
+  FROM reviews r
+    JOIN users u ON r.user_id = u.user_id
+    JOIN courses c ON r.course_id = c.id
+    LEFT JOIN votes v ON v.review_id = r.review_id
+    LEFT JOIN votes vu on vu.review_id = r.review_id AND vu.user_id = $2
+  WHERE u.username = $1
+  GROUP BY r.review_id, c.id, vu.vote_amount
+  ORDER BY r.year_taken DESC, c.course_id DESC,
+    CASE r.term_taken
+      WHEN 'Fall' THEN 1
+      WHEN 'Summer' THEN 2
+      WHEN 'Spring' THEN 3
+    END;`;
   const query2 = `DELETE FROM reviews WHERE review_id = $1;`; //not sending parameters correctly
   await db.any(query2, [req.body.review_id])
     .then(async function (data) {
-      const rows = await db.query(query, [req.session.username]);
+      const rows = await db.query(query, [req.session.username, req.body.user_id]);
       res.render('pages/account', {
         username: req.session.username,
         reviews: rows
