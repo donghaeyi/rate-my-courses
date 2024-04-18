@@ -225,7 +225,13 @@ app.get("/account", async (req, res) => {
       FROM reviews r
       JOIN users u ON r.user_id = u.user_id
       JOIN courses c ON r.course_id = c.id
-      WHERE u.username = $1;
+      WHERE u.username = $1
+      ORDER BY r.year_taken DESC, c.course_id DESC,
+        CASE r.term_taken
+          WHEN 'Fall' THEN 1
+          WHEN 'Summer' THEN 2
+          WHEN 'Spring' THEN 3
+        END;
     `;
 
     const rows = await db.query(query, [req.session.username]); // Store the result in a variable
