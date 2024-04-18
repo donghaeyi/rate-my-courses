@@ -144,7 +144,7 @@ app.post('/login', async (req, res) => {
 // Code Inspired by Lab 6
 app.delete('/deleteReview', async (req, res) => {
   const query = `
-    SELECT r.review, r.overall_rating, c.course_name, r.review_id
+    SELECT r.*, c.*
       FROM reviews r
       JOIN users u ON r.user_id = u.user_id
       JOIN courses c ON r.course_id = c.id
@@ -228,6 +228,12 @@ app.get("/account", async (req, res) => {
       LEFT JOIN votes v ON v.review_id = r.review_id
       WHERE u.username = $1
       GROUP BY r.review_id, c.id;
+      ORDER BY r.year_taken DESC, c.course_id DESC,
+        CASE r.term_taken
+          WHEN 'Fall' THEN 1
+          WHEN 'Summer' THEN 2
+          WHEN 'Spring' THEN 3
+        END;
     `;
 
     const rows = await db.query(query, [req.session.username]); // Store the result in a variable
