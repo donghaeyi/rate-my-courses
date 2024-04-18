@@ -4,17 +4,18 @@
         // Check if the clicked element is a vote button
         if (event.target.classList.contains('vote-button')) {
             const button = event.target;
-            const reviewElement = button.closest('.review');
-            const reviewId = Number(button.getAttribute('review-id'))
-            const baseTotalVote = Number(button.getAttribute('base-vote'))
-            const voteType = button.getAttribute('data-vote');
+            const buttonsInfo = button.parentElement;
+            const reviewId = Number(buttonsInfo.getAttribute('review-id'))
+            const voteState = Number(buttonsInfo.getAttribute('vote-state'))
+            const baseTotalVote = Number(buttonsInfo.getAttribute('total-vote')) - voteState
+            const voteAmount = Number(button.getAttribute('data-vote'));
 
-            let totalVote = Number(baseTotalVote + Number(voteType))
+            const totalVote = baseTotalVote + voteAmount
 
-            const voteDisplay = document.getElementById('total_vote' + reviewId).innerText = `Upvotes: ${totalVote}`
+            document.getElementById(`total_vote${reviewId}`).innerText = `Upvotes: ${totalVote}`
 
             // Make an AJAX request to the server to handle the vote
-            if (voteType == 1 || voteType==-1) {
+            if (voteAmount == 1 || voteAmount == -1) {
                 fetch(`/vote`, {
                     method: 'POST',
                     headers: ['Content-Type', 'application/json'],
@@ -23,7 +24,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ review_id: reviewId, vote_amount: voteType }),
+                    body: JSON.stringify({ review_id: reviewId, vote_amount: voteAmount }),
                 })
             }
             else{

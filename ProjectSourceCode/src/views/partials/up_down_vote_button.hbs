@@ -1,11 +1,6 @@
-<div class="review">
-    <div class="review-content">
-        {{review_text}}
-    </div>
-    <div class="vote-buttons">
-        <button class="vote-button" base-vote={{total_vote}} review-id={{review_id}} data-vote=1>Upvote</button>
-        <button class="vote-button" base-vote={{total_vote}} review-id={{review_id}} data-vote=-1>Downvote</button>
-        <button class="vote-button" base-vote={{total_vote}} review-id={{review_id}} data-vote=0>Remove Vote</button>
-        <p id="total_vote{{review_id}}">Upvotes: {{total_vote}}</p>
-    </div>
+<div class="vote-buttons" total-vote={{total_vote}} review-id={{review_id}} vote-state={{vote_state}}>
+    <button class="vote-button" data-vote=1>Upvote</button>
+    <button class="vote-button" data-vote=-1>Downvote</button>
+    <button class="vote-button" data-vote=0>Remove Vote</button>
+    <p id="total_vote{{review_id}}">Upvotes: {{total_vote}}</p>
 </div>

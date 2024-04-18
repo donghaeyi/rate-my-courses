@@ -221,13 +221,19 @@ app.get("/account", async (req, res) => {
 
     // Fetch the reviews for the logged in user
     const query = `
-      SELECT r.*, c.*, COALESCE(SUM(v.vote_amount), 0) AS total_vote, r.review_id
+      SELECT 
+        r.*, 
+        c.*, 
+        COALESCE(SUM(v.vote_amount), 0) AS total_vote, 
+        COALESCE(vu.vote_amount, 0) AS vote_state,
+        r.review_id
       FROM reviews r
       JOIN users u ON r.user_id = u.user_id
       JOIN courses c ON r.course_id = c.id
       LEFT JOIN votes v ON v.review_id = r.review_id
+      LEFT JOIN votes vu on vu.review_id = r.review_id AND vu.user_id = $2
       WHERE u.username = $1
-      GROUP BY r.review_id, c.id
+      GROUP BY r.review_id, c.id, vu.vote_amount
       ORDER BY r.year_taken DESC, c.course_id DESC,
         CASE r.term_taken
           WHEN 'Fall' THEN 1
@@ -236,7 +242,7 @@ app.get("/account", async (req, res) => {
         END;
     `;
 
-    const rows = await db.query(query, [req.session.username]); // Store the result in a variable
+    const rows = await db.query(query, [req.session.username, req.session.user_id]); // Store the result in a variable
     
     console.log(`Database Rows: ${JSON.stringify(rows, null, 2)}`);
     
@@ -286,7 +292,8 @@ app.get("/course/:code", async (req, res) => {
                                       'difficulty_rating', r.difficulty_rating,
                                       'professor_id', r.professor_id,
                                       'total_vote', v.total_vote,
-                                      'review_id', r.review_id
+                                      'review_id', r.review_id,
+                                      'vote_state', COALESCE(vu.vote_amount, 0)
                                     )) AS reviews
                                   FROM reviews r
                                   JOIN users u ON
@@ -303,12 +310,14 @@ app.get("/course/:code", async (req, res) => {
                                           r1.review_id
                                       ) AS v ON
                                     v.review_id = r.review_id
+                                  LEFT JOIN votes vu ON
+                                    vu.review_id = r.review_id AND vu.user_id = $3
                                   WHERE
                                     r.course_id = courses.id
                                 ),
                                 '[]'::json
                               ) AS reviews
-                            FROM courses WHERE courses.course_tag = $1 AND courses.course_id = $2;`, [req.params.code.slice(0,4), req.params.code.slice(4)])
+                            FROM courses WHERE courses.course_tag = $1 AND courses.course_id = $2;`, [req.params.code.slice(0,4), req.params.code.slice(4), req.session.user_id])
     console.log(data)  
     data.reviews.sort((a,b) => b.total_vote - a.total_vote)                        
     res.render('pages/course', data)
