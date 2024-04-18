@@ -227,7 +227,7 @@ app.get("/account", async (req, res) => {
       JOIN courses c ON r.course_id = c.id
       LEFT JOIN votes v ON v.review_id = r.review_id
       WHERE u.username = $1
-      GROUP BY r.review_id, c.id;
+      GROUP BY r.review_id, c.id
       ORDER BY r.year_taken DESC, c.course_id DESC,
         CASE r.term_taken
           WHEN 'Fall' THEN 1
