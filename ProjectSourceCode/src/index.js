@@ -415,7 +415,6 @@ app.post('/vote', async (req, res) => {
   const review_id = req.body.review_id;
   const vote_amount = req.body.vote_amount;
   if (user_id === undefined) {
-
     res.redirect('/login');
     return;
   }
