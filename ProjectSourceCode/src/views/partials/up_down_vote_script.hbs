@@ -14,7 +14,7 @@
 
             document.getElementById(`total_vote${reviewId}`).innerText = `Upvotes: ${totalVote}`
 
-            // Make an AJAX request to the server to handle the vote
+            // If vote amount is 1 or -1 create/modify a vote
             if (voteAmount == 1 || voteAmount == -1) {
                 fetch(`/vote`, {
                     method: 'POST',
@@ -27,6 +27,7 @@
                     body: JSON.stringify({ review_id: reviewId, vote_amount: voteAmount }),
                 })
             }
+            // If vote amount is 0 delete a vote.
             else{
                 fetch(`/vote`, {
                     method: 'DELETE',
