@@ -426,7 +426,7 @@ app.post('/vote', async (req, res) => {
     return console.log(`vote_amount not found in post request '/vote'. Please make sure vote_amount is defined in request body.`);
   }
   await vote(user_id, review_id, vote_amount, db);
-  return res.status(200);
+  res.status(200);
 })
 
 // API route to delete a vote.
