@@ -26,6 +26,14 @@
                     },
                     body: JSON.stringify({ review_id: reviewId, vote_amount: voteAmount }),
                 })
+                .then(res => {
+                    if (res.redirected) {
+                        window.location.href = res.url;
+                    }
+                })
+                .catch(function(err) {
+                    console.info(err);
+                });
             }
             // If vote amount is 0 delete a vote.
             else{
@@ -39,6 +47,14 @@
                     },
                     body: JSON.stringify({ review_id: reviewId }),
                 })
+                .then(res => {
+                    if (res.redirected) {
+                        window.location.href = res.url;
+                    }
+                })
+                .catch(function(err) {
+                    console.info(err);
+                });
             }
         }
     });
