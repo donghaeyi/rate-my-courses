@@ -41,3 +41,32 @@ Last updated 4/9/2024
 * @DonghaeYi made their first contribution in https://github.com/madisonpj/CSCI3308-Final-Project/pull/43
 
 **Full Changelog**: https://github.com/madisonpj/CSCI3308-Final-Project/compare/v0.0.0...v0.1.0
+
+
+
+v0.2.0
+Last updated 4/17/2024
+- Added a navbar
+- Account page bug fix
+- Added a footer
+- User can now write reviews on a course
+- Added a delete review button
+
+## What's Changed
+* Login fixes by @matt-harp in https://github.com/madisonpj/CSCI3308-Final-Project/pull/46
+* Search redirect by @matt-harp in https://github.com/madisonpj/CSCI3308-Final-Project/pull/44
+* Footer by @origrushka in https://github.com/madisonpj/CSCI3308-Final-Project/pull/48
+* Working Nav bar  by @madisonpj in https://github.com/madisonpj/CSCI3308-Final-Project/pull/47
+* Account page by @DonghaeYi in https://github.com/madisonpj/CSCI3308-Final-Project/pull/49
+* Vote basic by @garthable in https://github.com/madisonpj/CSCI3308-Final-Project/pull/50
+* Fixed a bug and changed the formatting of the account page. by @DonghaeYi in https://github.com/madisonpj/CSCI3308-Final-Project/pull/51
+* Write a review page - issue #11 by @maddiekloud in https://github.com/madisonpj/CSCI3308-Final-Project/pull/41
+* Added sliders to ratings and fixed bug where footer was blocking the submit button by @maddiekloud in https://github.com/madisonpj/CSCI3308-Final-Project/pull/53
+* Delete individual reviews by @madisonpj in https://github.com/madisonpj/CSCI3308-Final-Project/pull/54
+* Added write review button to courses page and some styling for course.hbs by @maddiekloud in https://github.com/madisonpj/CSCI3308-Final-Project/pull/55
+* Changed the order of reviews on the account page by descending year by @DonghaeYi in https://github.com/madisonpj/CSCI3308-Final-Project/pull/56
+
+## New Contributors
+* @origrushka made their first contribution in https://github.com/madisonpj/CSCI3308-Final-Project/pull/48
+
+**Full Changelog**: https://github.com/madisonpj/CSCI3308-Final-Project/compare/v0.1.0...v0.2.0
