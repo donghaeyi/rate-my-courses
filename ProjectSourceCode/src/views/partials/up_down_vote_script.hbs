@@ -17,7 +17,6 @@
             if (voteType == 1 || voteType==-1) {
                 fetch(`/vote`, {
                     method: 'POST',
-                    redirect: 'follow',
                     headers: ['Content-Type', 'application/json'],
                     mode: 'cors',
                     cache: 'default',
@@ -26,16 +25,10 @@
                     },
                     body: JSON.stringify({ review_id: reviewId, vote_amount: voteType }),
                 })
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    }
-                })
             }
             else{
                 fetch(`/vote`, {
                     method: 'DELETE',
-                    redirect: 'follow',
                     headers: ['Content-Type', 'application/json'],
                     mode: 'cors',
                     cache: 'default',
@@ -43,11 +36,6 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ review_id: reviewId }),
-                })
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    }
                 })
             }
         }

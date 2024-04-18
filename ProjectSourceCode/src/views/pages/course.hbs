@@ -1,36 +1,20 @@
-<div class="container border border-dark" style="padding-bottom: 16px">
+<div class="container border border-dark">
     <h1>{{course_tag}} {{course_id}}</h1>
     <h4>{{course_name}}</h4>
-    <h6>{{credit_hours}} credit hours</h6>
-    <p>{{description}}</p>
-    <hr>
-    <a class="btn btn-primary" style="float: right; " href="/review" role="button">Write a review</a>
-    </br>
-</div>
-</br>
-{{#if reviews.length}}
+    <h5>Reviews:</h5>
+
     {{#each reviews}}
-    <div class="container border border-dark">
-            <h5>Review from {{term_taken}} {{year_taken}}:</h5>
-            <table class="table">
-                <tr>
-              <td scope="col">Overall: {{overall_rating}}/10</td>
-              <td scope="col">Homework: {{homework_rating}}/10</td>
-              <td scope="col">Enjoyability: {{enjoyability_rating}}/10</td>
-              <td scope="col">Usefulness: {{usefulness_rating}}/10</td>
-              <td scope="col">Difficulty: {{difficulty_rating}}/10</td>
-                </tr>
-            </table>
-            
+        <div class="container">
+            <h6>Review from {{term_taken}} {{year_taken}}:</h6>
+            <p>Overall: {{overall_rating}}/10</p>
+            <p>Homework: {{homework_rating}}/10</p>
+            <p>Enjoyability: {{enjoyability_rating}}/10</p>
+            <p>Usefulness: {{usefulness_rating}}/10</p>
+            <p>Difficulty: {{difficulty_rating}}/10</p>
             <p>{{review}}</p>
             {{> up_down_vote_button }}
             <p class="text-muted">posted by {{posted_by.username}}</p>
         </div>
-        </br>
     {{/each}}
-{{else}}
-<div class="container">
-      <p>No reviews found.</p>
 </div>
-{{/if}}
 {{> up_down_vote_script }}
