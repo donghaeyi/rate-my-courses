@@ -1,6 +1,6 @@
 <script>
     // Event listener for upvote and downvote buttons
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', async function(event) {
         // Check if the clicked element is a vote button
         if (event.target.classList.contains('vote-button')) {
             const button = event.target;
@@ -16,7 +16,7 @@
 
             // If vote amount is 1 or -1 create/modify a vote
             if (voteAmount == 1 || voteAmount == -1) {
-                fetch(`/vote`, {
+                const response = await fetch(`/vote`, {
                     method: 'POST',
                     headers: ['Content-Type', 'application/json'],
                     mode: 'cors',
@@ -26,18 +26,13 @@
                     },
                     body: JSON.stringify({ review_id: reviewId, vote_amount: voteAmount }),
                 })
-                .then(res => {
-                    if (res.redirected) {
-                        window.location.href = res.url;
-                    }
-                })
-                .catch(function(err) {
-                    console.info(err);
-                });
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
             }
             // If vote amount is 0 delete a vote.
             else{
-                fetch(`/vote`, {
+                const response = await fetch(`/vote`, {
                     method: 'DELETE',
                     headers: ['Content-Type', 'application/json'],
                     mode: 'cors',
@@ -47,14 +42,9 @@
                     },
                     body: JSON.stringify({ review_id: reviewId }),
                 })
-                .then(res => {
-                    if (res.redirected) {
-                        window.location.href = res.url;
-                    }
-                })
-                .catch(function(err) {
-                    console.info(err);
-                });
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
             }
         }
     });

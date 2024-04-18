@@ -436,23 +436,23 @@ app.post('/addReview', async function (req, res) {
 
 // API route to create, or modify a vote.
 // Requests: query parameters, review_id and vote_amount.
-app.post('/vote', async (req, res) => {
+app.post('/vote', (req, res) => {
   const user_id = req.session.user_id;
   const review_id = req.body.review_id;
   const vote_amount = req.body.vote_amount;
   if (user_id === undefined) {
-
-    res.redirect('/login');
-    return;
+    return res.redirect('/login');
   }
   if (review_id === undefined) {
+    res.sendStatus(400);
     return console.log(`review_id not found in post request '/vote'. Please make sure review_id is defined in request body.`);
   }  
   if (vote_amount === undefined) {
+    res.sendStatus(400);
     return console.log(`vote_amount not found in post request '/vote'. Please make sure vote_amount is defined in request body.`);
   }
-  await vote(user_id, review_id, vote_amount, db);
-  return res.status(200);
+  vote(user_id, review_id, vote_amount, db);
+  return res.sendStatus(200);
 })
 
 // API route to delete a vote.
@@ -460,15 +460,15 @@ app.post('/vote', async (req, res) => {
 app.delete('/vote', (req, res) => {
   const user_id = req.session.user_id;
   const review_id = req.body.review_id;
-  console.log("vote")
   if (user_id === undefined) {
     return res.redirect('/login');
   }
   if (review_id === undefined) {
+    res.sendStatus(400);
     return console.log(`review_id not found in delete request '/vote'. Please make sure review_id is defined in request body.`);
   }
   deleteVote(user_id, review_id, db);
-  res.status(200);
+  return res.sendStatus(200);
 }) 
 
 app.get('/test', (req, res) => {
