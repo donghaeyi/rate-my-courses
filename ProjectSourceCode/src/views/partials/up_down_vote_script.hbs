@@ -1,0 +1,51 @@
+<script>
+    // Event listener for upvote and downvote buttons
+    document.addEventListener('click', async function(event) {
+        // Check if the clicked element is a vote button
+        if (event.target.classList.contains('vote-button')) {
+            const button = event.target;
+            const buttonsInfo = button.parentElement;
+            const reviewId = Number(buttonsInfo.getAttribute('review-id'))
+            const voteState = Number(buttonsInfo.getAttribute('vote-state'))
+            const baseTotalVote = Number(buttonsInfo.getAttribute('total-vote')) - voteState
+            const voteAmount = Number(button.getAttribute('data-vote'));
+
+            const totalVote = baseTotalVote + voteAmount
+
+            document.getElementById(`total_vote${reviewId}`).innerText = `Upvotes: ${totalVote}`
+
+            // If vote amount is 1 or -1 create/modify a vote
+            if (voteAmount == 1 || voteAmount == -1) {
+                const response = await fetch(`/vote`, {
+                    method: 'POST',
+                    headers: ['Content-Type', 'application/json'],
+                    mode: 'cors',
+                    cache: 'default',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ review_id: reviewId, vote_amount: voteAmount }),
+                })
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            }
+            // If vote amount is 0 delete a vote.
+            else{
+                const response = await fetch(`/vote`, {
+                    method: 'DELETE',
+                    headers: ['Content-Type', 'application/json'],
+                    mode: 'cors',
+                    cache: 'default',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ review_id: reviewId }),
+                })
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            }
+        }
+    });
+</script>

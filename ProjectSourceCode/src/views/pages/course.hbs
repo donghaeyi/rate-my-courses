@@ -23,6 +23,7 @@
             </table>
             
             <p>{{review}}</p>
+            {{> up_down_vote_button }}
             <p class="text-muted">posted by {{posted_by.username}}</p>
         </div>
         </br>
@@ -32,3 +33,4 @@
       <p>No reviews found.</p>
 </div>
 {{/if}}
+{{> up_down_vote_script }}
