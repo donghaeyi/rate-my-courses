@@ -485,11 +485,6 @@ app.delete('/vote', (req, res) => {
   return res.sendStatus(200);
 }) 
 
-app.get('/test', (req, res) => {
-  const total_vote = 1
-  res.render('pages/test', {total_vote})
-})
-
 module.exports = app.listen(3000);
 console.log("Server is listening on port 3000");
  
