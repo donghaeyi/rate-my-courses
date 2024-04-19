@@ -513,6 +513,63 @@ app.delete('/vote', (req, res) => {
   return res.sendStatus(200);
 }) 
 
+app.post('/reqreviews', async (req, res) => {
+  const sort = req.body.sort
+  if (sort === undefined) {
+    return console.log(`sort not found in get request '/reqreviews'. Please make sure sort is defined in request body.`)
+  }
+  const query = `
+    SELECT 
+      r.*, 
+      c.*, 
+      COALESCE(SUM(v.vote_amount), 0) AS total_vote, 
+      COALESCE(vu.vote_amount, 0) AS vote_state,
+      r.review_id
+    FROM reviews r
+    JOIN users u ON r.user_id = u.user_id
+    JOIN courses c ON r.course_id = c.id
+    LEFT JOIN votes v ON v.review_id = r.review_id
+    LEFT JOIN votes vu on vu.review_id = r.review_id AND vu.user_id = $2
+    WHERE u.username = $1
+    GROUP BY r.review_id, c.id, vu.vote_amount
+    ORDER BY r.year_taken DESC, c.course_id DESC,
+      CASE r.term_taken
+        WHEN 'Fall' THEN 1
+        WHEN 'Summer' THEN 2
+        WHEN 'Spring' THEN 3
+      END;`;
+  let reviews = await db.query(query, [req.session.username, req.session.user_id]);
+  if (sort === 'new') {
+    reviews.sort((a,b) => {
+
+      let aVal = 0
+      let bVal = 0
+
+      function getTermVal(season) {
+        if (season == 'Spring') return 0
+        else if (season == 'Summer') return 1
+        else return 2
+      }
+
+      aVal += getTermVal(a.term_taken)
+      bVal += getTermVal(b.term_taken)
+
+      aVal += a.year_taken*10
+      bVal += b.year_taken*10
+
+      bVal - aVal
+    })
+  }
+  else if (sort === 'top') {
+    reviews.sort((a,b) => b.total_vote - a.total_vote)
+  }
+  else {
+    return console.log(`sort value ${sort} is not defined in get request '/reqreviews'.`)
+  }
+  console.log(JSON.stringify(reviews))
+  return res.status(200).send(JSON.stringify(reviews));
+})
+
 module.exports = app.listen(3000);
 console.log("Server is listening on port 3000");
  
