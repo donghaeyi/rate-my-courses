@@ -10,13 +10,11 @@
 </div>
 
 <script>
-    var event = new Event('change');
-    document.getElementById('sortmode').dispatchEvent(event);
-
-    const startOption = document.getElementById('{{start_selected}}')
-    console.log(startOption)
+    const startOption = document.getElementById('{{start_selected}}') // Finds option element that its supposed to start with
     startOption.setAttribute('selected', 'selected')
 
+    var event = new Event('change');
+    document.getElementById('sortmode').dispatchEvent(event); // Innits sort 
 
     async function getNewResults(value) {
 
@@ -32,15 +30,16 @@
         })
         const reviews = await response.json()
         const parent = document.getElementById('review-container')
-        for(let i = reviews.length-1; i >= 0; i--) {
+
+        for(let i = reviews.length-1; i >= 0; i--) { // Sorts list in reverse to maintain order of sort function
             const review = reviews[i]
             const element = document.getElementById(`review${review.review_id}`)
-            if (element == undefined) {
+            if (element == undefined) { // If review is not displayed skip
                 continue
             }
-            parent.insertBefore(element, parent.firstChild);
+            parent.insertBefore(element, parent.firstChild); // Sets element as first child of review container
         }
-        const sortElement = document.getElementById(`sort`)
-        parent.insertBefore(sortElement, parent.firstChild)
+        const sortElement = document.getElementById(`sort`) 
+        parent.insertBefore(sortElement, parent.firstChild) // Puts sort dropdown back at the top
     }
 </script>
