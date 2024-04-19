@@ -332,7 +332,7 @@ app.get("/course/:code", async (req, res) => {
                                 '[]'::json
                               ) AS reviews
                             FROM courses WHERE courses.course_tag = $1 AND courses.course_id = $2;`, [req.params.code.slice(0,4), req.params.code.slice(4), req.session.user_id])
-    console.log(data)  
+    console.log(data)                     
     data.reviews.sort((a,b) => b.total_vote - a.total_vote)                        
     res.render('pages/course', data)
   }
@@ -501,8 +501,7 @@ app.post('/reqreviews', async (req, res) => {
     JOIN users u ON r.user_id = u.user_id
     JOIN courses c ON r.course_id = c.id
     LEFT JOIN votes v ON v.review_id = r.review_id
-    LEFT JOIN votes vu on vu.review_id = r.review_id AND vu.user_id = $2
-    WHERE u.username = $1
+    LEFT JOIN votes vu on vu.review_id = r.review_id AND vu.user_id = $1
     GROUP BY r.review_id, c.id, vu.vote_amount
     ORDER BY r.year_taken DESC, c.course_id DESC,
       CASE r.term_taken
@@ -510,35 +509,39 @@ app.post('/reqreviews', async (req, res) => {
         WHEN 'Summer' THEN 2
         WHEN 'Spring' THEN 3
       END;`;
-  let reviews = await db.query(query, [req.session.username, req.session.user_id]);
+  let reviews = await db.query(query, [req.session.user_id]);
+  function getTermVal(season) {
+    if (season == 'Spring') return 0
+    else if (season == 'Summer') return 1
+    else return 2
+  }
   if (sort === 'new') {
     reviews.sort((a,b) => {
+      let aVal = getTermVal(a.term_taken) + a.year_taken*10
+      let bVal = getTermVal(b.term_taken) + b.year_taken*10
 
-      let aVal = 0
-      let bVal = 0
+      if (aVal === bVal) return 0;
+      return aVal < bVal ? 1 : -1;
+    })
+  }
+  else if (sort === 'old') {
+    reviews.sort((a,b) => {
+      let aVal = getTermVal(a.term_taken) + a.year_taken*10
+      let bVal = getTermVal(b.term_taken) + b.year_taken*10
 
-      function getTermVal(season) {
-        if (season == 'Spring') return 0
-        else if (season == 'Summer') return 1
-        else return 2
-      }
-
-      aVal += getTermVal(a.term_taken)
-      bVal += getTermVal(b.term_taken)
-
-      aVal += a.year_taken*10
-      bVal += b.year_taken*10
-
-      bVal - aVal
+      if (aVal === bVal) return 0;
+      return aVal < bVal ? -1 : 1;
     })
   }
   else if (sort === 'top') {
     reviews.sort((a,b) => b.total_vote - a.total_vote)
   }
+  else if (sort === 'bottom') {
+    reviews.sort((a,b) => a.total_vote - b.total_vote)
+  }
   else {
     return console.log(`sort value ${sort} is not defined in get request '/reqreviews'.`)
   }
-  console.log(JSON.stringify(reviews))
   return res.status(200).send(JSON.stringify(reviews));
 })
 
