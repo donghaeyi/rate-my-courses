@@ -4,9 +4,10 @@
 
   {{!-- If there are reviews, display reviews --}}
   {{#if reviews.length}}
-    <div class="container">
+    <div id="review-container" class="container">
+      {{> sort }}
       {{#each reviews}}
-        <div class="container border border-dark">
+        <div id="review{{this.review_id}}" class="container border border-dark">
           <h3>{{this.course_tag}} {{this.course_id}}: {{this.course_name}}</h3>
           
           <h5>Review from {{term_taken}} {{year_taken}}:</h5>
