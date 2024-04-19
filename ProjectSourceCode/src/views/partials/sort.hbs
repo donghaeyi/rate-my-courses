@@ -2,16 +2,21 @@
     <label for="sortmode">Sort by:</label>
 
     <select name="sortmode" id="sortmode" onchange="getNewResults(this.options[this.selectedIndex].value)">
-        <option value="Trust">Trustworthy</option>
-        <option value="Year">Year</option>
-        <option value="High">Positive</option>
-        <option value="Low">Negative</option>
+        <option id="Trust" value="Trust">Trust</option>
+        <option id="Year" value="Year">Year</option>
+        <option id="High" value="High">Positive</option>
+        <option id="Low" value="Low">Negative</option>
     </select>
 </div>
 
 <script>
     var event = new Event('change');
     document.getElementById('sortmode').dispatchEvent(event);
+
+    const startOption = document.getElementById('{{start_selected}}')
+    console.log(startOption)
+    startOption.setAttribute('selected', 'selected')
+
 
     async function getNewResults(value) {
 
