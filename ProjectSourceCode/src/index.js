@@ -513,6 +513,9 @@ app.delete('/vote', (req, res) => {
   return res.sendStatus(200);
 }) 
 
+// API route to request reviews.
+// Requests: sort type
+// Sends: reviews sorted in order specified by sort type
 app.post('/reqreviews', async (req, res) => {
   const sort = req.body.sort
   if (sort === undefined) {
@@ -535,22 +538,23 @@ app.post('/reqreviews', async (req, res) => {
     else if (season == 'Summer') return 1
     else return 2
   }
-  if (sort === 'Year') {
+  if (sort === 'Year') { // Sorts by time
     reviews.sort((a,b) => {
-      let aVal = getTermVal(a.term_taken) + a.year_taken*10
+      let aVal = getTermVal(a.term_taken) + a.year_taken*10 // getTermVal either adds a 0 1 or 2
       let bVal = getTermVal(b.term_taken) + b.year_taken*10
 
       if (aVal === bVal) return 0;
-      return aVal < bVal ? 1 : -1;
+      else if (aVal < bVal) return 1;
+      else return -1;
     })
   }
-  else if (sort === 'Trust') {
+  else if (sort === 'Trust') { // Sorts by upvotes
     reviews.sort((a,b) => b.total_vote - a.total_vote)
   }
-  else if (sort === 'High') {
+  else if (sort === 'High') { // Sorts by overall rating 
     reviews.sort((a,b) => b.overall_rating - a.overall_rating)
   }
-  else if (sort === 'Low') {
+  else if (sort === 'Low') { // Sorts by overall rating
     reviews.sort((a,b) => a.overall_rating - b.overall_rating)
   }
   else {
