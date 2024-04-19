@@ -1,4 +1,34 @@
 <script>
+
+    let voteButtons = document.querySelectorAll('[class="vote-button"]')
+
+    voteButtons.forEach((button) => {
+        const parent = button.parentElement
+        const voteState = Number(parent.getAttribute('vote-state'))
+        const voteType = button.getAttribute('vote-type');
+
+        if (voteType === 'upvote') {
+            if (voteState === 1) {
+                button.setAttribute('data-vote', 0);
+                button.textContent = 'Unvote'
+            }
+            else {
+                button.setAttribute('data-vote', 1);
+                button.textContent = 'Upvote'
+            }
+        }
+        else if (voteType === 'downvote') {
+            if (voteState === -1) {
+                button.setAttribute('data-vote', 0);
+                button.textContent = 'Unvote'
+            }
+            else {
+                button.setAttribute('data-vote', -1);
+                button.textContent = 'Downvote'
+            }
+        }
+    })
+
     // Event listener for upvote and downvote buttons
     document.addEventListener('click', async function(event) {
         // Check if the clicked element is a vote button
@@ -12,7 +42,36 @@
 
             const totalVote = baseTotalVote + voteAmount
 
+            
             document.getElementById(`total_vote${reviewId}`).innerText = `Upvotes: ${totalVote}`
+
+            for(buttonC of buttonsInfo.children) {
+                if (buttonC.getAttribute('class') != 'vote-button') {
+                    console.log(buttonC.getAttribute('class'))
+                    continue
+                }
+                const voteType = buttonC.getAttribute('vote-type')
+                if (voteType === 'upvote') {
+                    if (voteAmount === 1) {
+                        buttonC.setAttribute('data-vote', 0);
+                        buttonC.textContent = 'Unvote'
+                    }
+                    else {
+                        buttonC.setAttribute('data-vote', 1);
+                        buttonC.textContent = 'Upvote'
+                    }
+                }
+                else if (voteType === 'downvote') {
+                    if (voteAmount === -1) {
+                        buttonC.setAttribute('data-vote', 0);
+                        buttonC.textContent = 'Unvote'
+                    }
+                    else {
+                        buttonC.setAttribute('data-vote', -1);
+                        buttonC.textContent = 'Downvote'
+                    }
+                }
+            }
 
             // If vote amount is 1 or -1 create/modify a vote
             if (voteAmount == 1 || voteAmount == -1) {
