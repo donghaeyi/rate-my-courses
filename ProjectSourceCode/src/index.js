@@ -520,24 +520,16 @@ app.post('/reqreviews', async (req, res) => {
   }
   const query = `
     SELECT 
-      r.*, 
-      c.*, 
-      COALESCE(SUM(v.vote_amount), 0) AS total_vote, 
-      COALESCE(vu.vote_amount, 0) AS vote_state,
-      r.review_id
+      r.overall_rating,
+      r.term_taken,
+      r.year_taken,
+      r.review_id,
+      COALESCE(SUM(v.vote_amount), 0) AS total_vote
     FROM reviews r
-    JOIN users u ON r.user_id = u.user_id
-    JOIN courses c ON r.course_id = c.id
     LEFT JOIN votes v ON v.review_id = r.review_id
-    LEFT JOIN votes vu on vu.review_id = r.review_id AND vu.user_id = $1
-    GROUP BY r.review_id, c.id, vu.vote_amount
-    ORDER BY r.year_taken DESC, c.course_id DESC,
-      CASE r.term_taken
-        WHEN 'Fall' THEN 1
-        WHEN 'Summer' THEN 2
-        WHEN 'Spring' THEN 3
-      END;`;
-  let reviews = await db.query(query, [req.session.user_id]);
+    GROUP BY r.review_id
+    ORDER BY r.year_taken DESC;`;
+  let reviews = await db.query(query, []);
   function getTermVal(season) {
     if (season == 'Spring') return 0
     else if (season == 'Summer') return 1
