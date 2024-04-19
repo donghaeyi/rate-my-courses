@@ -515,7 +515,7 @@ app.post('/reqreviews', async (req, res) => {
     else if (season == 'Summer') return 1
     else return 2
   }
-  if (sort === 'new') {
+  if (sort === 'Year') {
     reviews.sort((a,b) => {
       let aVal = getTermVal(a.term_taken) + a.year_taken*10
       let bVal = getTermVal(b.term_taken) + b.year_taken*10
@@ -524,20 +524,14 @@ app.post('/reqreviews', async (req, res) => {
       return aVal < bVal ? 1 : -1;
     })
   }
-  else if (sort === 'old') {
-    reviews.sort((a,b) => {
-      let aVal = getTermVal(a.term_taken) + a.year_taken*10
-      let bVal = getTermVal(b.term_taken) + b.year_taken*10
-
-      if (aVal === bVal) return 0;
-      return aVal < bVal ? -1 : 1;
-    })
-  }
-  else if (sort === 'top') {
+  else if (sort === 'Trust') {
     reviews.sort((a,b) => b.total_vote - a.total_vote)
   }
-  else if (sort === 'bottom') {
-    reviews.sort((a,b) => a.total_vote - b.total_vote)
+  else if (sort === 'High') {
+    reviews.sort((a,b) => b.overall_rating - a.overall_rating)
+  }
+  else if (sort === 'Low') {
+    reviews.sort((a,b) => a.overall_rating - b.overall_rating)
   }
   else {
     return console.log(`sort value ${sort} is not defined in get request '/reqreviews'.`)
