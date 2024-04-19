@@ -17,7 +17,7 @@
 </br>
 {{#if reviews.length}}
     <div id="review-container" class="container">
-    {{> sort }}
+    {{> sort start_selected="Trust" }}
     {{#each reviews}}
     <div id="review{{this.review_id}}" class="container border border-dark">
             <h5>Review from {{term_taken}} {{year_taken}}:</h5>
