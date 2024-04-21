@@ -36,6 +36,10 @@ const hbs = handlebars.create({
   helpers: {
     json: function(ctx) {
       return JSON.stringify(ctx)
+    },
+    ifeq: function (a, b, options) {
+      if (a == b) { return options.fn(this); }
+      return options.inverse(this);
     }
   }
 });
@@ -352,6 +356,7 @@ app.get("/course/:code", async (req, res) => {
     res.render('pages/course', data)
   }
   catch(err) {
+    console.log(err)
     if(err.message == 'No data returned from the query.') {
       const id = req.params.code.slice(4)
       const tag = req.params.code.slice(0,4)
@@ -394,18 +399,22 @@ app.get('/review', (req, res) => {
   db.task('get-everything', task => {
     return task.batch([task.any(all_courses), task.any(all_professors)]);
   })
-  .then(results => {
+  .then(async results => {
     res.render('pages/review', {
       courses: results[0], 
       professors: results[1],
       message: "success",
+      isUpdating: req.query.updating ? true : false,
+      existingData: req.query.updating ? await db.one('SELECT * FROM reviews WHERE review_id = $1 LIMIT 1;', [req.query.review_id]) : {}
     });
   })
-  .catch(err => {
+  .catch(async err => {
     res.render('pages/review', {
       courses: [],
       professors: [],
       message: err,
+      isUpdating: req.query.updating ? true : false,
+      existingData: req.query.updating ? await db.one('SELECT * FROM reviews WHERE review_id = $1 LIMIT 1;', [req.query.review_id]) : {}
     });
   });
   
@@ -424,6 +433,10 @@ app.post('/addReview', async function (req, res) {
     const course_id = parseInt(req.body.id);
     const professor_id = parseInt(req.body.professor_id);
     
+    if(req.body._update) {
+      await db.none('DELETE FROM reviews WHERE course_id = $1 AND user_id = $2', [course_id, user_id]);
+      console.log('got rid of an old review first')
+    }
     const review = await db.one(`INSERT INTO reviews (course_id, year_taken, term_taken, user_id, review, overall_rating, professor_id) values ($1, $2, $3, $4, $5, $6, $7) returning review_id;`, 
     [course_id, 
     parseInt(req.body.year), 
