@@ -25,6 +25,11 @@
                   <input type="hidden" id="user_id" name="user_id" value="{{this.user_id}}">
                   <button type="submit" class="btn btn-primary">Delete Review</button>
                 </form>
+                <form method="get" action="/review">
+                  <input type="hidden" name="updating" value="true">
+                  <input type="hidden" name="review_id" value="{{review_id}}">
+                  <button type="submit">Update Review</button>
+                </form>
               </td>
             </tr>
           </table>
