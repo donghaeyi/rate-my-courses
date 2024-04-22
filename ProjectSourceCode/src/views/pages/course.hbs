@@ -4,7 +4,15 @@
     <h6>{{credit_hours}} credit hours</h6>
     <p>{{description}}</p>
     <hr>
-    <a class="btn btn-primary" style="float: right; " href="/review" role="button">Write a review</a>
+
+    <button class="btn btn-primary" style="float: right; " id="reviewButton">Write a review</button>
+    <script>
+        //used chatgpt to help get the url from the course page (needed course id and course tag for review).
+    document.getElementById("reviewButton").onclick = function() {
+        var referringPage = window.location.href;
+        window.location.href = "/review?page=" + encodeURIComponent(referringPage);
+    };
+</script>
     </br>
 </div>
 </br>

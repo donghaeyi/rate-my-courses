@@ -17,28 +17,6 @@ CREATE TABLE IF NOT EXISTS users (
   password CHAR(60) NOT NULL
 );
 
-/* Table to keep track of all of the professors listed on our interface. */
-DROP TABLE IF EXISTS professors;
-CREATE TABLE IF NOT EXISTS professors (
-    professor_id SERIAL PRIMARY KEY NOT NULL,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    department VARCHAR(50), /* department that the professor is currently in */
-    years_teaching SMALLINT /* How many years the professor has been teaching for, could make this more specific to how many years they've taught at CU, how many years they've taught in this department, etc. */
-);
-
-/* table to connect professors to the courses they teach */
-DROP TABLE IF EXISTS courses_to_professors;
-CREATE TABLE IF NOT EXISTS courses_to_professors (
-    course_id INT NOT NULL,
-    professor_id INT NOT NULL,
-    FOREIGN KEY (course_id) REFERENCES courses (id) ON DELETE CASCADE,
-    FOREIGN KEY (professor_id) REFERENCES professors (professor_id) ON DELETE CASCADE
-);
-
-/* For the actual rate my professors side of this interface, we might need a separate reviews table that is specific to rating a professor 
-(would have different metrics like how engaging the professor is, how much the student learned, etc.) */
-
 DROP TABLE IF EXISTS reviews;
 /* I was going to add date posted as an attribute, but we can query the date posted by the id number of the review (later posts will have a higher id number)
  *review, course name, and user id should not be optional. Also made review VARCHAR(8000) so they can write as much as they want*/
@@ -59,17 +37,8 @@ CREATE TABLE reviews (
     homework_rating DECIMAL CHECK (homework_rating between 0 and 10), /* prompt them to indicate how much time they spent outside of the class on assignments */
     enjoyability_rating DECIMAL CHECK (enjoyability_rating between 0 and 10), /* How much the user enjoyed the course, did they find it interesting or boring */
     usefulness_rating DECIMAL CHECK (usefulness_rating between 0 and 10), /* how useful this course is to the user, i.e is the content in this course often used in this industry? does it apply to everday life? is it necessary to take to understand more useful classes later on? */
-    difficulty_rating DECIMAL CHECK (difficulty_rating between 0 and 10), /* generally how difficult they thought this course was */
-    /* grading metrics - grading breakdown of course, what was the student mainly graded on */
-    grade_recieved CHAR(2), /*grades will be in a dropdown menu so only valid selections are choosen */
-    attendance_required BOOLEAN, /* Was attendence required/needed to get a good grade */
-    /* Tag each course review to a professor */
-    professor_id INT NOT NULL, /* not sure how to do this efficently, maybe for each course we could have a dropdown list of professors */
-    FOREIGN KEY (professor_id) REFERENCES professors(professor_id) ON DELETE CASCADE /* Each review should have exactly 1 professor associated with it*/
+    difficulty_rating DECIMAL CHECK (difficulty_rating between 0 and 10) /* generally how difficult they thought this course was */
 );
-
-
-
 
 
 /* table to connect user to up/down votes */

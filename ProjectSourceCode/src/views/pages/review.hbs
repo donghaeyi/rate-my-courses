@@ -2,9 +2,10 @@
 
 <h1 style="text-align: center">Write a new review:</h1> 
 <form method="post" action="/addReview" style="padding-bottom: 50px;">
+<input type="hidden" name="referringPage" value={{referringPage}}> <!--Need to save the redirect route inside the post route (write review form should redirect back to course page on submit)-->
     <div class="form-group col-md-6" style="margin: auto;">
         <label for="course_name" class="form-label">Course Name:</label><br />
-        <select id = "course_name" class="form-control" name="id" required />
+        <select id = "course_name" name = "id" class="form-control"/>
         {{#each courses}}
                 <option value = {{id}}>{{course_name}}</option>
         {{/each}}
@@ -22,14 +23,8 @@
                     <option value="Summer">Summer</option>
                 </select><br/>
             </div>
-            
         </div>
-        <label for="professor" class="form-label">Professor:</label><br/>
-        <select id="professor" class="form-control" name = "professor_id" required/>
-        {{#each professors}} <!--Need to figure out way to display only the professors that teach inputted course and pass the professor id to /addReview -->
-            <option value={{professor_id}}>{{first_name}} {{last_name}}</option>
-        {{/each}}
-        </select><br/>
+        <br/>
         <hr>
         <div><b> Rate this course on a scale from 0 to 10:</b></div></br>
         <!--Referenced stack overflow to figure out how to display the number (value) next to the slider dynamically--> 
@@ -71,46 +66,6 @@
                     <output id="usefulness_amount" name="usefulness_amount" for="useful">0</output>
                 </div>
         </div>
-        
-        <hr>
-        <div><b>Grading breakdown</b></div>
-        <small id="gradingHelpBlock" class="form-text text-muted">
-                    Note that this section is not required. 
-        </small></br>
-        <div class = "form-group row">
-            <label for="grade_recieved" class="col-sm-6 col-form-label">Grade recieved:</label><br />
-            <div class="col sm-6">
-                <select id="grade_recieved" class="form-control" name="grade_recieved">
-                    <option disabled selected value>Choose...</option>
-                    <option value='A'>A</option>
-                    <option value='A-'>A-</option>
-                    <option value='B+'>B+</option>
-                    <option value='B'>B</option>
-                    <option value='B-'>B-</option>
-                    <option value='C+'>C+</option>
-                    <option value='C'>C</option>
-                    <option value='C-'>C-</option>
-                    <option value='D+'>D+</option>
-                    <option value='D'>D</option>
-                    <option value='D-'>D-</option>
-                    <option value='F'>F</option>
-                </select><br/>
-            </div>
-        </div>
-        <div class = "form-group row">
-            <legend class="col-form-label col-sm-6 pt-0">Was attendance mandatory?</legend>
-            <div class = "col sm-6">
-                <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="attendance_required" id="required" value='TRUE'>
-                <label class="form-check-label" for="inlineRadio1">Yes</label>
-                </div>
-                <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="attendance_required" id="not_required" value='FALSE'>
-                <label class="form-check-label" for="inlineRadio2">No</label>
-                </div>
-            </div>
-        </div>
-        </br>
         
         <hr>
         <br/>

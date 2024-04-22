@@ -1,12 +1,10 @@
 //  Import dependencies
 const express = require("express");
-const methodOverride = require('method-override');
 const app = express(); // Create Express app
-const bodyParser = require('body-parser');
 const session = require('express-session');
+const bodyParser = require("body-parser");
 
 const handlebars = require("express-handlebars");
-
 
 const path = require("path");
 
@@ -86,7 +84,6 @@ const auth = (req, res, next) => {
 // Authentication Required
 app.use(auth);
 
-app.use(methodOverride('_method'));
 // Begin routes
 
 // dummy route for testing
@@ -138,43 +135,6 @@ app.post('/login', async (req, res) => {
     res.statusCode = statusCodes.USER_NOT_FOUND;
     res.render('pages/login', {username, errorMsg});
   }
-});
-
-// Route to delete reviews
-// Code Inspired by Lab 6
-app.delete('/deleteReview', async (req, res) => {
-  const query = `
-  SELECT 
-    r.*, 
-    c.*, 
-    COALESCE(SUM(v.vote_amount), 0) AS total_vote, 
-    COALESCE(vu.vote_amount, 0) AS vote_state,
-    r.review_id
-  FROM reviews r
-    JOIN users u ON r.user_id = u.user_id
-    JOIN courses c ON r.course_id = c.id
-    LEFT JOIN votes v ON v.review_id = r.review_id
-    LEFT JOIN votes vu on vu.review_id = r.review_id AND vu.user_id = $2
-  WHERE u.username = $1
-  GROUP BY r.review_id, c.id, vu.vote_amount
-  ORDER BY r.year_taken DESC, c.course_id DESC,
-    CASE r.term_taken
-      WHEN 'Fall' THEN 1
-      WHEN 'Summer' THEN 2
-      WHEN 'Spring' THEN 3
-    END;`;
-  const query2 = `DELETE FROM reviews WHERE review_id = $1;`; //not sending parameters correctly
-  await db.any(query2, [req.body.review_id])
-    .then(async function (data) {
-      const rows = await db.query(query, [req.session.username, req.body.user_id]);
-      res.render('pages/account', {
-        username: req.session.username,
-        reviews: rows
-      });
-      })
-    .catch(function (err) {
-      return console.log(err);
-    });
 });
 
 // Renders register.hbs
@@ -235,28 +195,14 @@ app.get("/account", async (req, res) => {
 
     // Fetch the reviews for the logged in user
     const query = `
-      SELECT 
-        r.*, 
-        c.*, 
-        COALESCE(SUM(v.vote_amount), 0) AS total_vote, 
-        COALESCE(vu.vote_amount, 0) AS vote_state,
-        r.review_id
+      SELECT r.*, c.*
       FROM reviews r
       JOIN users u ON r.user_id = u.user_id
       JOIN courses c ON r.course_id = c.id
-      LEFT JOIN votes v ON v.review_id = r.review_id
-      LEFT JOIN votes vu on vu.review_id = r.review_id AND vu.user_id = $2
-      WHERE u.username = $1
-      GROUP BY r.review_id, c.id, vu.vote_amount
-      ORDER BY r.year_taken DESC, c.course_id DESC,
-        CASE r.term_taken
-          WHEN 'Fall' THEN 1
-          WHEN 'Summer' THEN 2
-          WHEN 'Spring' THEN 3
-        END;
+      WHERE u.username = $1;
     `;
 
-    const rows = await db.query(query, [req.session.username, req.session.user_id]); // Store the result in a variable
+    const rows = await db.query(query, [req.session.username]); // Store the result in a variable
     
     console.log(`Database Rows: ${JSON.stringify(rows, null, 2)}`);
     
@@ -303,38 +249,19 @@ app.get("/course/:code", async (req, res) => {
                                       'homework_rating', r.homework_rating,
                                       'enjoyability_rating', r.enjoyability_rating,
                                       'usefulness_rating', r.usefulness_rating,
-                                      'difficulty_rating', r.difficulty_rating,
-                                      'professor_id', r.professor_id,
-                                      'total_vote', v.total_vote,
-                                      'review_id', r.review_id,
-                                      'vote_state', COALESCE(vu.vote_amount, 0)
+                                      'difficulty_rating', r.difficulty_rating
+                                      
                                     )) AS reviews
                                   FROM reviews r
                                   JOIN users u ON
                                     r.user_id = u.user_id
-                                  JOIN (
-                                        SELECT r1.review_id AS review_id, COALESCE(SUM(v1.vote_amount), 0) AS total_vote
-                                        FROM
-                                          votes v1
-                                          RIGHT JOIN
-                                          reviews r1
-                                          ON
-                                          v1.review_id = r1.review_id
-                                          GROUP BY
-                                          r1.review_id
-                                      ) AS v ON
-                                    v.review_id = r.review_id
-                                  LEFT JOIN votes vu ON
-                                    vu.review_id = r.review_id AND vu.user_id = $3
                                   WHERE
                                     r.course_id = courses.id
                                 ),
                                 '[]'::json
                               ) AS reviews
-                            FROM courses WHERE courses.course_tag = $1 AND courses.course_id = $2;`, [req.params.code.slice(0,4), req.params.code.slice(4), req.session.user_id])
-    console.log(data)  
-    data.reviews.sort((a,b) => b.total_vote - a.total_vote)                        
-    res.render('pages/course', data)
+                            FROM courses WHERE courses.course_tag = $1 AND courses.course_id = $2;`, [req.params.code.slice(0,4), req.params.code.slice(4)])  
+    res.render('pages/course', data);
   }
   catch(err) {
     if(err.message == 'No data returned from the query.') {
@@ -372,24 +299,22 @@ app.get('/review', (req, res) => {
     // Redirect or handle the case where there is no session user, back to login
     return res.redirect("/login");
   }
-
-  //queries to get all courses and professors, we can narrow down this search later (specifically to have the professors listed match the course requested)
-  const all_courses = 'SELECT * FROM courses;';
-  const all_professors = 'SELECT * FROM professors;';
-  db.task('get-everything', task => {
-    return task.batch([task.any(all_courses), task.any(all_professors)]);
-  })
+  const course = req.query.page; //save the page the button was clicked on
+  let course_id = course.substring(course.length - 4); //get course id and course tag from query
+  let course_tag = course.substring(course.length - 4, course.length - 8);
+  //queries to get the course we requested a review for.
+  const all_courses = 'SELECT * FROM courses WHERE course_id = ($1) AND course_tag = ($2);';
+  db.any(all_courses, [course_id, course_tag])
   .then(results => {
     res.render('pages/review', {
-      courses: results[0], 
-      professors: results[1],
+      courses: results, 
+      referringPage: req.query.page,
       message: "success",
     });
   })
   .catch(err => {
     res.render('pages/review', {
       courses: [],
-      professors: [],
       message: err,
     });
   });
@@ -403,20 +328,16 @@ app.post('/addReview', async function (req, res) {
   console.log(req.body);
   console.log(req.session);
   try{
-
     //user won't be able to access the review form if they are not logged in, this route takes care of the submit review action
     const user_id = req.session.user_id;
     const course_id = parseInt(req.body.id);
-    const professor_id = parseInt(req.body.professor_id);
-    
-    const review = await db.one(`INSERT INTO reviews (course_id, year_taken, term_taken, user_id, review, overall_rating, professor_id) values ($1, $2, $3, $4, $5, $6, $7) returning review_id;`, 
+    const review = await db.one(`INSERT INTO reviews (course_id, year_taken, term_taken, user_id, review, overall_rating) values ($1, $2, $3, $4, $5, $6) returning review_id;`, 
     [course_id, 
     parseInt(req.body.year), 
     req.body.term, 
     user_id, 
     req.body.write_review,
     parseInt(req.body.overall),
-    professor_id
     ]);
     const review_id = review.review_id;
     //For the optional fields of the form, individually add these values to this review (there's definetely a better way to do this)
@@ -432,14 +353,10 @@ app.post('/addReview', async function (req, res) {
     if(req.body.useful){
       await db.any('UPDATE reviews SET usefulness_rating = ($1) WHERE review_id = ($2);',[parseInt(req.body.useful), review_id]);
     }
-    if(req.body.grade_recieved){
-      await db.any('UPDATE reviews SET grade_recieved = ($1) WHERE review_id = ($2);',[req.body.grade_recieved, review_id]);
-    }
-    if(req.body.attendance_required){
-      await db.any('UPDATE reviews SET attendance_required = ($1) WHERE review_id = ($2);',[req.body.attendance_required, review_id]);
-    }
     if(review){ //if the new review successfully added to reviews table, redirect to their account page. 
-        res.redirect('/account'); 
+        //let code = await db.any('SELECT course_tag, course_id FROM courses WHERE course_name = ($1)', [req.body.id]);
+        //let redirect = "/course/" + code; 
+        res.redirect(req.body.referringPage); 
     }
   }catch(error){
     console.log(error);
@@ -450,23 +367,23 @@ app.post('/addReview', async function (req, res) {
 
 // API route to create, or modify a vote.
 // Requests: query parameters, review_id and vote_amount.
-app.post('/vote', (req, res) => {
+app.post('/vote', async (req, res) => {
   const user_id = req.session.user_id;
   const review_id = req.body.review_id;
   const vote_amount = req.body.vote_amount;
   if (user_id === undefined) {
-    return res.redirect('/login');
+
+    res.redirect('/login');
+    return;
   }
   if (review_id === undefined) {
-    res.sendStatus(400);
     return console.log(`review_id not found in post request '/vote'. Please make sure review_id is defined in request body.`);
   }  
   if (vote_amount === undefined) {
-    res.sendStatus(400);
     return console.log(`vote_amount not found in post request '/vote'. Please make sure vote_amount is defined in request body.`);
   }
-  vote(user_id, review_id, vote_amount, db);
-  return res.sendStatus(200);
+  await vote(user_id, review_id, vote_amount, db);
+  return res.status(200);
 })
 
 // API route to delete a vote.
@@ -478,11 +395,10 @@ app.delete('/vote', (req, res) => {
     return res.redirect('/login');
   }
   if (review_id === undefined) {
-    res.sendStatus(400);
     return console.log(`review_id not found in delete request '/vote'. Please make sure review_id is defined in request body.`);
   }
   deleteVote(user_id, review_id, db);
-  return res.sendStatus(200);
+  res.status(200);
 }) 
 
 module.exports = app.listen(3000);
