@@ -1,6 +1,11 @@
 <script>
 
-    let voteButtons = document.querySelectorAll('[class="vote-button"]')
+    const downvoteImg = 'http://localhost:3000/images/downvote_gray.png'
+    const downvotedImg = 'http://localhost:3000/images/downvote_red.png'
+    const upvoteImg = 'http://localhost:3000/images/upvote_gray.png'
+    const upvotedImg = 'http://localhost:3000/images/upvote_blue.png'
+
+    let voteButtons = document.querySelectorAll('[vote-button="vote-button"]')
 
     voteButtons.forEach((button) => {
         const parent = button.parentElement
@@ -10,21 +15,21 @@
         if (voteType === 'upvote') {
             if (voteState === 1) {
                 button.setAttribute('data-vote', 0);
-                button.textContent = 'Unvote'
+                button.children[0].setAttribute('src', upvotedImg);
             }
             else {
                 button.setAttribute('data-vote', 1);
-                button.textContent = 'Upvote'
+                button.children[0].setAttribute('src', upvoteImg);
             }
         }
         else if (voteType === 'downvote') {
             if (voteState === -1) {
                 button.setAttribute('data-vote', 0);
-                button.textContent = 'Unvote'
+                button.children[0].setAttribute('src', downvotedImg);
             }
             else {
                 button.setAttribute('data-vote', -1);
-                button.textContent = 'Downvote'
+                button.children[0].setAttribute('src', downvoteImg);
             }
         }
     })
@@ -32,8 +37,11 @@
     // Event listener for upvote and downvote buttons
     document.addEventListener('click', async function(event) {
         // Check if the clicked element is a vote button
-        if (event.target.classList.contains('vote-button')) {
-            const button = event.target;
+        if (event.target.getAttribute('vote-button') == 'vote-button') {
+            let button = event.target;
+            if (button.getAttribute('vote-type') === null) {
+                button = button.parentElement
+            }
             const buttonsInfo = button.parentElement;
             const reviewId = Number(buttonsInfo.getAttribute('review-id'))
             const voteState = Number(buttonsInfo.getAttribute('vote-state'))
@@ -43,32 +51,31 @@
             const totalVote = baseTotalVote + voteAmount
 
             
-            document.getElementById(`total_vote${reviewId}`).innerText = `Upvotes: ${totalVote}`
+            document.getElementById(`total_vote${reviewId}`).innerText = `${totalVote}`
 
             for(buttonC of buttonsInfo.children) {
-                if (buttonC.getAttribute('class') != 'vote-button') {
-                    console.log(buttonC.getAttribute('class'))
+                if (buttonC.getAttribute('vote-button') != 'vote-button') {
                     continue
                 }
                 const voteType = buttonC.getAttribute('vote-type')
                 if (voteType === 'upvote') {
                     if (voteAmount === 1) {
                         buttonC.setAttribute('data-vote', 0);
-                        buttonC.textContent = 'Unvote'
+                        buttonC.children[0].setAttribute('src', upvotedImg);
                     }
                     else {
                         buttonC.setAttribute('data-vote', 1);
-                        buttonC.textContent = 'Upvote'
+                        buttonC.children[0].setAttribute('src', upvoteImg);
                     }
                 }
                 else if (voteType === 'downvote') {
                     if (voteAmount === -1) {
                         buttonC.setAttribute('data-vote', 0);
-                        buttonC.textContent = 'Unvote'
+                        buttonC.children[0].setAttribute('src', downvotedImg);
                     }
                     else {
                         buttonC.setAttribute('data-vote', -1);
-                        buttonC.textContent = 'Downvote'
+                        buttonC.children[0].setAttribute('src', downvoteImg);
                     }
                 }
             }
