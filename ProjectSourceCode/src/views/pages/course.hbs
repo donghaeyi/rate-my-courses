@@ -10,6 +10,9 @@
         table {
             text-align: center;
         }
+        .card{
+            margin-bottom: 16px;
+        }
 </style>
 
 </br>
@@ -44,13 +47,12 @@
 </br>
 {{#if reviews.length}}
     <div id="review-container" class="container">
-    {{> sort start_selected="Trust" }}
+    {{> sort start_selected="Year" }}
     {{#each reviews}}
     </br>
-    <div class="row">
-        <div class="col-sm-6 mx-auto" >
-
-            <div class="card" id="review{{this.review_id}}" >
+    <div class="row" >
+        <div class="col-sm-6 mx-auto">
+            <div class="card" id="review{{this.review_id}}">
                 <div class="card-header" style="background-color:#CFB87C">
                    Review from {{term_taken}} {{year_taken}}:
                 </div>
@@ -88,6 +90,7 @@
             </div>
         </div>
     </div>
+    </br>
     {{/each}}
     
 {{else}}
