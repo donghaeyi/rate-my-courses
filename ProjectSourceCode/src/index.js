@@ -94,20 +94,20 @@ app.use(auth);
 // Prev page tracker middleware
 app.use((req, res, next) => {
   const url = req.url;
-  const notSavedUrls = ['/login', '/register', '/logout', '/search', 'reqreviews']
-  let inNotSaved = false
-  for (let notSavedUrl of notSavedUrls) {
-    if (url === notSavedUrl) {
-      inNotSaved = true
+  const savedUrls = ['/', '/account', '/course', '/review']
+  let inSavedUrls = false
+  for (const savedUrl of savedUrls) {
+    const parsedUrl = url.split('/')
+    if ('/' + parsedUrl[1] === savedUrl) {
+      inSavedUrls = true
+      break;
     }
   }
-  if (inNotSaved || req.method !== 'GET') {
-    console.log(`Invalid Url!: ${url}`)
+  if (!inSavedUrls || req.method !== 'GET') {
     next()
   }
   else {
     req.session.prevUrl = url
-    console.log(`PREVURL: ${req.session.prevUrl}`)
     next()
   }
 })
