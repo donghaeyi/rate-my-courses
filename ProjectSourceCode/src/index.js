@@ -36,6 +36,10 @@ const hbs = handlebars.create({
   helpers: {
     json: function(ctx) {
       return JSON.stringify(ctx)
+    },
+    ifeq: function (a, b, options) {
+      if (a == b) { return options.fn(this); }
+      return options.inverse(this);
     }
   }
 });
@@ -286,8 +290,9 @@ app.get("/search", async (req, res) => {
 app.get("/course/:code", async (req, res) => {
   try {
     // assisted by ChatGPT to learn how to aggregate JSON data into a single query
+    console.log("b")
     let data = await db.one(`SELECT
-                              *, COALESCE(
+                              courses.*, COALESCE(
                                 (
                                   SELECT
                                     json_agg(json_build_object(
@@ -329,13 +334,28 @@ app.get("/course/:code", async (req, res) => {
                                     r.course_id = courses.id
                                 ),
                                 '[]'::json
-                              ) AS reviews
-                            FROM courses WHERE courses.course_tag = $1 AND courses.course_id = $2;`, [req.params.code.slice(0,4), req.params.code.slice(4), req.session.user_id])
-    console.log(data)  
+                              ) AS reviews,
+                              ROUND(COALESCE(AVG(rev.overall_rating), 0), 1) AS average_rating
+                            FROM courses
+                            LEFT JOIN
+                            (SELECT r.course_id AS course_id, r.overall_rating 
+                              FROM reviews r
+                              RIGHT JOIN
+                              courses c
+                              ON r.course_id = c.id
+                              WHERE
+                              c.course_id = $2
+                            ) rev
+                            ON rev.course_id = courses.id
+                            WHERE courses.course_tag = $1 AND courses.course_id = $2
+                            GROUP BY courses.id;`, 
+                            [req.params.code.slice(0,4), req.params.code.slice(4), req.session.user_id])
+    console.log(data)                     
     data.reviews.sort((a,b) => b.total_vote - a.total_vote)                        
     res.render('pages/course', data)
   }
   catch(err) {
+    console.log(err)
     if(err.message == 'No data returned from the query.') {
       const id = req.params.code.slice(4)
       const tag = req.params.code.slice(0,4)
@@ -386,12 +406,16 @@ app.get('/review', (req, res) => {
       message: "success",
       isUpdating: req.query.updating ? true : false,
       existingData: req.query.updating ? await db.one('SELECT * FROM reviews WHERE review_id = $1 LIMIT 1;', [req.query.review_id]) : {}
+      isUpdating: req.query.updating ? true : false,
+      existingData: req.query.updating ? await db.one('SELECT * FROM reviews WHERE review_id = $1 LIMIT 1;', [req.query.review_id]) : {}
     });
   })
-  .catch(err => {
+  .catch(async err => {
     res.render('pages/review', {
       courses: [],
       message: err,
+      isUpdating: req.query.updating ? true : false,
+      existingData: req.query.updating ? await db.one('SELECT * FROM reviews WHERE review_id = $1 LIMIT 1;', [req.query.review_id]) : {}
     });
   });
   
@@ -481,6 +505,56 @@ app.delete('/vote', (req, res) => {
   deleteVote(user_id, review_id, db);
   return res.sendStatus(200);
 }) 
+
+// API route to request reviews.
+// Requests: sort type
+// Sends: reviews sorted in order specified by sort type
+app.post('/reqreviews', async (req, res) => {
+  const sort = req.body.sort
+  if (sort === undefined) {
+    return console.log(`sort not found in get request '/reqreviews'. Please make sure sort is defined in request body.`)
+  }
+  const query = `
+    SELECT 
+      r.overall_rating,
+      r.term_taken,
+      r.year_taken,
+      r.review_id,
+      COALESCE(SUM(v.vote_amount), 0) AS total_vote
+    FROM reviews r
+    LEFT JOIN votes v ON v.review_id = r.review_id
+    GROUP BY r.review_id
+    ORDER BY r.year_taken DESC;`;
+  let reviews = await db.query(query, []);
+  function getTermVal(season) {
+    if (season == 'Spring') return 0
+    else if (season == 'Summer') return 1
+    else return 2
+  }
+  if (sort === 'Year') { // Sorts by time
+    reviews.sort((a,b) => {
+      let aVal = getTermVal(a.term_taken) + a.year_taken*10 // getTermVal either adds a 0 1 or 2
+      let bVal = getTermVal(b.term_taken) + b.year_taken*10
+
+      if (aVal === bVal) return 0;
+      else if (aVal < bVal) return 1;
+      else return -1;
+    })
+  }
+  else if (sort === 'Trust') { // Sorts by upvotes
+    reviews.sort((a,b) => b.total_vote - a.total_vote)
+  }
+  else if (sort === 'High') { // Sorts by overall rating 
+    reviews.sort((a,b) => b.overall_rating - a.overall_rating)
+  }
+  else if (sort === 'Low') { // Sorts by overall rating
+    reviews.sort((a,b) => a.overall_rating - b.overall_rating)
+  }
+  else {
+    return console.log(`sort value ${sort} is not defined in get request '/reqreviews'.`)
+  }
+  return res.status(200).send(JSON.stringify(reviews));
+})
 
 module.exports = app.listen(3000);
 console.log("Server is listening on port 3000");

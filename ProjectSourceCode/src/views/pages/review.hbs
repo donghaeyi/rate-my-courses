@@ -20,14 +20,14 @@
         <div class="row"> <!--Put year taken and term taken side by side (layout choice)-->
             <div class="col">
                 <label for="year_taken" class="form-label">Year taken:</label><br/>
-                <input id = "year_taken" type ="number" min="1900" max="2099" step="1" class="form-control" name = "year" required/><br/>
+                <input value="{{existingData.year_taken}}" id = "year_taken" type ="number" min="1900" max="2099" step="1" class="form-control" name = "year" required/><br/>
             </div>
             <div class = "col">
                 <label for="term_taken" class="form-label">Term taken:</label><br/>
                 <select id="term_taken" class="form-control" name = "term" required/>
-                    <option value="Fall">Fall</option>
-                    <option value="Spring">Spring</option>
-                    <option value="Summer">Summer</option>
+                    <option {{#ifeq existingData.term_taken "Fall"}}selected{{/ifeq}} value="Fall">Fall</option>
+                    <option {{#ifeq existingData.term_taken "Spring"}}selected{{/ifeq}} value="Spring">Spring</option>
+                    <option {{#ifeq existingData.term_taken "Summer"}}selected{{/ifeq}} value="Summer">Summer</option>
                 </select><br/>
             </div>
         </div>
@@ -40,8 +40,8 @@
             <label for="overall" class="col-sm-4 col-form-label pt-0">Overall class rating:</label><br />
             <div class="col-md-3">
                 <!--Rating between 0 and 10, accept decimal values, but only .5 (step)-->
-                <input id = "overall" name = "overall" type ="range" min="0" max="10" step=".5" value = "0" oninput="overall_amount.value=overall.value" /><br/> 
-                <output id="overall_amount" name="overall_amount" for="overall">0</output>
+                <input value="{{existingData.overall_rating}}" id = "overall" name = "overall" type ="range" min="0" max="10" step=".5" value = "0" oninput="overall_amount.value=overall.value" /><br/> 
+                <output id="overall_amount" name="overall_amount" for="overall">{{existingData.overall_rating}}</output>
             </div>
             <small id="ratingHelpBlock" class="form-text text-muted">
                     With a 10 being this is best course ever and a 0 being I would not recommend this course to anyone, please give this class a rating and be sure to explain why you rated the course this way.
@@ -51,13 +51,13 @@
         <div class="form-group row">
             <div class="col md-3">
                 <label for="enjoy" class="form-label">How enjoyable was this class?</label><br />
-                <input id = "enjoy" name = "enjoy" type ="range" min="0" max="10" step=".5" value = "0" oninput="enjoy_amount.value=enjoy.value" /><br/>
-                <output id="enjoy_amount" name="enjoy_amount" for="overall">0</output>
+                <input value="{{existingData.enjoyability_rating}}" id = "enjoy" name = "enjoy" type ="range" min="0" max="10" step=".5" value = "0" oninput="enjoy_amount.value=enjoy.value" /><br/>
+                <output id="enjoy_amount" name="enjoy_amount" for="overall">{{existingData.enjoyability_rating}}</output>
             </div>
             <div class="col md-3">
                 <label for="difficulty" class="form-label">How difficult was the content?</label><br />
-                <input id = "difficulty" name = "difficulty" type ="range" min="0" max="10" step=".5" value = "0" oninput="difficulty_amount.value=difficulty.value"/><br/>
-                <output id="difficulty_amount" name="difficulty_amount" for="homework">0</output>
+                <input value={{existingData.difficulty_rating}} id = "difficulty" name = "difficulty" type ="range" min="0" max="10" step=".5" value = "0" oninput="difficulty_amount.value=difficulty.value"/><br/>
+                <output id="difficulty_amount" name="difficulty_amount" for="homework">{{existingData.difficulty_rating}}</output>
             </div>
                 <!--Need to add captions that say what the scale is based off of (like a 10 being this is best course ever and I would absolutely recommend it, 0 being I would not recommend that anyone takes this course-->
         </div>
@@ -70,15 +70,19 @@
                 </div>          
                 <div class="col md-4">
                     <label for="useful" class="form-label">How useful was this class to you?</label><br />
-                    <input id = "useful" name = "useful" type ="range" min="0" max="10" step=".5" value = "0" oninput="usefulness_amount.value=useful.value" /><br/> 
-                    <output id="usefulness_amount" name="usefulness_amount" for="useful">0</output>
+                    <input value={{existingData.homework_rating}} id = "useful" name = "useful" type ="range" min="0" max="10" step=".5" value = "0" oninput="usefulness_amount.value=useful.value" /><br/> 
+                    <output id="usefulness_amount" name="usefulness_amount" for="useful">{{existingData.homework_rating}}</output>
                 </div>
         </div>
         
         <hr>
         <br/>
         <label for="review" class="form-label">Write your review:</label><br />
-        <textarea class="form-control" id = "review" rows = "3" name = "write_review" required/></textarea><br />
+        <textarea class="form-control" id = "review" rows = "3" name = "write_review" required/>{{existingData.review}}</textarea><br />
+        {{#if isUpdating}}
+        <input type="submit" value = "Update Review" class="btn btn-primary"/> <!--Submit review - goes to addReview POST route-->
+        {{else}}
         <input type="submit" value = "Submit Review" class="btn btn-primary"/> <!--Submit review - goes to addReview POST route-->
+        {{/if}}
     </div>
 </form>

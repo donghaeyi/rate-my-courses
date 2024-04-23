@@ -1,10 +1,12 @@
-<h1>Register</h1>
+<div class="form-group col-md-6" style="margin: auto;">
+<h1 style="text-align: center"><b>Register</b></h1>
 <form method="post" action="/register">
-    <label for="username">Username:</label>
-    <input id="username" type="text" value="{{username}}" name="username" /><br />
-    <label for="password">Password:</label>
-    <input id="password" type="password" value="{{password}}" name="password" /><br />
-    <input type="submit" />
+    <label for="username" class="form-label">Username:</label>
+    <input id="username" type="text" value="{{username}}" name="username" class="form-control"/><br />
+    <label for="password" class="form-label">Password:</label>
+    <input id="password" type="password" value="{{password}}" name="password" class="form-control"/><br />
+    <input type="submit" class="btn btn-primary" value = "Register"/>
 </form>
 {{> loginMessage }}
 <p>Already have an account? <a href="/login">Login</a></p>
+</div>

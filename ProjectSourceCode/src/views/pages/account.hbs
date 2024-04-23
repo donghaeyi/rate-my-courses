@@ -4,9 +4,10 @@
 
   {{!-- If there are reviews, display reviews --}}
   {{#if reviews.length}}
-    <div class="container">
+    <div id="review-container" class="container">
+      {{> sort start_selected="Year"}}
       {{#each reviews}}
-        <div class="container border border-dark">
+        <div id="review{{this.review_id}}" class="container border border-dark">
           <h3>{{this.course_tag}} {{this.course_id}}: {{this.course_name}}</h3>
           
           <h5>Review from {{term_taken}} {{year_taken}}:</h5>
@@ -24,6 +25,11 @@
                   <input type="hidden" id="review_id" name="review_id" value="{{this.review_id}}">
                   <input type="hidden" id="user_id" name="user_id" value="{{this.user_id}}">
                   <button type="submit" class="btn btn-primary">Delete Review</button>
+                </form>
+                <form method="get" action="/review">
+                  <input type="hidden" name="updating" value="true">
+                  <input type="hidden" name="review_id" value="{{review_id}}">
+                  <button type="submit">Update Review</button>
                 </form>
               </td>
             </tr>
