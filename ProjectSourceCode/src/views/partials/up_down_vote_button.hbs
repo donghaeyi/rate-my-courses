@@ -1,10 +1,10 @@
 {{!-- Top of class stores data that is used by buttons. --}}
-<div class='col-xs-3' total-vote={{total_vote}} review-id={{review_id}} vote-state={{vote_state}}>
-    <button class="btn" vote-button="vote-button" vote-type="upvote" data-vote=1>
+<div class='col-xs-3' style="width : 120px;height:50px" total-vote={{total_vote}} review-id={{review_id}} vote-state={{vote_state}}>
+    <button style="float: left;" class="btn" vote-button="vote-button" vote-type="upvote" data-vote=1>
         <img vote-button="vote-button" src = "http://localhost:3000/images/upvote_gray.png" width="25px" height="25px">
     </button>
-    <span id="total_vote{{review_id}}">{{total_vote}}</span>
-    <button class="btn" vote-button="vote-button" vote-type="downvote" data-vote=-1>
+    <span style="position:relative;top: 15%;left:2.5%;width=25px" id="total_vote{{review_id}}">{{total_vote}}</span>
+    <button style="float: right;"  class="btn" vote-button="vote-button" vote-type="downvote" data-vote=-1>
         <img vote-button="vote-button" src = "http://localhost:3000/images/downvote_gray.png" width="25px" height="25px">
     </button>
 </div>
