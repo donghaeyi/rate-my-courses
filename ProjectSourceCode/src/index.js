@@ -94,20 +94,24 @@ app.use(auth);
 // Prev page tracker middleware
 app.use((req, res, next) => {
   const url = req.url;
+  // If the start of url equals anything in this list it will be saved for login to go to.
   const savedUrls = ['/', '/account', '/course', '/review']
   let inSavedUrls = false
   for (const savedUrl of savedUrls) {
-    const parsedUrl = url.split('/')
-    if ('/' + parsedUrl[1] === savedUrl) {
+    const parsedUrlSlash = url.split('/')
+    const parsedUrlQuestion = url.split('?')
+    if ('/' + parsedUrlSlash[1] === savedUrl || parsedUrlQuestion[0] === savedUrl) {
       inSavedUrls = true
       break;
     }
   }
   if (!inSavedUrls || req.method !== 'GET') {
+    console.log(`${url} is not on the list!`)
     next()
   }
   else {
     req.session.prevUrl = url
+    console.log(`${url} IS VALID!`)
     next()
   }
 })
