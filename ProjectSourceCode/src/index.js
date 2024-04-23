@@ -91,14 +91,7 @@ const auth = (req, res, next) => {
 // Authentication Required
 app.use(auth);
 
-app.use(methodOverride('_method'));
-// Begin routes
-
-// dummy route for testing
-app.get('/welcome', (req, res) => {
-  res.json({status: 'success', message: 'Welcome!'});
-});
-
+// Prev page tracker middleware
 app.use((req, res, next) => {
   const url = req.url;
   const notSavedUrls = ['/login', '/register', '/logout', '/search', 'reqreviews']
@@ -119,6 +112,13 @@ app.use((req, res, next) => {
   }
 })
 
+app.use(methodOverride('_method'));
+// Begin routes
+
+// dummy route for testing
+app.get('/welcome', (req, res) => {
+  res.json({status: 'success', message: 'Welcome!'});
+});
 
 // Default route
 app.get("/", (req, res) => {
