@@ -1,4 +1,5 @@
 const statusCodes = require('./statusCodes.js');
+const defaultUrl = '/'
 
 /** 
  * Handles username length, username, and password check for login post and register post.
@@ -51,8 +52,6 @@ async function getUserFromDatabase(username, db) {
     })
 }
 
-g_variablesToBeRetreived = ['username']
-
 /**
  * Logs user in, assigns variables from user to req.session.
  * @param {*} user 
@@ -62,8 +61,9 @@ g_variablesToBeRetreived = ['username']
 function login(user, req, res) {
   req.session.username = user.username
   req.session.user_id = user.user_id
+  const url = req.session.prevUrl || defaultUrl;
   req.session.save((err) => {
-    res.redirect('/');
+    res.redirect(url);
   })
 }
 
