@@ -1,21 +1,18 @@
 <!--Page dedicated to writing a new review, I thought it would be useful to press a button and go to a new page where you just have a form to write a review-->
 
-<h1 style="text-align: center">
+<div class="m-3">
+    <h1 style="text-align: center">
     {{#if isUpdating}}
-    Update your review:
+    Update your review for {{course.course_tag}} {{course.course_id}}
     {{else}}
-    Write a new review:
+    Write a review for {{course.course_tag}} {{course.course_id}}
     {{/if}}
 </h1>
 <form method="post" action="/addReview" style="padding-bottom: 50px;">
     <input type="hidden" name="_update" value="{{isUpdating}}">
     <input type="hidden" name="referringPage" value={{referringPage}}> <!--Need to save the redirect route inside the post route (write review form should redirect back to course page on submit)-->
+    <input type="hidden" name="id" value="{{course.id}}">
     <div class="form-group col-md-6" style="margin: auto;">
-        <label for="course_name" class="form-label">Course Name:</label><br />
-        <select id = "course_name" class="form-control" name="id" />
-        {{#each courses}}
-                <option value = {{id}}>{{course_name}}</option>
-        {{/each}}
         </select><br/> <!--Spacing of input fields with line breaks (can also just change style to do this this)--> 
         <div class="row"> <!--Put year taken and term taken side by side (layout choice)-->
             <div class="col">
@@ -86,3 +83,4 @@
         {{/if}}
     </div>
 </form>
+</div>

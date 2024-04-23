@@ -79,7 +79,7 @@ app.use(function (req, res, next) {
 const auth = (req, res, next) => {
   if (!req.session.username && req.path.startsWith("/account")) {
     // Default to login page.
-    return res.redirect('/login');
+    return res.redirect(`/login?next=${req.path}`);
   }
   if (req.session.username && (req.path.startsWith("/login") || req.path.startsWith("/register"))) {
     // Default to home page if the user is logged in and tries to log in again
@@ -110,7 +110,9 @@ app.get("/", (req, res) => {
 
 // Renders login.hbs
 app.get('/login', (req, res) => {
-  res.render('pages/login');
+  res.render('pages/login', {
+    next: req.query.next
+  });
 });
 
 // API route to verify login info
@@ -237,7 +239,7 @@ app.get("/account", async (req, res) => {
   try {
     if (!req.session.username) {
       // Redirect or handle the case where there is no session user, back to login
-      return res.redirect("/login");
+      return res.redirect("/login?next=/account");
     }
 
     console.log(`Username: ${req.session.username}`);
@@ -382,7 +384,7 @@ app.get("/course/:code", async (req, res) => {
 // Renders login page and destroys user session.
 app.get('/logout', (req, res) => {
   req.session.destroy(() => {
-    res.render('pages/logout');
+    res.redirect('/');
   })
 });
 
@@ -390,47 +392,42 @@ app.get('/logout', (req, res) => {
 // <!-- Review routes -->
 // *****************************************************
 
-//route to render the review form, pass data from tables so user doesn't select options that aren't in the database
-app.get('/review', (req, res) => {
+// route to render the review form, pass data from tables so user doesn't select options that aren't in the database
+app.get('/course/:code/review', async (req, res) => {
   // make sure user is logged in to write a review. 
   if (!req.session.username) {
-    // Redirect or handle the case where there is no session user, back to login
-    return res.redirect("/login");
+    return res.redirect(`/login?next=${req.path}`);
   }
 
-  //queries to get all courses and professors, we can narrow down this search later (specifically to have the professors listed match the course requested)
-  const course = req.query.page; //save the page the button was clicked on
-  let course_id = course.substring(course.length - 4); //get course id and course tag from query
-  let course_tag = course.substring(course.length - 4, course.length - 8);
-  //queries to get the course we requested a review for.
-  const all_courses = 'SELECT * FROM courses WHERE course_id = ($1) AND course_tag = ($2);';
-  db.any(all_courses, [course_id, course_tag])
-  .then(async results => {
-    res.render('pages/review', {
-      courses: results, 
-      referringPage: req.query.page,
-      message: "success",
-      isUpdating: req.query.updating ? true : false,
-      existingData: req.query.updating ? await db.one('SELECT * FROM reviews WHERE review_id = $1 LIMIT 1;', [req.query.review_id]) : {}
-    });
-  })
-  .catch(async err => {
-    res.render('pages/review', {
-      courses: [],
-      message: err,
-      isUpdating: req.query.updating ? true : false,
-      existingData: req.query.updating ? await db.one('SELECT * FROM reviews WHERE review_id = $1 LIMIT 1;', [req.query.review_id]) : {}
-    });
-  });
-  
+  const [course_tag, course_id] = [req.params.code.substring(0, 4), req.params.code.substring(req.params.code.length - 4)]
+  try {
+    const course = await db.one('SELECT * FROM courses WHERE course_id = $1 AND course_tag = $2', [course_id, course_tag]);
+    const existingReview = await db.any('SELECT * FROM reviews WHERE course_id = $1 AND user_id = $2', [course.id, req.session.user_id])
+    if(existingReview.length == 1) {
+      res.render('pages/review', {
+        course,
+        isUpdating: true,
+        existingData: existingReview[0]
+      })
+    }
+    else {
+      res.render('pages/review', {
+        course,
+        isUpdating: false,
+        existingData: {}
+      })
+    }
+  }
+  catch(err) {
+    // probably doesn't exist (manually typed in), redirect home
+    console.log(err)
+    res.redirect('/')
+  }
 });
 
 //Write a new review (adds review to reviews table)
 //assuming that the user can press a button on the nav bar to write a review about a class (or we could have this built into the course page)
 app.post('/addReview', async function (req, res) {
-  //testing request
-  console.log(req.body);
-  console.log(req.session);
   try{
     //user won't be able to access the review form if they are not logged in, this route takes care of the submit review action
     const user_id = req.session.user_id;
@@ -462,10 +459,7 @@ app.post('/addReview', async function (req, res) {
     if(req.body.useful){
       await db.any('UPDATE reviews SET usefulness_rating = ($1) WHERE review_id = ($2);',[parseInt(req.body.useful), review_id]);
     }
-    if(review){ //if the new review successfully added to reviews table, redirect to their account page. 
-      res.redirect(req.body.referringPage); 
-      res.redirect(req.body.referringPage); 
-    }
+    res.redirect('/account')
   }catch(error){
     console.log(error);
     res.status(500).send();
