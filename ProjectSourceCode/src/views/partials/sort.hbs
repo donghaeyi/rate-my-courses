@@ -1,0 +1,62 @@
+<div id="sort">
+    <label style="top: 20px;" for="sortMode">Sort by: </label>
+    <div class="selectWrapper">
+        <select class="selectBox" name="sortmode" id="sortmode" onchange="getNewResults(this.options[this.selectedIndex].value)">
+            <option id="Trust" value="Trust">Trust</option>
+            <option id="Year" value="Year">Year</option>
+            <option id="High" value="High">Positive</option>
+            <option id="Low" value="Low">Negative</option>
+        </select>
+    </div>
+</div>
+
+<script>
+    const startOption = document.getElementById('{{start_selected}}') // Finds option element that its supposed to start with
+    startOption.setAttribute('selected', 'selected')
+
+    var event = new Event('change');
+    document.getElementById('sortmode').dispatchEvent(event); // Innits sort 
+
+    async function getNewResults(value) {
+
+        const response = await fetch(`/reqreviews`, {
+            method: 'POST',
+            headers: ['Content-Type', 'application/json'],
+            mode: 'cors',
+            cache: 'default',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ sort: value }),
+        })
+        const reviews = await response.json()
+        const parent = document.getElementById('review-container')
+
+        for(let i = reviews.length-1; i >= 0; i--) { // Sorts list in reverse to maintain order of sort function
+            const review = reviews[i]
+            const element = document.getElementById(`review${review.review_id}`)
+            if (element == undefined) { // If review is not displayed skip
+                continue
+            }
+            parent.insertBefore(element, parent.firstChild); // Sets element as first child of review container
+        }
+        const sortElement = document.getElementById(`sort`) 
+        parent.insertBefore(sortElement, parent.firstChild) // Puts sort dropdown back at the top
+    }
+</script>
+
+<style>
+    .selectWrapper{
+        border-radius:18px;
+        display:inline-block;
+        overflow:hidden;
+        background:#cccccc;
+        border:1px solid #000000;
+    }
+    .selectBox{
+        width:100px;
+        height:20px;
+        border:1px;
+        outline:none;
+    }
+</style>

@@ -336,7 +336,7 @@ app.get("/course/:code", async (req, res) => {
                                 '[]'::json
                               ) AS reviews
                             FROM courses WHERE courses.course_tag = $1 AND courses.course_id = $2;`, [req.params.code.slice(0,4), req.params.code.slice(4), req.session.user_id])
-    console.log(data)  
+    console.log(data)                     
     data.reviews.sort((a,b) => b.total_vote - a.total_vote)                        
     res.render('pages/course', data)
   }
@@ -497,6 +497,56 @@ app.delete('/vote', (req, res) => {
   deleteVote(user_id, review_id, db);
   return res.sendStatus(200);
 }) 
+
+// API route to request reviews.
+// Requests: sort type
+// Sends: reviews sorted in order specified by sort type
+app.post('/reqreviews', async (req, res) => {
+  const sort = req.body.sort
+  if (sort === undefined) {
+    return console.log(`sort not found in get request '/reqreviews'. Please make sure sort is defined in request body.`)
+  }
+  const query = `
+    SELECT 
+      r.overall_rating,
+      r.term_taken,
+      r.year_taken,
+      r.review_id,
+      COALESCE(SUM(v.vote_amount), 0) AS total_vote
+    FROM reviews r
+    LEFT JOIN votes v ON v.review_id = r.review_id
+    GROUP BY r.review_id
+    ORDER BY r.year_taken DESC;`;
+  let reviews = await db.query(query, []);
+  function getTermVal(season) {
+    if (season == 'Spring') return 0
+    else if (season == 'Summer') return 1
+    else return 2
+  }
+  if (sort === 'Year') { // Sorts by time
+    reviews.sort((a,b) => {
+      let aVal = getTermVal(a.term_taken) + a.year_taken*10 // getTermVal either adds a 0 1 or 2
+      let bVal = getTermVal(b.term_taken) + b.year_taken*10
+
+      if (aVal === bVal) return 0;
+      else if (aVal < bVal) return 1;
+      else return -1;
+    })
+  }
+  else if (sort === 'Trust') { // Sorts by upvotes
+    reviews.sort((a,b) => b.total_vote - a.total_vote)
+  }
+  else if (sort === 'High') { // Sorts by overall rating 
+    reviews.sort((a,b) => b.overall_rating - a.overall_rating)
+  }
+  else if (sort === 'Low') { // Sorts by overall rating
+    reviews.sort((a,b) => a.overall_rating - b.overall_rating)
+  }
+  else {
+    return console.log(`sort value ${sort} is not defined in get request '/reqreviews'.`)
+  }
+  return res.status(200).send(JSON.stringify(reviews));
+})
 
 module.exports = app.listen(3000);
 console.log("Server is listening on port 3000");
