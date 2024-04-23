@@ -1,12 +1,13 @@
 <div id="sort">
-    <label for="sortmode">Sort by:</label>
-
-    <select name="sortmode" id="sortmode" onchange="getNewResults(this.options[this.selectedIndex].value)">
-        <option id="Trust" value="Trust">Trust</option>
-        <option id="Year" value="Year">Year</option>
-        <option id="High" value="High">Positive</option>
-        <option id="Low" value="Low">Negative</option>
-    </select>
+    <label style="top: 20px;" for="sortMode">Sort by: </label>
+    <div class="selectWrapper">
+        <select class="selectBox" name="sortmode" id="sortmode" onchange="getNewResults(this.options[this.selectedIndex].value)">
+            <option id="Trust" value="Trust">Trust</option>
+            <option id="Year" value="Year">Year</option>
+            <option id="High" value="High">Positive</option>
+            <option id="Low" value="Low">Negative</option>
+        </select>
+    </div>
 </div>
 
 <script>
@@ -43,3 +44,19 @@
         parent.insertBefore(sortElement, parent.firstChild) // Puts sort dropdown back at the top
     }
 </script>
+
+<style>
+    .selectWrapper{
+        border-radius:18px;
+        display:inline-block;
+        overflow:hidden;
+        background:#cccccc;
+        border:1px solid #000000;
+    }
+    .selectBox{
+        width:100px;
+        height:20px;
+        border:1px;
+        outline:none;
+    }
+</style>
