@@ -350,8 +350,9 @@ app.get("/course/:code", async (req, res) => {
                             WHERE courses.course_tag = $1 AND courses.course_id = $2
                             GROUP BY courses.id;`, 
                             [req.params.code.slice(0,4), req.params.code.slice(4), req.session.user_id])
-    console.log(data)                     
-    data.reviews.sort((a,b) => b.total_vote - a.total_vote)                        
+    data.reviews.sort((a,b) => b.total_vote - a.total_vote)
+    data.userHasAlreadyReviewed = data.reviews.some(x => x.posted_by.user_id == req.session.user_id)
+    console.log(data)
     res.render('pages/course', data)
   }
   catch(err) {
