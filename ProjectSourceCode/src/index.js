@@ -79,7 +79,7 @@ app.use(function (req, res, next) {
 const auth = (req, res, next) => {
   if (!req.session.username && req.path.startsWith("/account")) {
     // Default to login page.
-    return res.redirect(`/login?next=${req.path}`);
+    return res.redirect('/login');
   }
   if (req.session.username && (req.path.startsWith("/login") || req.path.startsWith("/register"))) {
     // Default to home page if the user is logged in and tries to log in again
@@ -91,6 +91,31 @@ const auth = (req, res, next) => {
 // Authentication Required
 app.use(auth);
 
+// Prev page tracker middleware
+app.use((req, res, next) => {
+  const url = req.url;
+  // If the start of url equals anything in this list it will be saved for login to go to.
+  const savedUrls = ['/', '/account', '/course', '/review']
+  let inSavedUrls = false
+  for (const savedUrl of savedUrls) {
+    const parsedUrlSlash = url.split('/')
+    const parsedUrlQuestion = url.split('?')
+    if ('/' + parsedUrlSlash[1] === savedUrl || parsedUrlQuestion[0] === savedUrl) {
+      inSavedUrls = true
+      break;
+    }
+  }
+  if (!inSavedUrls || req.method !== 'GET') {
+    console.log(`${url} is not on the list!`)
+    next()
+  }
+  else {
+    req.session.prevUrl = url
+    console.log(`${url} IS VALID!`)
+    next()
+  }
+})
+
 app.use(methodOverride('_method'));
 // Begin routes
 
@@ -99,10 +124,6 @@ app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
 
-app.get("/static", (req, res) => { 
-  res.render("static"); 
-}); 
-
 // Default route
 app.get("/", (req, res) => {
   res.render('pages/home')
@@ -110,9 +131,7 @@ app.get("/", (req, res) => {
 
 // Renders login.hbs
 app.get('/login', (req, res) => {
-  res.render('pages/login', {
-    next: req.query.next
-  });
+  res.render('pages/login');
 });
 
 // API route to verify login info
@@ -239,7 +258,7 @@ app.get("/account", async (req, res) => {
   try {
     if (!req.session.username) {
       // Redirect or handle the case where there is no session user, back to login
-      return res.redirect("/login?next=/account");
+      return res.redirect("/login");
     }
 
     console.log(`Username: ${req.session.username}`);
@@ -395,7 +414,7 @@ app.get('/logout', (req, res) => {
 app.get('/course/:code/review', async (req, res) => {
   // make sure user is logged in to write a review. 
   if (!req.session.username) {
-    return res.redirect(`/login?next=${req.path}`);
+    return res.redirect('/login');
   }
 
   const [course_tag, course_id] = [req.params.code.substring(0, 4), req.params.code.substring(req.params.code.length - 4)]
