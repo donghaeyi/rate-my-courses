@@ -406,8 +406,6 @@ app.get('/review', (req, res) => {
       message: "success",
       isUpdating: req.query.updating ? true : false,
       existingData: req.query.updating ? await db.one('SELECT * FROM reviews WHERE review_id = $1 LIMIT 1;', [req.query.review_id]) : {}
-      isUpdating: req.query.updating ? true : false,
-      existingData: req.query.updating ? await db.one('SELECT * FROM reviews WHERE review_id = $1 LIMIT 1;', [req.query.review_id]) : {}
     });
   })
   .catch(async err => {
