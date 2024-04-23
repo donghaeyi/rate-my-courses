@@ -99,10 +99,6 @@ app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
 
-app.get("/static", (req, res) => { 
-  res.render("static"); 
-}); 
-
 app.use((req, res, next) => {
   const url = req.url;
   const notSavedUrls = ['/login', '/register', '/logout', '/search', 'reqreviews']
