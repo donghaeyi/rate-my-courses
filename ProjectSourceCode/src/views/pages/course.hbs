@@ -20,7 +20,7 @@
         //used chatgpt to help get the url from the course page (needed course id and course tag for review).
         document.getElementById("reviewButton").onclick = function() {
         var referringPage = window.location.href;
-        window.location.href = "/review?page=" + encodeURIComponent(referringPage);
+        window.location.href = "/course/{{course_tag}}{{course_id}}/review?page=" + encodeURIComponent(referringPage);
         };
     </script>
         </div>

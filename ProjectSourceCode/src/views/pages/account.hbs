@@ -26,9 +26,7 @@
                   <input type="hidden" id="user_id" name="user_id" value="{{this.user_id}}">
                   <button type="submit" class="btn btn-sm btn-primary" style="padding: 7px 10px; margin: 4px 0; border: none; cursor: pointer; width: 75%;">Delete Review</button>
                 </form>
-                <form method="get" action="/review">
-                  <input type="hidden" name="updating" value="true">
-                  <input type="hidden" name="review_id" value="{{review_id}}">
+                <form method="get" action="/course/{{course_tag}}{{course_id}}/review">
                   <button type="submit" class="btn btn-sm btn-primary" style="padding: 7px 10px; margin: 4px 0; border: none; cursor: pointer; width: 75%;">Update Review</button>
                 </form>
               </td>
