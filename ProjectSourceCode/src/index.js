@@ -371,17 +371,21 @@ app.get('/review', (req, res) => {
     // Redirect or handle the case where there is no session user, back to login
     return res.redirect("/login");
   }
+
+  //queries to get all courses and professors, we can narrow down this search later (specifically to have the professors listed match the course requested)
   const course = req.query.page; //save the page the button was clicked on
   let course_id = course.substring(course.length - 4); //get course id and course tag from query
   let course_tag = course.substring(course.length - 4, course.length - 8);
   //queries to get the course we requested a review for.
   const all_courses = 'SELECT * FROM courses WHERE course_id = ($1) AND course_tag = ($2);';
   db.any(all_courses, [course_id, course_tag])
-  .then(results => {
+  .then(async results => {
     res.render('pages/review', {
       courses: results, 
       referringPage: req.query.page,
       message: "success",
+      isUpdating: req.query.updating ? true : false,
+      existingData: req.query.updating ? await db.one('SELECT * FROM reviews WHERE review_id = $1 LIMIT 1;', [req.query.review_id]) : {}
     });
   })
   .catch(err => {
@@ -403,14 +407,18 @@ app.post('/addReview', async function (req, res) {
     //user won't be able to access the review form if they are not logged in, this route takes care of the submit review action
     const user_id = req.session.user_id;
     const course_id = parseInt(req.body.id);
-
+    
+    if(req.body._update) {
+      await db.none('DELETE FROM reviews WHERE course_id = $1 AND user_id = $2', [course_id, user_id]);
+      console.log('got rid of an old review first')
+    }
     const review = await db.one(`INSERT INTO reviews (course_id, year_taken, term_taken, user_id, review, overall_rating) values ($1, $2, $3, $4, $5, $6) returning review_id;`, 
     [course_id, 
     parseInt(req.body.year), 
     req.body.term, 
     user_id, 
     req.body.write_review,
-    parseInt(req.body.overall),
+    parseInt(req.body.overall)
     ]);
     const review_id = review.review_id;
     //For the optional fields of the form, individually add these values to this review (there's definetely a better way to do this)
@@ -427,6 +435,7 @@ app.post('/addReview', async function (req, res) {
       await db.any('UPDATE reviews SET usefulness_rating = ($1) WHERE review_id = ($2);',[parseInt(req.body.useful), review_id]);
     }
     if(review){ //if the new review successfully added to reviews table, redirect to their account page. 
+      res.redirect(req.body.referringPage); 
       res.redirect(req.body.referringPage); 
     }
   }catch(error){
