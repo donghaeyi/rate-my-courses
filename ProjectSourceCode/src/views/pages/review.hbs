@@ -1,4 +1,47 @@
-<!--Page dedicated to writing a new review, I thought it would be useful to press a button and go to a new page where you just have a form to write a review-->
+<!--CSS sliders from https://www.w3schools.com/howto/howto_js_rangeslider.asp-->
+<style>
+    
+    
+
+    .slidecontainer {
+    width: 100%;
+    }
+
+    .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 15px;
+    border-radius: 6px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    }
+
+    .slider:hover {
+    opacity: 1;
+    }
+
+    .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #CFB87C;
+    cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #CFB87C;
+    cursor: pointer;
+    }
+
+</style>
 
 <h1 style="text-align: center">
     {{#if isUpdating}}
@@ -7,7 +50,8 @@
     Write a new review:
     {{/if}}
 </h1>
-<form method="post" action="/addReview" style="padding-bottom: 50px;">
+</br>
+<form method="post" action="/addReview" style="padding-bottom: 75px;">
     <input type="hidden" name="_update" value="{{isUpdating}}">
     <input type="hidden" name="referringPage" value={{referringPage}}> <!--Need to save the redirect route inside the post route (write review form should redirect back to course page on submit)-->
     <div class="form-group col-md-6" style="margin: auto;">
@@ -31,58 +75,69 @@
                 </select><br/>
             </div>
         </div>
-        <br/>
         
         <hr>
-        <div><b> Rate this course on a scale from 0 to 10:</b></div></br>
-        <!--Referenced stack overflow to figure out how to display the number (value) next to the slider dynamically--> 
-        <div class="form-group row">
-            <label for="overall" class="col-sm-4 col-form-label pt-0">Overall class rating:</label><br />
-            <div class="col-md-3">
-                <!--Rating between 0 and 10, accept decimal values, but only .5 (step)-->
-                <input value="{{existingData.overall_rating}}" id = "overall" name = "overall" type ="range" min="0" max="10" step=".5" value = "0" oninput="overall_amount.value=overall.value" /><br/> 
-                <output id="overall_amount" name="overall_amount" for="overall">{{existingData.overall_rating}}</output>
-            </div>
-            <small id="ratingHelpBlock" class="form-text text-muted">
-                    With a 10 being this is best course ever and a 0 being I would not recommend this course to anyone, please give this class a rating and be sure to explain why you rated the course this way.
-            </small>
-            
-        </div></br>
-        <div class="form-group row">
-            <div class="col md-3">
-                <label for="enjoy" class="form-label">How enjoyable was this class?</label><br />
-                <input value="{{existingData.enjoyability_rating}}" id = "enjoy" name = "enjoy" type ="range" min="0" max="10" step=".5" value = "0" oninput="enjoy_amount.value=enjoy.value" /><br/>
-                <output id="enjoy_amount" name="enjoy_amount" for="overall">{{existingData.enjoyability_rating}}</output>
-            </div>
-            <div class="col md-3">
-                <label for="difficulty" class="form-label">How difficult was the content?</label><br />
-                <input value={{existingData.difficulty_rating}} id = "difficulty" name = "difficulty" type ="range" min="0" max="10" step=".5" value = "0" oninput="difficulty_amount.value=difficulty.value"/><br/>
-                <output id="difficulty_amount" name="difficulty_amount" for="homework">{{existingData.difficulty_rating}}</output>
-            </div>
-                <!--Need to add captions that say what the scale is based off of (like a 10 being this is best course ever and I would absolutely recommend it, 0 being I would not recommend that anyone takes this course-->
-        </div>
-        <div class = "form-group row">
-                
-                <div class="col md-4">
-                    <label for="homework" class="form-label">How difficult was your homework?</label><br />
-                    <input id = "homework" name = "homework" type ="range" min="0" max="10" step=".5" value = "0" oninput="homework_amount.value=homework.value" /><br/> 
-                    <output id="homework_amount" name="homework_amount" for="homework">0</output>
-                </div>          
-                <div class="col md-4">
-                    <label for="useful" class="form-label">How useful was this class to you?</label><br />
-                    <input value={{existingData.homework_rating}} id = "useful" name = "useful" type ="range" min="0" max="10" step=".5" value = "0" oninput="usefulness_amount.value=useful.value" /><br/> 
-                    <output id="usefulness_amount" name="usefulness_amount" for="useful">{{existingData.homework_rating}}</output>
+
+        <!--Referenced w3 to figure out how to display the number (value) next to the slider dynamically-->
+        <!--https://www.w3schools.com/howto/howto_js_rangeslider.asp-->
+        
+        <!--Rating metrics-->
+        <div><b> Rate this course on a scale from 0 to 10:</b></div>
+        <small id="ratingHelpBlock" class="form-text text-muted">
+            With a 0 being worst course ever do not take it to a 10 being it's perfect and a personal favorite, rate this course:
+        </small></br>
+        </br>
+        <div id = "slidecontainer">
+            <div class="form-group row">
+                <label for="overall" class="col-sm-6 pt-0">Overall class rating:</label><br />
+                <div class="col-sm-6">
+                    <!--Rating between 0 and 10, accept decimal values, but only .5 (step)-->
+                    <input value="{{existingData.overall_rating}}" id = "overall" name = "overall" class="slider" type ="range" min="0" max="10" step=".5" value = "0" oninput="overall_amount.value=overall.value" /><br/> 
+                    <center><output id="overall_amount" name="overall_amount" for="overall">{{existingData.overall_rating}}</output></center>
                 </div>
+                
+            </div>
+            </br>
+            <div class="form-group row">
+                <label for="difficulty" class="col-sm-6 col-form-label pt-0">How difficult was the class content?</label>
+                <div class="col sm-6">
+                    <input value={{existingData.difficulty_rating}} id = "difficulty" name = "difficulty" class="slider" type ="range" min="0" max="10" step=".5" value = "0" oninput="difficulty_amount.value=difficulty.value"/><br/>
+                    <center><output id="difficulty_amount" name="difficulty_amount" for="homework">{{existingData.difficulty_rating}}</output></center>
+                </div>
+            </div>
+            </br>
+            <div class = "form-group row">
+                    <label for="homework" class="col-sm-6 col-form-label pt-0">How difficult was your homework/workload?</label>
+                    <div class="col sm-6">
+                        <input value={{existingData.homework_rating}} id = "homework" name = "homework" class="slider" type ="range" min="0" max="10" step=".5" value = "0" oninput="homework_amount.value=homework.value" /><br/> 
+                        <center><output id="homework_amount" name="homework_amount" for="homework">{{existingData.homework_rating}}</output></center>
+                    </div> 
+            </div> 
+            </br>
+            <div class = "form-group row">
+                 <label for="useful" class="col-sm-6 col-form-label pt-0">How useful was this class to you?</label>    
+                    <div class="col sm-6">
+                        <input value={{existingData.usefulness_rating}} id = "useful" name = "useful" class="slider" type ="range" min="0" max="10" step=".5" value = "0" oninput="usefulness_amount.value=useful.value" /><br/> 
+                        <center><output id="usefulness_amount" name="usefulness_amount" for="useful">{{existingData.usefulness_rating}}</output></center>
+                    </div>
+            </div>
+            </br>
+            <div class="form-group row">
+                <label for="enjoy" class="col-sm-6 pt-0">How enjoyable was this class to you?</label><br />
+                <div class="col-sm-6">
+                    <input value="{{existingData.enjoyability_rating}}" id = "enjoy"  name = "enjoy"  class="slider" type ="range" min="0" max="10" step=".5" value = "0" oninput="enjoy_amount.value=enjoy.value" /><br/>
+                    <center><output id="enjoy_amount" name="enjoy_amount" for="overall">{{existingData.enjoyability_rating}}</output></center>
+                </div>
+            </div>
         </div>
-        
         <hr>
-        <br/>
-        <label for="review" class="form-label">Write your review:</label><br />
+       <b> <label for="review" class="form-label">Write your review:</label></b><br />
         <textarea class="form-control" id = "review" rows = "3" name = "write_review" required/>{{existingData.review}}</textarea><br />
+        <div class = "form-group row">
         {{#if isUpdating}}
-        <input type="submit" value = "Update Review" class="btn btn-primary"/> <!--Submit review - goes to addReview POST route-->
+        <input type="submit" value = "Update Review" class="btn btn-dark"/> <!--Submit review - goes to addReview POST route-->
         {{else}}
-        <input type="submit" value = "Submit Review" class="btn btn-primary"/> <!--Submit review - goes to addReview POST route-->
+        <input type="submit" value = "Submit Review" class="btn btn-dark"/> <!--Submit review - goes to addReview POST route-->
         {{/if}}
     </div>
 </form>
