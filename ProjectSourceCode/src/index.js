@@ -103,6 +103,27 @@ app.get("/static", (req, res) => {
   res.render("static"); 
 }); 
 
+app.use((req, res, next) => {
+  const url = req.url;
+  const notSavedUrls = ['/login', '/register', '/logout', '/search', 'reqreviews']
+  let inNotSaved = false
+  for (let notSavedUrl of notSavedUrls) {
+    if (url === notSavedUrl) {
+      inNotSaved = true
+    }
+  }
+  if (inNotSaved || req.method !== 'GET') {
+    console.log(`Invalid Url!: ${url}`)
+    next()
+  }
+  else {
+    req.session.prevUrl = url
+    console.log(`PREVURL: ${req.session.prevUrl}`)
+    next()
+  }
+})
+
+
 // Default route
 app.get("/", (req, res) => {
   res.render('pages/home')
