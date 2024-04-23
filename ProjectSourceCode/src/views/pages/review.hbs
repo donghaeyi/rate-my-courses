@@ -7,11 +7,12 @@
     Write a new review:
     {{/if}}
 </h1>
-<form method="post" action="/addReview">
+<form method="post" action="/addReview" style="padding-bottom: 50px;">
     <input type="hidden" name="_update" value="{{isUpdating}}">
+    <input type="hidden" name="referringPage" value={{referringPage}}> <!--Need to save the redirect route inside the post route (write review form should redirect back to course page on submit)-->
     <div class="form-group col-md-6" style="margin: auto;">
         <label for="course_name" class="form-label">Course Name:</label><br />
-        <select id = "course_name" class="form-control" name="id" required />
+        <select id = "course_name" class="form-control" name="id" />
         {{#each courses}}
                 <option value = {{id}}>{{course_name}}</option>
         {{/each}}
@@ -29,14 +30,9 @@
                     <option {{#ifeq existingData.term_taken "Summer"}}selected{{/ifeq}} value="Summer">Summer</option>
                 </select><br/>
             </div>
-            
         </div>
-        <label for="professor" class="form-label">Professor:</label><br/>
-        <select value="{{existingData.professor_id}}" id="professor" class="form-control" name = "professor_id" required/>
-        {{#each professors}} <!--Need to figure out way to display only the professors that teach inputted course and pass the professor id to /addReview -->
-            <option value={{professor_id}}>{{first_name}} {{last_name}}</option>
-        {{/each}}
-        </select><br/>
+        <br/>
+        
         <hr>
         <div><b> Rate this course on a scale from 0 to 10:</b></div></br>
         <!--Referenced stack overflow to figure out how to display the number (value) next to the slider dynamically--> 
@@ -78,46 +74,6 @@
                     <output id="usefulness_amount" name="usefulness_amount" for="useful">{{existingData.homework_rating}}</output>
                 </div>
         </div>
-        
-        <hr>
-        <div><b>Grading breakdown</b></div>
-        <small id="gradingHelpBlock" class="form-text text-muted">
-                    Note that this section is not required. 
-        </small></br>
-        <div class = "form-group row">
-            <label for="grade_recieved" class="col-sm-6 col-form-label">Grade recieved:</label><br />
-            <div class="col sm-6">
-                <select id="grade_recieved" class="form-control" name="grade_recieved">
-                    <option disabled selected value>Choose...</option>
-                    <option {{#ifeq existingData.grade_recieved "A"}}selected{{/ifeq}} value='A'>A</option>
-                    <option {{#ifeq existingData.grade_recieved "A-"}}selected{{/ifeq}} value='A-'>A-</option>
-                    <option {{#ifeq existingData.grade_recieved "B+"}}selected{{/ifeq}} value='B+'>B+</option>
-                    <option {{#ifeq existingData.grade_recieved "B"}}selected{{/ifeq}} value='B'>B</option>
-                    <option {{#ifeq existingData.grade_recieved "B-"}}selected{{/ifeq}} value='B-'>B-</option>
-                    <option {{#ifeq existingData.grade_recieved "C+"}}selected{{/ifeq}} value='C+'>C+</option>
-                    <option {{#ifeq existingData.grade_recieved "C"}}selected{{/ifeq}} value='C'>C</option>
-                    <option {{#ifeq existingData.grade_recieved "C-"}}selected{{/ifeq}} value='C-'>C-</option>
-                    <option {{#ifeq existingData.grade_recieved "D+"}}selected{{/ifeq}} value='D+'>D+</option>
-                    <option {{#ifeq existingData.grade_recieved "D"}}selected{{/ifeq}} value='D'>D</option>
-                    <option {{#ifeq existingData.grade_recieved "D-"}}selected{{/ifeq}} value='D-'>D-</option>
-                    <option {{#ifeq existingData.grade_recieved "F"}}selected{{/ifeq}} value='F'>F</option>
-                </select><br/>
-            </div>
-        </div>
-        <div class = "form-group row">
-            <legend class="col-form-label col-sm-6 pt-0">Was attendance mandatory?</legend>
-            <div class = "col sm-6">
-                <div class="form-check form-check-inline">
-                <input {{#ifeq existingData.attendance_required true}}checked{{/ifeq}} class="form-check-input" type="radio" name="attendance_required" id="required" value='TRUE'>
-                <label class="form-check-label" for="inlineRadio1">Yes</label>
-                </div>
-                <div class="form-check form-check-inline">
-                <input {{#ifeq existingData.attendance_required false}}checked{{/ifeq}} class="form-check-input" type="radio" name="attendance_required" id="not_required" value='FALSE'>
-                <label class="form-check-label" for="inlineRadio2">No</label>
-                </div>
-            </div>
-        </div>
-        </br>
         
         <hr>
         <br/>

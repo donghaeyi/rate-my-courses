@@ -9,7 +9,20 @@
             <h5>Average Rating: <b> {{average_rating}} </b></h5>
         </div>
         <div class="col md-6">
-        <button class="btn btn-primary" style="float: right; " id="reviewButton">Write a review</button>
+    <button class="btn btn-primary" style="float: right; " id="reviewButton">
+        {{#unless userHasAlreadyReviewed}}
+        Write a review
+        {{else}}
+        Update your review
+        {{/unless}}
+    </button>
+    <script>
+        //used chatgpt to help get the url from the course page (needed course id and course tag for review).
+        document.getElementById("reviewButton").onclick = function() {
+        var referringPage = window.location.href;
+        window.location.href = "/review?page=" + encodeURIComponent(referringPage);
+        };
+    </script>
         </div>
     </div>
     </br>
@@ -19,7 +32,8 @@
     <div id="review-container" class="container">
     {{> sort start_selected="Trust" }}
     {{#each reviews}}
-    <div id="review{{this.review_id}}" class="container border border-dark">
+    </br>
+    <div id="review{{this.review_id}}" class="container border border-dark" >
             <h5>Review from {{term_taken}} {{year_taken}}:</h5>
             <table class="table">
                 <tr>
@@ -30,7 +44,6 @@
               <td scope="col">Difficulty: {{difficulty_rating}}/10</td>
                 </tr>
             </table>
-            
             <p>{{review}}</p>
             {{> up_down_vote_button }}
             <p class="text-muted">posted by {{posted_by.username}}</p>
