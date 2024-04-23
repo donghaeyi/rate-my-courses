@@ -318,7 +318,6 @@ app.get("/search", async (req, res) => {
 app.get("/course/:code", async (req, res) => {
   try {
     // assisted by ChatGPT to learn how to aggregate JSON data into a single query
-    console.log("b")
     let data = await db.one(`SELECT
                               courses.*, COALESCE(
                                 (
