@@ -290,8 +290,9 @@ app.get("/search", async (req, res) => {
 app.get("/course/:code", async (req, res) => {
   try {
     // assisted by ChatGPT to learn how to aggregate JSON data into a single query
+    console.log("b")
     let data = await db.one(`SELECT
-                              *, COALESCE(
+                              courses.*, COALESCE(
                                 (
                                   SELECT
                                     json_agg(json_build_object(
@@ -334,8 +335,22 @@ app.get("/course/:code", async (req, res) => {
                                     r.course_id = courses.id
                                 ),
                                 '[]'::json
-                              ) AS reviews
-                            FROM courses WHERE courses.course_tag = $1 AND courses.course_id = $2;`, [req.params.code.slice(0,4), req.params.code.slice(4), req.session.user_id])
+                              ) AS reviews,
+                              ROUND(COALESCE(AVG(rev.overall_rating), 0), 1) AS average_rating
+                            FROM courses
+                            LEFT JOIN
+                            (SELECT r.course_id AS course_id, r.overall_rating 
+                              FROM reviews r
+                              RIGHT JOIN
+                              courses c
+                              ON r.course_id = c.id
+                              WHERE
+                              c.course_id = $2
+                            ) rev
+                            ON rev.course_id = courses.id
+                            WHERE courses.course_tag = $1 AND courses.course_id = $2
+                            GROUP BY courses.id;`, 
+                            [req.params.code.slice(0,4), req.params.code.slice(4), req.session.user_id])
     console.log(data)                     
     data.reviews.sort((a,b) => b.total_vote - a.total_vote)                        
     res.render('pages/course', data)

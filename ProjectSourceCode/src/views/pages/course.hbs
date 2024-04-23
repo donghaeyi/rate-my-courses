@@ -4,7 +4,14 @@
     <h6>{{credit_hours}} credit hours</h6>
     <p>{{description}}</p>
     <hr>
-    <a class="btn btn-primary" style="float: right; " href="/review" role="button">Write a review</a>
+    <div class="row">
+        <div class="col md-6 pt-1" style="float: left;">
+            <h5>Average Rating: <b> {{average_rating}} </b></h5>
+        </div>
+        <div class="col md-6">
+        <button class="btn btn-primary" style="float: right; " id="reviewButton">Write a review</button>
+        </div>
+    </div>
     </br>
 </div>
 </br>
