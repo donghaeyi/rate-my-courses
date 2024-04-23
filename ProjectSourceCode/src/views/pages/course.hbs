@@ -9,20 +9,13 @@
             <h5>Average Rating: <b> {{average_rating}} </b></h5>
         </div>
         <div class="col md-6">
-    <button class="btn btn-primary" style="float: right; " id="reviewButton">
+    <a class="btn btn-primary" style="float: right;" href="/course/{{course_tag}}{{course_id}}/review">
         {{#unless userHasAlreadyReviewed}}
         Write a review
         {{else}}
         Update your review
         {{/unless}}
-    </button>
-    <script>
-        //used chatgpt to help get the url from the course page (needed course id and course tag for review).
-        document.getElementById("reviewButton").onclick = function() {
-        var referringPage = window.location.href;
-        window.location.href = "/review?page=" + encodeURIComponent(referringPage);
-        };
-    </script>
+    </a>
         </div>
     </div>
     </br>

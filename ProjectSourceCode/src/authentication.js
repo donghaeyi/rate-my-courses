@@ -63,7 +63,12 @@ function login(user, req, res) {
   req.session.username = user.username
   req.session.user_id = user.user_id
   req.session.save((err) => {
-    res.redirect('/');
+    if(req.query.next) {
+      res.redirect(req.query.next)
+    }
+    else {
+      res.redirect('/');
+    }
   })
 }
 
