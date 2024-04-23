@@ -48,6 +48,7 @@ app.engine("hbs", hbs.engine);
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
 app.use(bodyParser.json());
+app.use(express.static("public"))
 
 app.use(
   session({
@@ -97,6 +98,10 @@ app.use(methodOverride('_method'));
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
+
+app.get("/static", (req, res) => { 
+  res.render("static"); 
+}); 
 
 // Default route
 app.get("/", (req, res) => {
