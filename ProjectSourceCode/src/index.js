@@ -91,6 +91,8 @@ const auth = (req, res, next) => {
 // Authentication Required
 app.use(auth);
 
+app.use(methodOverride('_method'));
+
 // Prev page tracker middleware
 app.use((req, res, next) => {
   const url = req.url;
@@ -116,7 +118,6 @@ app.use((req, res, next) => {
   }
 })
 
-app.use(methodOverride('_method'));
 // Begin routes
 
 // dummy route for testing
@@ -172,7 +173,7 @@ app.post('/login', async (req, res) => {
 
 // Route to delete reviews
 // Code Inspired by Lab 6
-app.delete('/deleteReview', async (req, res) => {
+app.post('/deleteReview', async (req, res) => {
   const query = `
   SELECT 
     r.*, 
