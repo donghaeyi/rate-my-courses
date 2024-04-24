@@ -187,13 +187,7 @@ app.post('/deleteReview', async (req, res) => {
     LEFT JOIN votes v ON v.review_id = r.review_id
     LEFT JOIN votes vu on vu.review_id = r.review_id AND vu.user_id = $2
   WHERE u.username = $1
-  GROUP BY r.review_id, c.id, vu.vote_amount
-  ORDER BY r.year_taken DESC, c.course_id DESC,
-    CASE r.term_taken
-      WHEN 'Fall' THEN 1
-      WHEN 'Summer' THEN 2
-      WHEN 'Spring' THEN 3
-    END;`;
+  GROUP BY r.review_id, c.id, vu.vote_amount;`;
   const query2 = `DELETE FROM reviews WHERE review_id = $1;`; //not sending parameters correctly
   await db.any(query2, [req.body.review_id])
     .then(async function (data) {
@@ -278,13 +272,7 @@ app.get("/account", async (req, res) => {
       LEFT JOIN votes v ON v.review_id = r.review_id
       LEFT JOIN votes vu on vu.review_id = r.review_id AND vu.user_id = $2
       WHERE u.username = $1
-      GROUP BY r.review_id, c.id, vu.vote_amount
-      ORDER BY r.year_taken DESC, c.course_id DESC,
-        CASE r.term_taken
-          WHEN 'Fall' THEN 1
-          WHEN 'Summer' THEN 2
-          WHEN 'Spring' THEN 3
-        END;
+      GROUP BY r.review_id, c.id, vu.vote_amount;
     `;
 
     const rows = await db.query(query, [req.session.username, req.session.user_id]); // Store the result in a variable
