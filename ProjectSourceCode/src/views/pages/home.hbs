@@ -1,4 +1,12 @@
-<div class="d-flex flex-grow-1 flex-column justify-content-center align-items-center">
+<style>
+#home {
+  background-image: url('http://localhost:3000/images/game.jpeg');
+  background-color: rgba(255,255,255,0.6);
+  background-blend-mode: lighten;
+  background-size: 100% 100%;
+}
+</style>
+<div id = "home" class="d-flex flex-grow-1 flex-column justify-content-center align-items-center">
     <h1 class="display-4">Rate My Courses</h1>
     <div class="container w-50">
         {{> searchbox }}

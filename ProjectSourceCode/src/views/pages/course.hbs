@@ -1,4 +1,22 @@
-<div class="container border border-dark" style="padding-bottom: 16px">
+<style>
+        table,
+        th{
+            border-bottom:0;
+        },
+        td {
+            padding: 20px;
+        }
+ 
+        table {
+            text-align: center;
+        }
+        .card{
+            margin-bottom: 16px;
+        }
+</style>
+
+</br>
+<div class="container border border-dark" style="padding-bottom: 16px; padding-top: 16px;">
     <h1>{{course_tag}} {{course_id}}</h1>
     <h4>{{course_name}}</h4>
     <h6>{{credit_hours}} credit hours</h6>
@@ -18,7 +36,6 @@
     </a>
         </div>
     </div>
-    </br>
 </div>
 </br>
 {{#if reviews.length}}
@@ -26,24 +43,49 @@
     {{> sort start_selected="Trust" }}
     {{#each reviews}}
     </br>
-    <div id="review{{this.review_id}}" class="container border border-dark" >
-            <h5>Review from {{term_taken}} {{year_taken}}:</h5>
-            <table class="table">
-                <tr>
-              <td scope="col">Overall: {{overall_rating}}/10</td>
-              <td scope="col">Homework: {{homework_rating}}/10</td>
-              <td scope="col">Enjoyability: {{enjoyability_rating}}/10</td>
-              <td scope="col">Usefulness: {{usefulness_rating}}/10</td>
-              <td scope="col">Difficulty: {{difficulty_rating}}/10</td>
-                </tr>
-            </table>
-            <p>{{review}}</p>
-            {{> up_down_vote_button }}
-            <p class="text-muted">posted by {{posted_by.username}}</p>
+    <div class="row" >
+        <div class="col-sm-6 mx-auto">
+            <div class="card" id="review{{this.review_id}}">
+                <div class="card-header" style="background-color:#CFB87C">
+                   Review from {{term_taken}} {{year_taken}}:
+                </div>
+                <div class="card-body">
+                    <div class="row flex-nowrap">
+                        <div class="col-sm-auto " style="margin: auto;">
+
+                            {{> up_down_vote_button }}
+                        </div>
+                        <div class="col-sm">
+                            <table class="table">
+                                <tr>
+                                    <th scope="col">Overall:</th>
+                                    <th scope="col">Homework:</th>
+                                    <th scope="col">Enjoyability:</th>
+                                    <th scope="col">Usefulness:</th>
+                                    <th scope="col">Difficulty:</th>
+                                </tr>
+                                <tr>
+                                    <td scope="col">{{overall_rating}}/10</td>
+                                    <td scope="col">{{homework_rating}}/10</td>
+                                    <td scope="col">{{enjoyability_rating}}/10</td>
+                                    <td scope="col">{{usefulness_rating}}/10</td>
+                                    <td scope="col">{{difficulty_rating}}/10</td>
+                                </tr>
+                            </table>
+                            </br>
+                            <p>{{review}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-muted" style="background-color:#CFB87C">
+                    Posted by {{posted_by.username}}
+                </div>
+            </div>
         </div>
-        </br>
-    {{/each}}
     </div>
+    </br>
+    {{/each}}
+    
 {{else}}
 <div class="container">
       <p>No reviews found.</p>
