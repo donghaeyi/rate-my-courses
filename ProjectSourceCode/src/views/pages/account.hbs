@@ -24,7 +24,11 @@
             </table>
             <p>{{review}}</p>
             <a class="btn btn-dark" href="/course/{{course_tag}}{{course_id}}">Visit Course</a>
-            <a class="btn btn-danger" href="/deleteReview?_method=DELETE&review_id={{review_id}}&user_id={{user_id}}">Delete Review</a>
+            <form style="display: inline;" action="/deleteReview" method="POST">
+              <input type="hidden" name="review_id" value="{{review_id}}">
+              <input type="hidden" name="user_id" value="{{user_id}}">
+              <button class="btn btn-danger" type="submit">Delete Review</button>
+            </form>
             <a class="btn btn-primary" href="/course/{{course_tag}}{{course_id}}/review">Update Review</a>
           </div>
         </div>
