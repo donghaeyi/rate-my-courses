@@ -73,7 +73,7 @@ Last updated 4/17/2024
 
 
 
-v0.3.0 (Final Submission)
+v1.0.0 (Final Submission)
 Last updated 4/24/2024
 - Made the overall application prettier
 - User is now able to update their review
@@ -103,6 +103,5 @@ Last updated 4/24/2024
 * added color to navbar by @madisonpj in https://github.com/madisonpj/CSCI3308-Final-Project/pull/77
 * Added sample data by @DonghaeYi in https://github.com/madisonpj/CSCI3308-Final-Project/pull/78
 * Styling reviews on course page by @maddiekloud in https://github.com/madisonpj/CSCI3308-Final-Project/pull/76
-
 
 **Full Changelog**: https://github.com/madisonpj/CSCI3308-Final-Project/compare/v0.2.0...v0.3.0
