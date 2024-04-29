@@ -1,4 +1,4 @@
-Pre-Release
+v0.0.0 (Pre-Release)
 Last updated 4/3/2024
 - Created UAT Plan
 - Updated create.sql 
@@ -70,3 +70,39 @@ Last updated 4/17/2024
 * @origrushka made their first contribution in https://github.com/madisonpj/CSCI3308-Final-Project/pull/48
 
 **Full Changelog**: https://github.com/madisonpj/CSCI3308-Final-Project/compare/v0.1.0...v0.2.0
+
+
+
+v0.3.0 (Final Submission)
+Last updated 4/24/2024
+- Made the overall application prettier
+- User is now able to update their review
+- User may now upvote and downvote reviews
+- User may view reviews by different sorting (by number of votes, most recent review, by overall rating)
+- Average overall rating is displayed underneath the course
+- Improved UI for writing a review
+- Fixed a bug where usefulness rating was not working
+- Application is complete!
+- May add future enhancements...
+
+## What's Changed
+* changed one line that made usefulness rating not work by @maddiekloud in https://github.com/madisonpj/CSCI3308-Final-Project/pull/58
+* Add total vote to review by @garthable in https://github.com/madisonpj/CSCI3308-Final-Project/pull/57
+* Changed the styling of login and register pages to be bootstrap style by @maddiekloud in https://github.com/madisonpj/CSCI3308-Final-Project/pull/66
+* Update reviews by @matt-harp in https://github.com/madisonpj/CSCI3308-Final-Project/pull/63
+* Different sorting methods by @garthable in https://github.com/madisonpj/CSCI3308-Final-Project/pull/62
+* Created average course rating by @garthable in https://github.com/madisonpj/CSCI3308-Final-Project/pull/64
+* Write a review autofills the course selected, redirects back to course page by @maddiekloud in https://github.com/madisonpj/CSCI3308-Final-Project/pull/65
+* Fixing the buttons by @garthable in https://github.com/madisonpj/CSCI3308-Final-Project/pull/67
+* Overall styling by @madisonpj in https://github.com/madisonpj/CSCI3308-Final-Project/pull/68
+* Styling for review elements elements by @maddiekloud in https://github.com/madisonpj/CSCI3308-Final-Project/pull/70
+* Improvements to updating reviews by @matt-harp in https://github.com/madisonpj/CSCI3308-Final-Project/pull/72
+* Login register goto prev by @garthable in https://github.com/madisonpj/CSCI3308-Final-Project/pull/71
+* styling improvements by @matt-harp in https://github.com/madisonpj/CSCI3308-Final-Project/pull/75
+* Created sample users by @garthable in https://github.com/madisonpj/CSCI3308-Final-Project/pull/74
+* added color to navbar by @madisonpj in https://github.com/madisonpj/CSCI3308-Final-Project/pull/77
+* Added sample data by @DonghaeYi in https://github.com/madisonpj/CSCI3308-Final-Project/pull/78
+* Styling reviews on course page by @maddiekloud in https://github.com/madisonpj/CSCI3308-Final-Project/pull/76
+
+
+**Full Changelog**: https://github.com/madisonpj/CSCI3308-Final-Project/compare/v0.2.0...v0.3.0
