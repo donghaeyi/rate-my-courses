@@ -42,11 +42,11 @@ SESSION_SECRET="super secret"
 
 ## Testing
 ### Full website test case:
-Start Conditions:
+#### Start Conditions:
 - User starts on course search page logged out.
-Prompt:
+#### Prompt:
 - “Write a review for Computer Science 2: Data Structures, downvote every other review for that course and upvote the review you just wrote. Then delete the review you just wrote.”
-Ideal steps taken by user:
+#### Ideal steps taken by user:
 - User searches for a course.
 - User tries to write a review but is redirected to login.
 - User does not have an account so they register.
@@ -55,5 +55,5 @@ Ideal steps taken by user:
 - User downvotes all of the other reviews. 
 - User upvotes their own review.
 - User deletes review just made.
-Results:
+#### Results:
 - The website successfully ran and all tasks/functions were successful.
