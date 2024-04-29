@@ -12,7 +12,7 @@ FCQs are offered by the school but have no way for students to freely express op
 
 ## Demo Video
 ![image](https://github.com/madisonpj/CSCI3308-Final-Project/assets/132002675/0082e827-dcbe-4411-8dfe-0988d24b7a73)
-- [https://youtu.be/cdr9eSnpycM](https://youtu.be/cdr9eSnpycM)
+- YouTube video link: [https://youtu.be/cdr9eSnpycM](https://youtu.be/cdr9eSnpycM)
 
 ## Technology
 - Frontend: HTML, CSS (Bootstrap), JavaScript
@@ -41,3 +41,19 @@ SESSION_SECRET="super secret"
 - Visit localhost:3000 on your favorite browser!
 
 ## Testing
+### Full website test case:
+Start Conditions:
+- User starts on course search page logged out.
+Prompt:
+- “Write a review for Computer Science 2: Data Structures, downvote every other review for that course and upvote the review you just wrote. Then delete the review you just wrote.”
+Ideal steps taken by user:
+- User searches for a course.
+- User tries to write a review but is redirected to login.
+- User does not have an account so they register.
+- User searches for a course.
+- User writes review for course
+- User downvotes all of the other reviews. 
+- User upvotes their own review.
+- User deletes review just made.
+Results:
+- The website successfully ran and all tasks/functions were successful.
