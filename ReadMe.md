@@ -55,5 +55,5 @@ SESSION_SECRET="super secret"
 - User downvotes all of the other reviews. 
 - User upvotes their own review.
 - User deletes review just made.
-#### Results:
+#### Expected Results:
 - The website successfully ran and all tasks/functions were successful.
