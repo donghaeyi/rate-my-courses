@@ -104,4 +104,4 @@ Last updated 4/24/2024
 * Added sample data by @DonghaeYi in https://github.com/madisonpj/CSCI3308-Final-Project/pull/78
 * Styling reviews on course page by @maddiekloud in https://github.com/madisonpj/CSCI3308-Final-Project/pull/76
 
-**Full Changelog**: https://github.com/madisonpj/CSCI3308-Final-Project/compare/v0.2.0...v0.3.0
+**Full Changelog**: https://github.com/madisonpj/CSCI3308-Final-Project/compare/v0.2.0...v1.0.0
