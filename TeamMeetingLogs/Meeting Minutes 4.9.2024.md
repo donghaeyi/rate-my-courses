@@ -1,10 +1,10 @@
-Meeting Minutes 04/09:
+# Meeting Minutes 04/09/2024
 - use office hours (3-5 on Wednesdays) to prevent blocking in the future
 - do smaller tasks when waiting for others and then integrate your feature with the others
 - update release notes prior to meeting with TA
 - make sure to make consistent commits (to feature branches) (must commit three times each week with relavent commit messages)
 
-Individual Updates
+## Individual Updates
 Madison: working on delete reviews and navbar - push changes to feature branch and test those; push in smaller components to prevent losing changes and keep consistent commits
 
 Don: finished the account page; not currently facing challenges because we now have data and waiting on delete
@@ -15,12 +15,12 @@ Matt: finished course suggestions being displayed (merged to main); worked on pr
 
 Dalton: finished login, registration, and logout; currently waiting on reviews before implementing upvote/downvote system
 
-Plan:
+## Plan:
 - putting everything together
 - finishing up navbar
 - once reviews can be added, they will be displayed on the account page
 
-Functional Code:
+## Functional Code:
 - login displays a message based on what data is entered
 - initially directed to login page
 - register button on login reroutes to the register page
