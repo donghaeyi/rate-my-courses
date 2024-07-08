@@ -8,7 +8,7 @@ FCQs are offered by the school but have no way for students to freely express op
 - Matt Harper: [@matt-harp](https://github.com/matt-harp), maha6576@colorado.edu
 - Ori Grushka: [@origrushka](https://github.com/origrushka), orgr9499@colorado.edu
 - Maddie Kloud: [@maddiekloud](https://github.com/maddiekloud), makl2991@colorado.edu
-- Donghae Yi: [@DonghaeYi](https://github.com/DonghaeYi), doyi9623@colorado.edu
+- Donghae Yi: [@donghaeyi](https://github.com/donghaeyi), doyi9623@colorado.edu
 
 ## Demo Video
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=cdr9eSnpycM" target="_blank"><img src="https://github.com/madisonpj/CSCI3308-Final-Project/assets/132002675/0082e827-dcbe-4411-8dfe-0988d24b7a73" alt="cdr9eSnpycM" width="683.33" height="360" border="10" /></a>
