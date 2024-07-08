@@ -10,9 +10,8 @@ FCQs are offered by the school but have no way for students to freely express op
 - Maddie Kloud: [@maddiekloud](https://github.com/maddiekloud), makl2991@colorado.edu
 - Donghae Yi: [@DonghaeYi](https://github.com/DonghaeYi), doyi9623@colorado.edu
 
-## Demo
-![image](https://github.com/madisonpj/CSCI3308-Final-Project/assets/132002675/0082e827-dcbe-4411-8dfe-0988d24b7a73)
-- YouTube video link: [https://youtu.be/cdr9eSnpycM](https://youtu.be/cdr9eSnpycM)
+## Demo Video
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=cdr9eSnpycM" target="_blank"><img src="https://github.com/madisonpj/CSCI3308-Final-Project/assets/132002675/0082e827-dcbe-4411-8dfe-0988d24b7a73" alt="cdr9eSnpycM" width="683.33" height="360" border="10" /></a>
 
 ## Technology
 - Frontend: HTML, CSS (Bootstrap), JavaScript
